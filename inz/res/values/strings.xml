@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="app_name">inz</string>
+    <string name="action_settings">Settings</string>
+    <string name="hello_world">Hello world!</string>
+
+    
+    <string name="drawer_open">Open</string>
+    <string name="drawer_close">Close</string>
+    
+    <string-array name="menu_sections">
+        <item>Test 1</item>
+        <item>Test 2</item>
+    </string-array>
+    <string-array name="menu_icons">
+        <item>action_settings</item>
+        <item>collections_go_to_today</item>
+    </string-array>
+    <string-array name="menu_fragments">
+        <item>Test 1</item>
+        <item>Test 2</item>
+    </string-array>
+
+</resources>
