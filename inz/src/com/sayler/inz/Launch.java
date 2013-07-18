@@ -1,8 +1,10 @@
 package com.sayler.inz;
 
 import android.content.res.Configuration;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.support.v4.app.ActionBarDrawerToggle;
+import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.ListFragment;
 import android.support.v4.view.GravityCompat;
@@ -13,12 +15,15 @@ import android.view.View;
 
 import com.actionbarsherlock.app.SherlockFragmentActivity;
 import com.actionbarsherlock.view.MenuItem;
+import com.sayler.inz.Menu.FragmentSwitchable;
 
-public class Launch extends SherlockFragmentActivity {
-
+public class Launch extends SherlockFragmentActivity implements FragmentSwitchable{
+	
+	static String TAG  = "Launch";
+	
 	private ActionBarDrawerToggle mDrawerToggle;
 	private DrawerLayout mDrawerLayout;
-	private View mDrawerList;
+
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -30,12 +35,15 @@ public class Launch extends SherlockFragmentActivity {
 		FragmentManager fm = getSupportFragmentManager();
 		fm.beginTransaction().replace(R.id.left_drawer, menu).commit();
 
-		mDrawerList = (View) findViewById(R.id.left_drawer);
+		
 
 		mDrawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
 		mDrawerLayout.setDrawerShadow(R.drawable.drawer_shadow,
 				GravityCompat.START);
-
+		mDrawerLayout.setScrimColor(Color.GREEN);
+		
+		
+		
 		mDrawerToggle = new ActionBarDrawerToggle(this, mDrawerLayout,
 				R.drawable.ic_drawer, R.string.drawer_open,
 				R.string.drawer_close) {
@@ -89,5 +97,11 @@ public class Launch extends SherlockFragmentActivity {
 		}
 
 		return super.onOptionsItemSelected(item);
+	}
+
+	@Override
+	public void switchFragment(Fragment f,boolean exists) {
+		Log.d(TAG,"new fragment");  
+		mDrawerLayout.closeDrawer(Gravity.START);
 	}
 }

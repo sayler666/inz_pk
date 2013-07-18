@@ -1,7 +1,10 @@
 package com.sayler.inz;
 
+import java.util.ArrayList;
+
 import android.content.Context;
 import android.os.Bundle;
+import android.support.v4.app.Fragment;
 import android.support.v4.app.ListFragment;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -9,33 +12,99 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.ImageView;
+import android.widget.ListView;
 import android.widget.TextView;
 
 public class Menu extends ListFragment {
 
+	static String TAG="Menu";
+	
 	private MenuListAdapter mListAdapter;
+	private String[] menu_sections, menu_icons, menu_fragments;
+	private ArrayList<Fragment> initializedFragments;
 	
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
 			Bundle savedInstanceState) {
 		return inflater.inflate(R.layout.menu_layout, null);
 	}
-	
-	
-	
+
 	@Override
 	public void onActivityCreated(Bundle savedInstanceState) {
 		super.onActivityCreated(savedInstanceState);
-		String[] menu_sections = getResources().getStringArray(
-				R.array.menu_sections);
-		String[] menu_fragments = getResources().getStringArray(
-				R.array.menu_fragments);
-		String[] menu_icons = getResources().getStringArray(R.array.menu_icons);
+		menu_sections = getResources().getStringArray(R.array.menu_sections);
+		menu_fragments = getResources().getStringArray(R.array.menu_fragments);
+		menu_icons = getResources().getStringArray(R.array.menu_icons);
 
-		
-		mListAdapter = new MenuListAdapter(getActivity(), menu_sections, menu_sections, menu_icons);
-		
+		mListAdapter = new MenuListAdapter(getActivity(), menu_sections,
+				menu_sections, menu_icons);
 
 		setListAdapter(mListAdapter);
+		
+		initializedFragments = new ArrayList<Fragment>();
+	}
+
+	@Override
+	public void onListItemClick(ListView l, View v, int position, long id) {
+		
+		Class<?> fragmentClass;
+		Fragment newFragment = null;
+		boolean exists = false;
+		try {
+			//class name of chosen fragment
+			fragmentClass = Class.forName(menu_fragments[position]);
+			
+			//if chosen fragment instance already exists in array of initialized fragment
+			for (Fragment f : initializedFragments) {
+				if(f.getClass() == fragmentClass){
+					Log.d(TAG,"instantion already exists. "+f.getClass().toString()+ " "+fragmentClass.toString());
+					exists = true;
+					newFragment = f;
+					Log.d(TAG,menu_fragments[position]+" - old instantion");
+					break;
+				}
+			}
+			//if fragment instance not exists - creating new instance
+			if(!exists){
+				newFragment = (Fragment) fragmentClass.newInstance();
+				initializedFragments.add(newFragment);
+				Log.d(TAG,menu_fragments[position]+" - new instantion");
+			}
+			
+
+			if(getActivity() instanceof FragmentSwitchable){
+				FragmentSwitchable fragmentSwitcher = (FragmentSwitchable) getActivity();
+				fragmentSwitcher.switchFragment(newFragment,exists);
+			}else{
+				Log.d(TAG,"Activity must be instance of FragmentSwitchable!");  
+			}
+			
+		} catch (ClassNotFoundException e) {
+			Log.d(TAG,menu_fragments[position]+" - class not found");
+			e.printStackTrace();
+		} catch (java.lang.InstantiationException e) {
+			Log.d(TAG,menu_fragments[position]+" - is not a Fragment");
+			e.printStackTrace();
+		} catch (IllegalAccessException e) {
+			
+			e.printStackTrace();
+		}
+		
+		
+		
+		super.onListItemClick(l, v, position, id);
+	}
+
+	/**
+	 * Activity must implements this interface to change fragments
+	 * 
+	 * @author sayler
+	 */
+	public interface FragmentSwitchable {
+		/**
+		 * @param f
+		 *            fragment chosen from menu, to be shown in activity
+		 */
+		void switchFragment(Fragment f, boolean exists);
 	}
 
 	// MENU LIST ADPATER
@@ -55,7 +124,7 @@ public class Menu extends ListFragment {
 			this.mTitle = title;
 			this.mSubTitle = subtitle;
 			this.mIcon = icon;
-			
+
 			Log.d(TAG, String.valueOf(this.mIcon.length));
 		}
 
@@ -94,11 +163,12 @@ public class Menu extends ListFragment {
 			// Set the results into TextViews
 			txtTitle.setText(mTitle[position]);
 			txtSubTitle.setText(mSubTitle[position]);
-			
+
 			Log.d(TAG, mIcon[position]);
-			
+
 			// Set the results into ImageView
-			int iconDraw = this.context.getResources().getIdentifier(mIcon[position], "drawable", this.context.getPackageName());
+			int iconDraw = this.context.getResources().getIdentifier(
+					mIcon[position], "drawable", this.context.getPackageName());
 			imgIcon.setImageResource(iconDraw);
 
 			return itemView;

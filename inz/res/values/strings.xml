@@ -10,7 +10,7 @@
     <string name="drawer_close">Close</string>
     
     <string-array name="menu_sections">
-        <item>Test 1</item>
+        <item>Gps</item>
         <item>Test 2</item>
     </string-array>
     <string-array name="menu_icons">
@@ -18,7 +18,7 @@
         <item>collections_go_to_today</item>
     </string-array>
     <string-array name="menu_fragments">
-        <item>Test 1</item>
+        <item>com.sayler.inz.gps.GpsFragment</item>
         <item>Test 2</item>
     </string-array>
 
