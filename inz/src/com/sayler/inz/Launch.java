@@ -17,33 +17,32 @@ import com.actionbarsherlock.app.SherlockFragmentActivity;
 import com.actionbarsherlock.view.MenuItem;
 import com.sayler.inz.Menu.FragmentSwitchable;
 
-public class Launch extends SherlockFragmentActivity implements FragmentSwitchable{
-	
-	static String TAG  = "Launch";
-	
+public class Launch extends SherlockFragmentActivity implements
+		FragmentSwitchable {
+
+	static String TAG = "Launch";
+
 	private ActionBarDrawerToggle mDrawerToggle;
 	private DrawerLayout mDrawerLayout;
-
+	private FragmentManager fm;
+	private Fragment activeFragment;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_launch);
+		activeFragment = null;
 
 		// menu fragment
 		ListFragment menu = new com.sayler.inz.Menu();
-		FragmentManager fm = getSupportFragmentManager();
+		fm = getSupportFragmentManager();
 		fm.beginTransaction().replace(R.id.left_drawer, menu).commit();
-
-		
 
 		mDrawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
 		mDrawerLayout.setDrawerShadow(R.drawable.drawer_shadow,
 				GravityCompat.START);
-		mDrawerLayout.setScrimColor(Color.GREEN);
-		
-		
-		
+		mDrawerLayout.setScrimColor(Color.GRAY);
+
 		mDrawerToggle = new ActionBarDrawerToggle(this, mDrawerLayout,
 				R.drawable.ic_drawer, R.string.drawer_open,
 				R.string.drawer_close) {
@@ -83,9 +82,9 @@ public class Launch extends SherlockFragmentActivity implements FragmentSwitchab
 	public boolean onOptionsItemSelected(MenuItem item) {
 
 		switch (item.getItemId()) {
-		
-		//HOME button
-		//navidraver hide/show
+
+		// HOME button
+		// navidraver hide/show
 		case android.R.id.home:
 
 			if (mDrawerLayout.isDrawerOpen(Gravity.START)) {
@@ -100,8 +99,25 @@ public class Launch extends SherlockFragmentActivity implements FragmentSwitchab
 	}
 
 	@Override
-	public void switchFragment(Fragment f,boolean exists) {
-		Log.d(TAG,"new fragment");  
+	public void switchFragment(Fragment f, boolean exists) {
+		Log.d(TAG, "switch fragment");
+
+		if (exists) {
+			if (activeFragment != null)
+				fm.beginTransaction().hide(activeFragment).show(f).commit();
+			else
+				fm.beginTransaction().show(f).commit();
+
+			activeFragment = f;
+		} else {
+			if (activeFragment != null)
+				fm.beginTransaction().hide(activeFragment)
+						.add(R.id.content_frame, f).commit();
+			else
+				fm.beginTransaction().add(R.id.content_frame, f).commit();
+			activeFragment = f;
+		}
+
 		mDrawerLayout.closeDrawer(Gravity.START);
 	}
 }

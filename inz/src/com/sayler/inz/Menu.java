@@ -70,7 +70,7 @@ public class Menu extends ListFragment {
 				Log.d(TAG,menu_fragments[position]+" - new instantion");
 			}
 			
-
+			//replace old fragment with new
 			if(getActivity() instanceof FragmentSwitchable){
 				FragmentSwitchable fragmentSwitcher = (FragmentSwitchable) getActivity();
 				fragmentSwitcher.switchFragment(newFragment,exists);
