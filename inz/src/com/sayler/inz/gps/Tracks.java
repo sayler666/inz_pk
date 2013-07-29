@@ -13,17 +13,18 @@ public class Tracks {
 	public static final String COLUMN_LONG = "long";
 	public static final String COLUMN_SPEED = "speed";
 	public static final String COLUMN_TIME = "time";
+	public static final String COLUMN_ROAD = "road";
 
 	private double lang, lng, speed;
-	private long time;
+	private long time, road;
 
-	public Tracks(double lang, double lng, double speed, long time) {
+	public Tracks(double lang, double lng, double speed, long time, long road) {
 
 		this.lang = lang;
 		this.lng = lng;
 		this.speed = speed;
 		this.time = time;
-
+		this.road = road;
 	}
 
 	public static ContentValues getValues(Tracks track) {
@@ -33,6 +34,7 @@ public class Tracks {
 		values.put(COLUMN_LONG, track.lng);
 		values.put(COLUMN_SPEED, track.speed);
 		values.put(COLUMN_TIME, track.time);
+		values.put(COLUMN_ROAD, track.road);
 		return values;
 	}
 
@@ -43,7 +45,7 @@ public class Tracks {
 			+ TABLE_TRACKS + "(" + COLUMN_ID
 			+ " integer primary key autoincrement, " + COLUMN_LANG
 			+ " real not null, " + COLUMN_LONG + " real not null,"
-			+ COLUMN_SPEED + " real not null, " + COLUMN_TIME + " real not null"
+			+ COLUMN_SPEED + " real not null, " + COLUMN_TIME + " real not null, " + COLUMN_ROAD + " integer not null"
 			+ ");";
 
 	public static void onCreate(SQLiteDatabase database) {

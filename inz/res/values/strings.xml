@@ -3,12 +3,18 @@
 
     <string name="app_name">inz</string>
     <string name="action_settings">Settings</string>
-    <string name="hello_world">Hello world!</string>
-
+	
+    
+	
     
     <string name="drawer_open">Open</string>
     <string name="drawer_close">Close</string>
     
+    
+    
+    
+    
+    <!-- MENU -->
     <string-array name="menu_sections">
         <item>Gps</item>
         <item>Test 2</item>
@@ -22,4 +28,10 @@
         <item>Test 2</item>
     </string-array>
 
+    
+    <!-- GPS -->
+    <!-- controls buttons -->
+    <string name="start_button">Start</string>
+    <string name="end_button">End</string>
+    
 </resources>

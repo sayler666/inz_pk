@@ -73,7 +73,7 @@ public class Menu extends ListFragment {
 			//replace old fragment with new
 			if(getActivity() instanceof FragmentSwitchable){
 				FragmentSwitchable fragmentSwitcher = (FragmentSwitchable) getActivity();
-				fragmentSwitcher.switchFragment(newFragment,exists);
+				fragmentSwitcher.switchFragment(newFragment,exists, menu_sections[position]);
 			}else{
 				Log.d(TAG,"Activity must be instance of FragmentSwitchable!");  
 			}
@@ -104,7 +104,7 @@ public class Menu extends ListFragment {
 		 * @param f
 		 *            fragment chosen from menu, to be shown in activity
 		 */
-		void switchFragment(Fragment f, boolean exists);
+		void switchFragment(Fragment f, boolean exists, String title);
 	}
 
 	// MENU LIST ADPATER

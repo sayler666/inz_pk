@@ -48,12 +48,12 @@ public class Launch extends SherlockFragmentActivity implements
 				R.string.drawer_close) {
 			/** Called when a drawer has settled in a completely closed state. */
 			public void onDrawerClosed(View view) {
-				getSupportActionBar().setTitle("closed");
+			
 			}
 
 			/** Called when a drawer has settled in a completely open state. */
 			public void onDrawerOpened(View drawerView) {
-				getSupportActionBar().setTitle("opened");
+				getSupportActionBar().setTitle("Menu");
 			}
 		};
 
@@ -99,7 +99,7 @@ public class Launch extends SherlockFragmentActivity implements
 	}
 
 	@Override
-	public void switchFragment(Fragment f, boolean exists) {
+	public void switchFragment(Fragment f, boolean exists, String title) {
 		Log.d(TAG, "switch fragment");
 
 		if (exists) {
@@ -117,7 +117,7 @@ public class Launch extends SherlockFragmentActivity implements
 				fm.beginTransaction().add(R.id.content_frame, f).commit();
 			activeFragment = f;
 		}
-
+		getSupportActionBar().setTitle(title);
 		mDrawerLayout.closeDrawer(Gravity.START);
 	}
 }
