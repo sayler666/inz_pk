@@ -33,6 +33,10 @@ public class GpsFragment extends SherlockFragment implements OnClickListener,
 	private Location mLastLocation;
 	private long mLastLocationMillis;
 
+	private Database gpsDb;
+
+	private long currentRoadId = -1;
+
 	private Button startButton;
 	private Button endButton;
 
@@ -72,8 +76,11 @@ public class GpsFragment extends SherlockFragment implements OnClickListener,
 
 		locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER,
 				400, 1, this);
-		Toast.makeText(getActivity(), LocationManager.GPS_PROVIDER, 10).show();
+		Toast.makeText(getActivity(), LocationManager.GPS_PROVIDER, Toast.LENGTH_SHORT).show();
 		locationManager.addGpsStatusListener(mGPSListener);
+
+		// instance of Db
+		gpsDb = new Database(getActivity().getApplicationContext());
 
 		return view;
 	}
@@ -85,7 +92,7 @@ public class GpsFragment extends SherlockFragment implements OnClickListener,
 
 		case R.id.startButton: // start recording
 
-			// if gps not fix - alert
+			// if GPS not fix - alert
 			if (isGpsFix == false) {
 				GpsNotFixedDialog gpsDialog = new GpsNotFixedDialog();
 				gpsDialog.setTargetFragment(this, 0);
@@ -135,9 +142,9 @@ public class GpsFragment extends SherlockFragment implements OnClickListener,
 				if (mLastLocation != null)
 					isGpsFix = (SystemClock.elapsedRealtime() - mLastLocationMillis) < 10000;
 
-				if (isGpsFix) { 		// A fix has been acquired.
+				if (isGpsFix) { // A fix has been acquired.
 					gpsFix(true);
-				} else { 				// The fix has been lost.
+				} else { // The fix has been lost.
 					gpsFix(false);
 				}
 				break;
@@ -157,16 +164,21 @@ public class GpsFragment extends SherlockFragment implements OnClickListener,
 		mLastLocationMillis = SystemClock.elapsedRealtime();
 		mLastLocation = location;
 
-		int lat = (int) (location.getLatitude());
-		int lng = (int) (location.getLongitude());
-		float speed = (int) (location.getSpeed());
-		long time = (int) (location.getTime());
+		double lat =  location.getLatitude();
+		double lng =  location.getLongitude();
+		float speed =location.getSpeed();
+		long time = location.getTime();
 
 		Log.d(this.getClass().toString(), " location change: " + lat + " "
 				+ lng + ", speed " + speed);
 
 		gpsLngLanView.append(lat + " " + lng + " speed " + speed + " time "
 				+ time + "\n");
+
+		// TODO save track
+		Tracks track = new Tracks(lat, lng, speed, time, this.currentRoadId);
+		gpsDb.addTrack(track);
+		
 	}
 
 	@Override
@@ -187,13 +199,16 @@ public class GpsFragment extends SherlockFragment implements OnClickListener,
 
 	}
 
+	// all recording goes here
 	public void startRecording() {
 		this.isRecording = true;
 
 		startButton.setVisibility(View.GONE);
 		endButton.setVisibility(View.VISIBLE);
 
-		// TODO generate new id raod
+		currentRoadId = gpsDb.getNexRoadId();
+		Log.d(this.getClass().toString(), " currentRoadId: " + currentRoadId);
+
 	}
 
 	public void endRecording() {

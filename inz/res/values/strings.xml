@@ -12,11 +12,11 @@
 
     <!-- MENU -->
     <string-array name="menu_sections">
-        <item>Gps</item>
+        <item>Trening</item>
         <item>Test 2</item>
     </string-array>
     <string-array name="menu_icons">
-        <item>action_settings</item>
+        <item>trening</item>
         <item>collections_go_to_today</item>
     </string-array>
     <string-array name="menu_fragments">

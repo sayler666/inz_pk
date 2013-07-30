@@ -9,18 +9,18 @@ public class Tracks {
 	public static final String TABLE_TRACKS = "tracks";
 	// columns
 	public static final String COLUMN_ID = "tracks_id";
-	public static final String COLUMN_LANG = "lang";
-	public static final String COLUMN_LONG = "long";
+	public static final String COLUMN_LAT = "lat";
+	public static final String COLUMN_LNG = "lng";
 	public static final String COLUMN_SPEED = "speed";
 	public static final String COLUMN_TIME = "time";
 	public static final String COLUMN_ROAD = "road";
 
-	private double lang, lng, speed;
+	private double lat, lng, speed;
 	private long time, road;
 
-	public Tracks(double lang, double lng, double speed, long time, long road) {
+	public Tracks(double lat, double lng, double speed, long time, long road) {
 
-		this.lang = lang;
+		this.lat = lat;
 		this.lng = lng;
 		this.speed = speed;
 		this.time = time;
@@ -30,8 +30,8 @@ public class Tracks {
 	public static ContentValues getValues(Tracks track) {
 
 		ContentValues values = new ContentValues();
-		values.put(COLUMN_LANG, track.lang);
-		values.put(COLUMN_LONG, track.lng);
+		values.put(COLUMN_LAT, track.lat);
+		values.put(COLUMN_LNG, track.lng);
 		values.put(COLUMN_SPEED, track.speed);
 		values.put(COLUMN_TIME, track.time);
 		values.put(COLUMN_ROAD, track.road);
@@ -43,8 +43,8 @@ public class Tracks {
 	// Database creation SQL statement
 	private static final String DATABASE_CREATE = "create table "
 			+ TABLE_TRACKS + "(" + COLUMN_ID
-			+ " integer primary key autoincrement, " + COLUMN_LANG
-			+ " real not null, " + COLUMN_LONG + " real not null,"
+			+ " integer primary key autoincrement, " + COLUMN_LAT
+			+ " real not null, " + COLUMN_LNG + " real not null,"
 			+ COLUMN_SPEED + " real not null, " + COLUMN_TIME + " real not null, " + COLUMN_ROAD + " integer not null"
 			+ ");";
 

@@ -922,6 +922,7 @@ containing a value of this type.
         public static final int drawer_shadow=0x7f020072;
         public static final int ic_drawer=0x7f020073;
         public static final int ic_launcher=0x7f020074;
+        public static final int trening=0x7f020075;
     }
     public static final class id {
         public static final int abs__action_bar=0x7f040020;
