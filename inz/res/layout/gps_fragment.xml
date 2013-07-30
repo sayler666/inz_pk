@@ -8,26 +8,19 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content" >
 
-        <ToggleButton
-            android:id="@+id/toggleGpsButton"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="ToggleButton" />
-
         <TextView
             android:id="@+id/gpsStatusText"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignParentTop="true"
-            android:layout_toRightOf="@+id/toggleGpsButton" />
+            android:text="@string/gps_not_fixed" />
 
     </RelativeLayout>
 
     <LinearLayout
         android:id="@+id/controlsLayout"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:visibility="gone" >
+        android:layout_height="wrap_content" >
 
         <Button
             android:id="@+id/startButton"

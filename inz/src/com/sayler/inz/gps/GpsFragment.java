@@ -1,6 +1,5 @@
 package com.sayler.inz.gps;
 
-import android.animation.ObjectAnimator;
 import android.content.Context;
 import android.content.Intent;
 import android.location.GpsStatus;
@@ -10,7 +9,7 @@ import android.location.LocationManager;
 import android.os.Bundle;
 import android.os.SystemClock;
 import android.provider.Settings;
-import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -19,39 +18,40 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
-import android.widget.ToggleButton;
 
+import com.actionbarsherlock.app.SherlockFragment;
 import com.sayler.inz.R;
+import com.sayler.inz.gps.EndRecordingDialog.EndRecordingDialogListener;
+import com.sayler.inz.gps.GpsNotFixedDialog.GpsNotFixedDialogListener;
 
-public class GpsFragment extends Fragment implements OnClickListener,
-		LocationListener {
+public class GpsFragment extends SherlockFragment implements OnClickListener,
+		LocationListener, GpsNotFixedDialogListener, EndRecordingDialogListener {
+
+	private FragmentManager fm;
 
 	private LocationManager locationManager;
-	private long mLastLocationMillis;
 	private Location mLastLocation;
-	private boolean isGpsFix = false;
-	private ToggleButton gpsToggleButton;
-	private TextView gpsStatusView;
-	private TextView gpsLngLanView;
-	private View controlsLayout;
-	private boolean isRecording;
+	private long mLastLocationMillis;
 
 	private Button startButton;
 	private Button endButton;
+
+	private TextView gpsStatusView;
+	private TextView gpsLngLanView;
+
+	private boolean isRecording;
+	private boolean isGpsFix = false;
 
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
 			Bundle savedInstanceState) {
 		View view = inflater.inflate(R.layout.gps_fragment, container, false);
 
-		gpsToggleButton = (ToggleButton) view
-				.findViewById(R.id.toggleGpsButton);
-		gpsToggleButton.setOnClickListener(this);
-
 		gpsStatusView = (TextView) view.findViewById(R.id.gpsStatusText);
 		gpsLngLanView = (TextView) view.findViewById(R.id.gpsLngLanTextView);
 
-		controlsLayout = view.findViewById(R.id.controlsLayout);
+		fm = getSherlockActivity().getSupportFragmentManager();
+
 		startButton = (Button) view.findViewById(R.id.startButton);
 		endButton = (Button) view.findViewById(R.id.endButton);
 		startButton.setOnClickListener(this);
@@ -61,6 +61,20 @@ public class GpsFragment extends Fragment implements OnClickListener,
 		locationManager = (LocationManager) getActivity().getSystemService(
 				Context.LOCATION_SERVICE);
 
+		// start gps listener
+		boolean enabled = locationManager
+				.isProviderEnabled(LocationManager.GPS_PROVIDER);
+
+		if (!enabled) {
+			Intent intent = new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS);
+			startActivity(intent);
+		}
+
+		locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER,
+				400, 1, this);
+		Toast.makeText(getActivity(), LocationManager.GPS_PROVIDER, 10).show();
+		locationManager.addGpsStatusListener(mGPSListener);
+
 		return view;
 	}
 
@@ -68,62 +82,28 @@ public class GpsFragment extends Fragment implements OnClickListener,
 	public void onClick(View v) {
 
 		switch (v.getId()) {
-		// gps button
-		case R.id.toggleGpsButton:
-			boolean on = ((ToggleButton) v).isChecked();
-			if (on) {
 
-				boolean enabled = locationManager
-						.isProviderEnabled(LocationManager.GPS_PROVIDER);
+		case R.id.startButton: // start recording
 
-				if (!enabled) {
-					Intent intent = new Intent(
-							Settings.ACTION_LOCATION_SOURCE_SETTINGS);
-					startActivity(intent);
-				}
+			// if gps not fix - alert
+			if (isGpsFix == false) {
+				GpsNotFixedDialog gpsDialog = new GpsNotFixedDialog();
+				gpsDialog.setTargetFragment(this, 0);
+				gpsDialog.show(fm, "gps_dialog");
 
-				locationManager.requestLocationUpdates(
-						LocationManager.GPS_PROVIDER, 400, 1, this);
-				Toast.makeText(getActivity(), LocationManager.GPS_PROVIDER, 10)
-						.show();
-				locationManager.addGpsStatusListener(mGPSListener);
 			} else {
-				gpsFix(false);
-
-				locationManager.removeUpdates(this);
-				Toast.makeText(getActivity(), LocationManager.GPS_PROVIDER, 10)
-						.show();
-				locationManager.removeGpsStatusListener(mGPSListener);
+				this.startRecording();
 			}
 
-			// Database db = new Database(getActivity());
-			// Tracks tr = new Tracks(10, 1, 13, 123);
-			//
-			// Toast.makeText(getActivity(), String.valueOf(db.addTrack(tr)),
-			// 10)
-			// .show();
-
 			break;
 
-		case R.id.startButton:
-			Log.d(this.getClass().toString(), "start button");
-			this.isRecording = true;
+		case R.id.endButton: // end recording
 
-			startButton.setVisibility(View.GONE);
-			endButton.setVisibility(View.VISIBLE);
+			// dialog if user sure
+			EndRecordingDialog gpsDialog = new EndRecordingDialog();
+			gpsDialog.setTargetFragment(this, 0);
+			gpsDialog.show(fm, "end_recording");
 
-			// TODO generate new id raod
-				
-			break;
-
-		case R.id.endButton:
-			this.isRecording = false;
-
-			startButton.setVisibility(View.VISIBLE);
-			endButton.setVisibility(View.GONE);
-
-			// TODO save all data to db
-			
 			break;
 		}
 
@@ -131,26 +111,11 @@ public class GpsFragment extends Fragment implements OnClickListener,
 
 	private void gpsFix(boolean b) {
 		this.isGpsFix = b;
-		ObjectAnimator controlsAnimator;
-		if (b) { // is fixed
-			gpsStatusView.setText("Gps fixed!");
 
-			controlsLayout.setVisibility(View.VISIBLE);
-			controlsLayout.setAlpha(0);
-
-			controlsAnimator = ObjectAnimator.ofFloat(controlsLayout, "alpha",
-					1);
-			controlsAnimator.setDuration(1000);
-			controlsAnimator.start();
-		} else {
-			gpsStatusView.setText("Gps not fixed!");
-
-			controlsAnimator = ObjectAnimator.ofFloat(controlsLayout, "alpha",
-					0);
-			controlsAnimator.setDuration(500);
-			controlsAnimator.start();
-
-		}
+		if (b)
+			gpsStatusView.setText(R.string.gps_fixed);
+		else
+			gpsStatusView.setText(R.string.gps_not_fixed);
 	}
 
 	private GpsStatus.Listener mGPSListener = new GpsStatus.Listener() {
@@ -162,7 +127,6 @@ public class GpsFragment extends Fragment implements OnClickListener,
 			case GpsStatus.GPS_EVENT_FIRST_FIX:
 
 				gpsFix(true);
-
 				break;
 			case GpsStatus.GPS_EVENT_STOPPED:
 
@@ -186,6 +150,8 @@ public class GpsFragment extends Fragment implements OnClickListener,
 	@Override
 	public void onLocationChanged(Location location) {
 
+		if (isRecording == false)
+			return;
 		if (location == null)
 			return;
 		mLastLocationMillis = SystemClock.elapsedRealtime();
@@ -193,9 +159,14 @@ public class GpsFragment extends Fragment implements OnClickListener,
 
 		int lat = (int) (location.getLatitude());
 		int lng = (int) (location.getLongitude());
+		float speed = (int) (location.getSpeed());
+		long time = (int) (location.getTime());
+
 		Log.d(this.getClass().toString(), " location change: " + lat + " "
-				+ lng);
-		gpsLngLanView.append(lat + " " + lng + "\n");
+				+ lng + ", speed " + speed);
+
+		gpsLngLanView.append(lat + " " + lng + " speed " + speed + " time "
+				+ time + "\n");
 	}
 
 	@Override
@@ -213,6 +184,36 @@ public class GpsFragment extends Fragment implements OnClickListener,
 	@Override
 	public void onStatusChanged(String provider, int status, Bundle extras) {
 		Log.d(this.getClass().toString(), " status changed: ");
+
+	}
+
+	public void startRecording() {
+		this.isRecording = true;
+
+		startButton.setVisibility(View.GONE);
+		endButton.setVisibility(View.VISIBLE);
+
+		// TODO generate new id raod
+	}
+
+	public void endRecording() {
+
+		this.isRecording = false;
+
+		startButton.setVisibility(View.VISIBLE);
+		endButton.setVisibility(View.GONE);
+
+		// TODO save all data to db
+	}
+
+	@Override
+	public void onGpsNotFixedDialogPositiveClick() {
+		startRecording();
+	}
+
+	@Override
+	public void onEndRecordingDialogPositiveClick() {
+		endRecording();
 
 	}
 

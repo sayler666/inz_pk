@@ -3,17 +3,13 @@
 
     <string name="app_name">inz</string>
     <string name="action_settings">Settings</string>
-	
-    
-	
-    
     <string name="drawer_open">Open</string>
+    
     <string name="drawer_close">Close</string>
-    
-    
-    
-    
-    
+    <string name="cancel">Cancel</string>
+    <string name="ignore">Ignore</string>
+    <string name="yes">Yes</string>
+
     <!-- MENU -->
     <string-array name="menu_sections">
         <item>Gps</item>
@@ -28,10 +24,14 @@
         <item>Test 2</item>
     </string-array>
 
-    
     <!-- GPS -->
     <!-- controls buttons -->
     <string name="start_button">Start</string>
     <string name="end_button">End</string>
-    
+    <string name="gps_fixed">Gps fixed!</string>
+    <string name="gps_searching">Gps searching!</string>
+    <string name="gps_not_fixed">Gps not fixed!</string>
+    <string name="gps_not_fixed_dialog_message">Gps signal is not fixed.</string>
+    <string name="end_recording_dialog_message">Are you sure to end recording?</string>
+
 </resources>
