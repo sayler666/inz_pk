@@ -55,11 +55,13 @@ public class TimerView extends TextView {
 
 	public void end() {
 		timer.cancel();
-	}
-
+	} 
+	
 	public void clear() {
-
 		this.setText("00:00:00");
 	}
 
+	
+	
+	
 }

@@ -163,19 +163,16 @@ public class GpsFragment extends SherlockFragment implements OnClickListener,
 	@Override
 	public void onProviderDisabled(String provider) {
 		Log.d(this.getClass().toString(), provider + "  enabled ");
-
 	}
 
 	@Override
 	public void onProviderEnabled(String provider) {
 		Log.d(this.getClass().toString(), provider + "  disable ");
-
 	}
 
 	@Override
 	public void onStatusChanged(String provider, int status, Bundle extras) {
 		Log.d(this.getClass().toString(), " status changed: ");
-
 	}
 
 	// all recording goes here
