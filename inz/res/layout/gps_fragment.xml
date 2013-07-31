@@ -4,19 +4,7 @@
     android:layout_height="match_parent"
     android:orientation="vertical" >
 
-    <RelativeLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content" >
-
-        <TextView
-            android:id="@+id/gpsStatusText"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignParentTop="true"
-            android:text="@string/gps_not_fixed" />
-
-    </RelativeLayout>
-
+  
     <LinearLayout
         android:id="@+id/controlsLayout"
         android:layout_width="match_parent"
@@ -39,10 +27,56 @@
 
     </LinearLayout>
 
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" >
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:paddingRight="10dp"
+            android:text="@string/time_elapsed"
+            android:textAppearance="?android:attr/textAppearanceMedium" />
+
+        <com.sayler.inz.gps.TimerView
+            android:id="@+id/timerView1"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textAppearance="?android:attr/textAppearanceMedium" />
+
+    </LinearLayout>
+	<LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" >
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:paddingRight="10dp"
+            android:text="@string/distance"
+            android:textAppearance="?android:attr/textAppearanceMedium" />
+
+       <TextView
+           android:id="@+id/distanceTextView"
+           android:layout_width="wrap_content"
+           android:layout_height="wrap_content"
+           android:paddingRight="10dp"
+           android:textAppearance="?android:attr/textAppearanceMedium" />
+
+    </LinearLayout>
     <TextView
         android:id="@+id/gpsLngLanTextView"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_weight="0.21" />
+        android:layout_weight="0.21"
+        android:scrollbarAlwaysDrawVerticalTrack="true"
+        android:scrollbarStyle="insideInset"
+        android:scrollbars="vertical" />
+
+    <TextView
+        android:id="@+id/gpsStatusText"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/gps_not_fixed" />
 
 </LinearLayout>

@@ -8,6 +8,8 @@ import android.support.v4.app.DialogFragment;
 
 import com.sayler.inz.R;
 
+import de.greenrobot.event.EventBus;
+
 public class GpsNotFixedDialog extends DialogFragment {
 
 	/*
@@ -51,7 +53,7 @@ public class GpsNotFixedDialog extends DialogFragment {
 				.setNegativeButton(R.string.cancel,
 						new DialogInterface.OnClickListener() {
 							public void onClick(DialogInterface dialog, int id) {
-							
+								
 							}
 						});
 

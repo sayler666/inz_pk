@@ -33,5 +33,7 @@
     <string name="gps_not_fixed">Gps not fixed!</string>
     <string name="gps_not_fixed_dialog_message">Gps signal is not fixed.</string>
     <string name="end_recording_dialog_message">Are you sure to end recording?</string>
+    <string name="time_elapsed">Time: </string>
+    <string name="distance">Distance: </string>
 
 </resources>

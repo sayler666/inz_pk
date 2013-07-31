@@ -964,27 +964,29 @@ containing a value of this type.
         public static final int abs__textButton=0x7f040013;
         public static final int abs__title=0x7f04001b;
         public static final int abs__up=0x7f04000b;
-        public static final int action_settings=0x7f04003d;
+        public static final int action_settings=0x7f04003f;
         public static final int content_frame=0x7f040033;
-        public static final int controlsLayout=0x7f040036;
+        public static final int controlsLayout=0x7f040035;
         public static final int disableHome=0x7f040009;
+        public static final int distanceTextView=0x7f040039;
         public static final int drawer_layout=0x7f040032;
         public static final int edit_query=0x7f040026;
-        public static final int endButton=0x7f040038;
-        public static final int gpsLngLanTextView=0x7f040039;
-        public static final int gpsStatusText=0x7f040035;
+        public static final int endButton=0x7f040037;
+        public static final int gpsLngLanTextView=0x7f04003a;
+        public static final int gpsStatusText=0x7f04003b;
         public static final int homeAsUp=0x7f040006;
-        public static final int icon=0x7f04003a;
+        public static final int icon=0x7f04003c;
         public static final int left_drawer=0x7f040034;
         public static final int listMode=0x7f040002;
         public static final int normal=0x7f040001;
         public static final int showCustom=0x7f040008;
         public static final int showHome=0x7f040005;
         public static final int showTitle=0x7f040007;
-        public static final int startButton=0x7f040037;
-        public static final int subtitle=0x7f04003c;
+        public static final int startButton=0x7f040036;
+        public static final int subtitle=0x7f04003e;
         public static final int tabMode=0x7f040003;
-        public static final int title=0x7f04003b;
+        public static final int timerView1=0x7f040038;
+        public static final int title=0x7f04003d;
         public static final int useLogo=0x7f040004;
         public static final int wrap_content=0x7f040000;
     }
@@ -1066,6 +1068,7 @@ containing a value of this type.
         public static final int action_settings=0x7f09000e;
         public static final int app_name=0x7f09000d;
         public static final int cancel=0x7f090011;
+        public static final int distance=0x7f09001c;
         public static final int drawer_close=0x7f090010;
         public static final int drawer_open=0x7f09000f;
         public static final int end_button=0x7f090015;
@@ -1079,6 +1082,7 @@ containing a value of this type.
  controls buttons 
          */
         public static final int start_button=0x7f090014;
+        public static final int time_elapsed=0x7f09001b;
         public static final int yes=0x7f090013;
     }
     public static final class style {

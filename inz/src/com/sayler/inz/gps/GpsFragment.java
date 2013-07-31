@@ -17,7 +17,6 @@ import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.actionbarsherlock.app.SherlockFragment;
 import com.sayler.inz.R;
@@ -30,8 +29,10 @@ public class GpsFragment extends SherlockFragment implements OnClickListener,
 	private FragmentManager fm;
 
 	private LocationManager locationManager;
-	private Location mLastLocation;
+	private Location mLastLocation = null;
 	private long mLastLocationMillis;
+
+	private float distance = 0;
 
 	private Database gpsDb;
 
@@ -42,6 +43,9 @@ public class GpsFragment extends SherlockFragment implements OnClickListener,
 
 	private TextView gpsStatusView;
 	private TextView gpsLngLanView;
+	private TextView distanceTextView;
+
+	private TimerView timerView;
 
 	private boolean isRecording;
 	private boolean isGpsFix = false;
@@ -53,6 +57,7 @@ public class GpsFragment extends SherlockFragment implements OnClickListener,
 
 		gpsStatusView = (TextView) view.findViewById(R.id.gpsStatusText);
 		gpsLngLanView = (TextView) view.findViewById(R.id.gpsLngLanTextView);
+		distanceTextView = (TextView) view.findViewById(R.id.distanceTextView);
 
 		fm = getSherlockActivity().getSupportFragmentManager();
 
@@ -60,6 +65,8 @@ public class GpsFragment extends SherlockFragment implements OnClickListener,
 		endButton = (Button) view.findViewById(R.id.endButton);
 		startButton.setOnClickListener(this);
 		endButton.setOnClickListener(this);
+
+		timerView = (TimerView) view.findViewById(R.id.timerView1);
 
 		// Get the location manager
 		locationManager = (LocationManager) getActivity().getSystemService(
@@ -76,7 +83,7 @@ public class GpsFragment extends SherlockFragment implements OnClickListener,
 
 		locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER,
 				400, 1, this);
-		Toast.makeText(getActivity(), LocationManager.GPS_PROVIDER, Toast.LENGTH_SHORT).show();
+
 		locationManager.addGpsStatusListener(mGPSListener);
 
 		// instance of Db
@@ -92,21 +99,20 @@ public class GpsFragment extends SherlockFragment implements OnClickListener,
 
 		case R.id.startButton: // start recording
 
-			// if GPS not fix - alert
+			// if GPS not fix - dialog
 			if (isGpsFix == false) {
+
 				GpsNotFixedDialog gpsDialog = new GpsNotFixedDialog();
 				gpsDialog.setTargetFragment(this, 0);
 				gpsDialog.show(fm, "gps_dialog");
-
-			} else {
+			} else
 				this.startRecording();
-			}
 
 			break;
 
 		case R.id.endButton: // end recording
 
-			// dialog if user sure
+			// dialog if user is sure
 			EndRecordingDialog gpsDialog = new EndRecordingDialog();
 			gpsDialog.setTargetFragment(this, 0);
 			gpsDialog.show(fm, "end_recording");
@@ -155,33 +161,6 @@ public class GpsFragment extends SherlockFragment implements OnClickListener,
 	};
 
 	@Override
-	public void onLocationChanged(Location location) {
-
-		if (isRecording == false)
-			return;
-		if (location == null)
-			return;
-		mLastLocationMillis = SystemClock.elapsedRealtime();
-		mLastLocation = location;
-
-		double lat =  location.getLatitude();
-		double lng =  location.getLongitude();
-		float speed =location.getSpeed();
-		long time = location.getTime();
-
-		Log.d(this.getClass().toString(), " location change: " + lat + " "
-				+ lng + ", speed " + speed);
-
-		gpsLngLanView.append(lat + " " + lng + " speed " + speed + " time "
-				+ time + "\n");
-
-		// TODO save track
-		Tracks track = new Tracks(lat, lng, speed, time, this.currentRoadId);
-		gpsDb.addTrack(track);
-		
-	}
-
-	@Override
 	public void onProviderDisabled(String provider) {
 		Log.d(this.getClass().toString(), provider + "  enabled ");
 
@@ -203,20 +182,72 @@ public class GpsFragment extends SherlockFragment implements OnClickListener,
 	public void startRecording() {
 		this.isRecording = true;
 
+		// show necessary buttons
 		startButton.setVisibility(View.GONE);
 		endButton.setVisibility(View.VISIBLE);
 
+		// generate new road id (highest id + 1)
 		currentRoadId = gpsDb.getNexRoadId();
-		Log.d(this.getClass().toString(), " currentRoadId: " + currentRoadId);
+
+		// reset distance
+		distance = 0;
+		distanceTextView.setText(String.format("%.0f m", distance));
+
+		// start timer
+		timerView.start();
+	}
+
+	@Override
+	public void onLocationChanged(Location location) {
+
+		// gps fixing stuff
+		if (location == null)
+			return;
+
+		// calculate distance
+		if (mLastLocation != null) {
+			float[] results = new float[5];
+			Location.distanceBetween(mLastLocation.getLatitude(),
+					mLastLocation.getLongitude(), location.getLatitude(),
+					location.getLongitude(), results);
+			distance += results[0];
+		}
+
+		mLastLocationMillis = SystemClock.elapsedRealtime();
+		mLastLocation = location;
+
+		// if not recording - do not bother about rest
+		if (isRecording == false)
+			return;
+
+		double lat = location.getLatitude();
+		double lng = location.getLongitude();
+		float speed = location.getSpeed();
+		long time = location.getTime();
+
+		// TODO choose units (m/s, km/h, km, mile, m, foot, etc)
+
+		// update distance view
+		distanceTextView.setText(String.format("%.0f m", distance));
+
+		// save track to db
+		Tracks track = new Tracks(lat, lng, speed, time, this.currentRoadId);
+		gpsDb.addTrack(track);
+
+		gpsLngLanView.append(lat + " " + lng + " speed " + speed + " time "
+				+ time + "\n");
 
 	}
 
 	public void endRecording() {
-
 		this.isRecording = false;
 
+		// hide necessary buttons
 		startButton.setVisibility(View.VISIBLE);
 		endButton.setVisibility(View.GONE);
+
+		// stop timer
+		timerView.end();
 
 		// TODO save all data to db
 	}
