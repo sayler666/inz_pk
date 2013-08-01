@@ -19,6 +19,9 @@ import android.widget.Button;
 import android.widget.TextView;
 
 import com.actionbarsherlock.app.SherlockFragment;
+import com.actionbarsherlock.app.SherlockFragmentActivity;
+import com.actionbarsherlock.view.Menu;
+import com.actionbarsherlock.view.MenuInflater;
 import com.sayler.inz.R;
 import com.sayler.inz.gps.EndRecordingDialog.EndRecordingDialogListener;
 import com.sayler.inz.gps.GpsNotFixedDialog.GpsNotFixedDialogListener;
@@ -35,6 +38,7 @@ public class GpsFragment extends SherlockFragment implements OnClickListener,
 	private Location mLastLocation = null;
 	private long mLastLocationMillis;
 
+	private Calories calories = new Calories();
 	private ISport sport;
 
 	private float distance = 0;
@@ -48,6 +52,8 @@ public class GpsFragment extends SherlockFragment implements OnClickListener,
 
 	private TextView gpsStatusView;
 	private TextView gpsLngLanView;
+
+
 	private TextView distanceTextView;
 	private TextView caloriesTextView;
 
@@ -56,6 +62,14 @@ public class GpsFragment extends SherlockFragment implements OnClickListener,
 	private boolean isRecording;
 	private boolean isGpsFix = false;
 
+	
+	
+	@Override
+	public void onCreate(Bundle savedInstanceState) {
+		
+		super.onCreate(savedInstanceState);
+		setHasOptionsMenu(true);
+	}
 
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -200,7 +214,10 @@ public class GpsFragment extends SherlockFragment implements OnClickListener,
 		// reset distance
 		distance = 0;
 		distanceTextView.setText(String.format("%.0f m", distance));
-		
+
+		// choose sport
+		calories.setCaloriesCalculateStrategy(sport);
+
 		// start timer
 		timerView.start();
 	}
@@ -223,7 +240,7 @@ public class GpsFragment extends SherlockFragment implements OnClickListener,
 		float speed = location.getSpeed();
 		long time = location.getTime();
 		double alt = location.getAltitude();
-		
+
 		// calculate distance
 		if (mLastLocation != null) {
 			float[] results = new float[5];
@@ -236,8 +253,6 @@ public class GpsFragment extends SherlockFragment implements OnClickListener,
 		distanceTextView.setText(String.format("%.0f m", distance));
 
 		// calories calculation
-		Calories calories = new Calories();
-		calories.setCaloriesCalculateStrategy(sport);
 		float cal = calories.calculate(distance, 75, 1,
 				timerView.getElapsedTime());
 		// update calories view
@@ -266,7 +281,7 @@ public class GpsFragment extends SherlockFragment implements OnClickListener,
 		// stop timer
 		timerView.end();
 
-		// TODO save all data to db
+		// TODO save all additional data to db
 	}
 
 	@Override
@@ -280,4 +295,13 @@ public class GpsFragment extends SherlockFragment implements OnClickListener,
 
 	}
 
+	@Override
+	public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+		Log.d(this.getClass().toString(),"onCreateOptionsMenu");
+		MenuInflater in = ((SherlockFragmentActivity)getActivity()).getSupportMenuInflater();
+		in.inflate(R.menu.gps_fragment_menu, menu);
+		super.onCreateOptionsMenu(menu, in);
+	}
+
+	
 }

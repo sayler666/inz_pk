@@ -964,7 +964,8 @@ containing a value of this type.
         public static final int abs__textButton=0x7f040013;
         public static final int abs__title=0x7f04001b;
         public static final int abs__up=0x7f04000b;
-        public static final int action_settings=0x7f040040;
+        public static final int action_compose=0x7f040040;
+        public static final int action_settings=0x7f040041;
         public static final int caloriesTextView=0x7f04003a;
         public static final int content_frame=0x7f040033;
         public static final int controlsLayout=0x7f040035;
@@ -1024,7 +1025,8 @@ containing a value of this type.
         public static final int sherlock_spinner_item=0x7f03001a;
     }
     public static final class menu {
-        public static final int launch=0x7f0c0000;
+        public static final int gps_fragment_menu=0x7f0c0000;
+        public static final int launch=0x7f0c0001;
     }
     public static final class string {
         /**  Content description for the action bar "home" affordance. [CHAR LIMIT=NONE] 

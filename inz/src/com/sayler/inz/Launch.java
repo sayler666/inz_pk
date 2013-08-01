@@ -14,6 +14,8 @@ import android.view.Gravity;
 import android.view.View;
 
 import com.actionbarsherlock.app.SherlockFragmentActivity;
+import com.actionbarsherlock.view.Menu;
+import com.actionbarsherlock.view.MenuInflater;
 import com.actionbarsherlock.view.MenuItem;
 import com.sayler.inz.Menu.FragmentSwitchable;
 
@@ -48,7 +50,7 @@ public class Launch extends SherlockFragmentActivity implements
 				R.string.drawer_close) {
 			/** Called when a drawer has settled in a completely closed state. */
 			public void onDrawerClosed(View view) {
-			
+
 			}
 
 			/** Called when a drawer has settled in a completely open state. */
@@ -98,6 +100,7 @@ public class Launch extends SherlockFragmentActivity implements
 		return super.onOptionsItemSelected(item);
 	}
 
+
 	@Override
 	public void switchFragment(Fragment f, boolean exists, String title) {
 		Log.d(TAG, "switch fragment");
@@ -119,5 +122,6 @@ public class Launch extends SherlockFragmentActivity implements
 		}
 		getSupportActionBar().setTitle(title);
 		mDrawerLayout.closeDrawer(Gravity.START);
+		
 	}
 }
