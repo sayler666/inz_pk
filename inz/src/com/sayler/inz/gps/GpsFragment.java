@@ -22,6 +22,9 @@ import com.actionbarsherlock.app.SherlockFragment;
 import com.sayler.inz.R;
 import com.sayler.inz.gps.EndRecordingDialog.EndRecordingDialogListener;
 import com.sayler.inz.gps.GpsNotFixedDialog.GpsNotFixedDialogListener;
+import com.sayler.inz.gps.sports.Calories;
+import com.sayler.inz.gps.sports.ISport;
+import com.sayler.inz.gps.sports.Running;
 
 public class GpsFragment extends SherlockFragment implements OnClickListener,
 		LocationListener, GpsNotFixedDialogListener, EndRecordingDialogListener {
@@ -31,6 +34,8 @@ public class GpsFragment extends SherlockFragment implements OnClickListener,
 	private LocationManager locationManager;
 	private Location mLastLocation = null;
 	private long mLastLocationMillis;
+
+	private ISport sport;
 
 	private float distance = 0;
 
@@ -44,11 +49,13 @@ public class GpsFragment extends SherlockFragment implements OnClickListener,
 	private TextView gpsStatusView;
 	private TextView gpsLngLanView;
 	private TextView distanceTextView;
+	private TextView caloriesTextView;
 
 	private TimerView timerView;
 
 	private boolean isRecording;
 	private boolean isGpsFix = false;
+
 
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -58,6 +65,7 @@ public class GpsFragment extends SherlockFragment implements OnClickListener,
 		gpsStatusView = (TextView) view.findViewById(R.id.gpsStatusText);
 		gpsLngLanView = (TextView) view.findViewById(R.id.gpsLngLanTextView);
 		distanceTextView = (TextView) view.findViewById(R.id.distanceTextView);
+		caloriesTextView = (TextView) view.findViewById(R.id.caloriesTextView);
 
 		fm = getSherlockActivity().getSupportFragmentManager();
 
@@ -82,12 +90,15 @@ public class GpsFragment extends SherlockFragment implements OnClickListener,
 		}
 
 		locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER,
-				400, 1, this);
+				1000, 3, this);
 
 		locationManager.addGpsStatusListener(mGPSListener);
 
 		// instance of Db
 		gpsDb = new Database(getActivity().getApplicationContext());
+
+		// TODO choosing sport type
+		sport = new Running();
 
 		return view;
 	}
@@ -189,7 +200,7 @@ public class GpsFragment extends SherlockFragment implements OnClickListener,
 		// reset distance
 		distance = 0;
 		distanceTextView.setText(String.format("%.0f m", distance));
-
+		
 		// start timer
 		timerView.start();
 	}
@@ -197,21 +208,11 @@ public class GpsFragment extends SherlockFragment implements OnClickListener,
 	@Override
 	public void onLocationChanged(Location location) {
 
-		// gps fixing stuff
+		// GPS fixing stuff
 		if (location == null)
 			return;
 
-		// calculate distance
-		if (mLastLocation != null) {
-			float[] results = new float[5];
-			Location.distanceBetween(mLastLocation.getLatitude(),
-					mLastLocation.getLongitude(), location.getLatitude(),
-					location.getLongitude(), results);
-			distance += results[0];
-		}
-
 		mLastLocationMillis = SystemClock.elapsedRealtime();
-		mLastLocation = location;
 
 		// if not recording - do not bother about rest
 		if (isRecording == false)
@@ -221,19 +222,38 @@ public class GpsFragment extends SherlockFragment implements OnClickListener,
 		double lng = location.getLongitude();
 		float speed = location.getSpeed();
 		long time = location.getTime();
-
-		// TODO choose units (m/s, km/h, km, mile, m, foot, etc)
-
+		double alt = location.getAltitude();
+		
+		// calculate distance
+		if (mLastLocation != null) {
+			float[] results = new float[5];
+			Location.distanceBetween(mLastLocation.getLatitude(),
+					mLastLocation.getLongitude(), location.getLatitude(),
+					location.getLongitude(), results);
+			distance += results[0];
+		}
 		// update distance view
 		distanceTextView.setText(String.format("%.0f m", distance));
 
-		// save track to db
+		// calories calculation
+		Calories calories = new Calories();
+		calories.setCaloriesCalculateStrategy(sport);
+		float cal = calories.calculate(distance, 75, 1,
+				timerView.getElapsedTime());
+		// update calories view
+		caloriesTextView.setText(String.format("%.0f kcal", cal));
+
+		//
+		// Database
+		// save track to database
 		Tracks track = new Tracks(lat, lng, speed, time, this.currentRoadId);
 		gpsDb.addTrack(track);
 
 		gpsLngLanView.append(lat + " " + lng + " speed " + speed + " time "
 				+ time + "\n");
 
+		// remember last location
+		mLastLocation = location;
 	}
 
 	public void endRecording() {

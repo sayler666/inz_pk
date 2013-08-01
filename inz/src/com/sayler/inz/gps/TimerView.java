@@ -15,7 +15,10 @@ public class TimerView extends TextView {
 
 	private long startTime;
 	private Timer timer;
-
+	/**
+	 * seconds
+	 */
+	private int elapsedTime;
 	public TimerView(Context context, AttributeSet attrs) {
 		super(context, attrs);
 		this.clear();
@@ -25,6 +28,8 @@ public class TimerView extends TextView {
 
 		@Override
 		public boolean handleMessage(Message msg) {
+			elapsedTime = (int)((System.currentTimeMillis() - startTime)/1000);
+			
 			long millis = System.currentTimeMillis() - startTime;
 
 			int seconds = (int) (millis / 1000);
@@ -55,13 +60,20 @@ public class TimerView extends TextView {
 
 	public void end() {
 		timer.cancel();
+		
 	} 
 	
 	public void clear() {
 		this.setText("00:00:00");
 	}
 
-	
-	
+	/**
+	 * elapsed time in seconds
+	 * @return seconds
+	 */
+	public int getElapsedTime(){
+		
+		return  elapsedTime;
+	}
 	
 }
