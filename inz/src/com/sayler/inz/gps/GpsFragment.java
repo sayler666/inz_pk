@@ -22,6 +22,7 @@ import com.actionbarsherlock.app.SherlockFragment;
 import com.actionbarsherlock.app.SherlockFragmentActivity;
 import com.actionbarsherlock.view.Menu;
 import com.actionbarsherlock.view.MenuInflater;
+import com.actionbarsherlock.view.MenuItem;
 import com.sayler.inz.R;
 import com.sayler.inz.gps.EndRecordingDialog.EndRecordingDialogListener;
 import com.sayler.inz.gps.GpsNotFixedDialog.GpsNotFixedDialogListener;
@@ -51,8 +52,6 @@ public class GpsFragment extends SherlockFragment implements OnClickListener,
 	private Button endButton;
 
 	private TextView gpsStatusView;
-	private TextView gpsLngLanView;
-
 
 	private TextView distanceTextView;
 	private TextView caloriesTextView;
@@ -62,11 +61,9 @@ public class GpsFragment extends SherlockFragment implements OnClickListener,
 	private boolean isRecording;
 	private boolean isGpsFix = false;
 
-	
-	
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
-		
+
 		super.onCreate(savedInstanceState);
 		setHasOptionsMenu(true);
 	}
@@ -77,7 +74,6 @@ public class GpsFragment extends SherlockFragment implements OnClickListener,
 		View view = inflater.inflate(R.layout.gps_fragment, container, false);
 
 		gpsStatusView = (TextView) view.findViewById(R.id.gpsStatusText);
-		gpsLngLanView = (TextView) view.findViewById(R.id.gpsLngLanTextView);
 		distanceTextView = (TextView) view.findViewById(R.id.distanceTextView);
 		caloriesTextView = (TextView) view.findViewById(R.id.caloriesTextView);
 
@@ -261,11 +257,9 @@ public class GpsFragment extends SherlockFragment implements OnClickListener,
 		//
 		// Database
 		// save track to database
-		Tracks track = new Tracks(lat, lng, speed, time, this.currentRoadId);
+		Tracks track = new Tracks(lat, lng, alt, speed, time,
+				this.currentRoadId);
 		gpsDb.addTrack(track);
-
-		gpsLngLanView.append(lat + " " + lng + " speed " + speed + " time "
-				+ time + "\n");
 
 		// remember last location
 		mLastLocation = location;
@@ -281,7 +275,13 @@ public class GpsFragment extends SherlockFragment implements OnClickListener,
 		// stop timer
 		timerView.end();
 
-		// TODO save all additional data to db
+		//
+		// Database
+		// save roads details into Roads table
+		int time = timerView.getElapsedTime();
+		double avg_speed = (distance / 1000.0) / (time / 3600.0);
+		Roads newRoad = new Roads(distance, time, avg_speed);
+		gpsDb.addRoad(newRoad);
 	}
 
 	@Override
@@ -295,13 +295,24 @@ public class GpsFragment extends SherlockFragment implements OnClickListener,
 
 	}
 
+	private final int ID_MENU_EXIT = 1;
+
 	@Override
 	public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
-		Log.d(this.getClass().toString(),"onCreateOptionsMenu");
-		MenuInflater in = ((SherlockFragmentActivity)getActivity()).getSupportMenuInflater();
-		in.inflate(R.menu.gps_fragment_menu, menu);
-		super.onCreateOptionsMenu(menu, in);
+		Log.d(this.getClass().toString(), "onCreateOptionsMenu");
+		inflater.inflate(R.menu.gps_fragment_menu, menu);
+
+		MenuItem item = menu.add(Menu.NONE, ID_MENU_EXIT, Menu.NONE, "test").setShowAsActionFlags(MenuItem.SHOW_AS_ACTION_IF_ROOM);
+		
+
+		super.onCreateOptionsMenu(menu, inflater);
 	}
 
-	
+	@Override
+	public boolean onOptionsItemSelected(MenuItem item) {
+		Log.d(this.getClass().toString(),
+				"context item selected" + item.getTitle());
+		return super.onOptionsItemSelected(item);
+	}
+
 }

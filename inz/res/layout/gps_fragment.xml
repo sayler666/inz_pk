@@ -1,10 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:orientation="vertical" >
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent" >
 
-  
     <LinearLayout
         android:id="@+id/controlsLayout"
         android:layout_width="match_parent"
@@ -24,12 +22,14 @@
             android:layout_height="wrap_content"
             android:text="@string/end_button"
             android:visibility="gone" />
-
     </LinearLayout>
 
     <LinearLayout
+        android:id="@+id/linearLayout1"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content" >
+        android:layout_height="wrap_content"
+        android:layout_alignParentLeft="true"
+        android:layout_below="@+id/controlsLayout" >
 
         <TextView
             android:layout_width="wrap_content"
@@ -43,11 +43,14 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:textAppearance="?android:attr/textAppearanceMedium" />
-
     </LinearLayout>
-	<LinearLayout
+
+    <LinearLayout
+        android:id="@+id/linearLayout2"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content" >
+        android:layout_height="wrap_content"
+        android:layout_alignParentLeft="true"
+        android:layout_below="@+id/linearLayout1" >
 
         <TextView
             android:layout_width="wrap_content"
@@ -56,17 +59,19 @@
             android:text="@string/distance"
             android:textAppearance="?android:attr/textAppearanceMedium" />
 
-       <TextView
-           android:id="@+id/distanceTextView"
-           android:layout_width="wrap_content"
-           android:layout_height="wrap_content"
-           android:paddingRight="10dp"
-           android:textAppearance="?android:attr/textAppearanceMedium" />
-
+        <TextView
+            android:id="@+id/distanceTextView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:paddingRight="10dp"
+            android:textAppearance="?android:attr/textAppearanceMedium" />
     </LinearLayout>
-	<LinearLayout
+
+    <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content" >
+        android:layout_height="wrap_content"
+        android:layout_alignParentLeft="true"
+        android:layout_below="@+id/linearLayout2" >
 
         <TextView
             android:layout_width="wrap_content"
@@ -75,27 +80,20 @@
             android:text="@string/calories"
             android:textAppearance="?android:attr/textAppearanceMedium" />
 
-       <TextView
-           android:id="@+id/caloriesTextView"
-           android:layout_width="wrap_content"
-           android:layout_height="wrap_content"
-           android:paddingRight="10dp"
-           android:textAppearance="?android:attr/textAppearanceMedium" />
-
+        <TextView
+            android:id="@+id/caloriesTextView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:paddingRight="10dp"
+            android:textAppearance="?android:attr/textAppearanceMedium" />
     </LinearLayout>
-    <TextView
-        android:id="@+id/gpsLngLanTextView"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_weight="0.21"
-        android:scrollbarAlwaysDrawVerticalTrack="true"
-        android:scrollbarStyle="insideInset"
-        android:scrollbars="vertical" />
 
     <TextView
         android:id="@+id/gpsStatusText"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentLeft="true"
         android:text="@string/gps_not_fixed" />
 
-</LinearLayout>
+</RelativeLayout>

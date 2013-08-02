@@ -1,9 +1,18 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android" >
-  
-   
-    <item android:id="@+id/action_compose"
-          android:title="Sport"  
-          android:showAsAction="ifRoom"/>
+
+    <item
+        android:id="@+id/sports_menu"
+        android:showAsAction="ifRoom"
+        android:title="Sports">
+        <menu>
+            <item
+                android:id="@+id/bicycle"
+                android:title="Bicycle"/>
+            <item
+                android:id="@+id/running"
+                android:title="Running"/>
+        </menu>
+    </item>
 
 </menu>

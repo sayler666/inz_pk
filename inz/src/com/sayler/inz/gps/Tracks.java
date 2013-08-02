@@ -11,20 +11,22 @@ public class Tracks {
 	public static final String COLUMN_ID = "tracks_id";
 	public static final String COLUMN_LAT = "lat";
 	public static final String COLUMN_LNG = "lng";
+	public static final String COLUMN_ALT = "alt";
 	public static final String COLUMN_SPEED = "speed";
 	public static final String COLUMN_TIME = "time";
-	public static final String COLUMN_ROAD = "road";
+	public static final String COLUMN_ROAD_ID = "road_id";
 
-	private double lat, lng, speed;
-	private long time, road;
+	private double lat, lng,alt, speed;
+	private long time, road_id;
 
-	public Tracks(double lat, double lng, double speed, long time, long road) {
+	public Tracks(double lat, double lng,double alt, double speed, long time, long road_id) {
 
 		this.lat = lat;
 		this.lng = lng;
+		this.alt = alt;
 		this.speed = speed;
 		this.time = time;
-		this.road = road;
+		this.road_id = road_id;
 	}
 
 	public static ContentValues getValues(Tracks track) {
@@ -32,9 +34,10 @@ public class Tracks {
 		ContentValues values = new ContentValues();
 		values.put(COLUMN_LAT, track.lat);
 		values.put(COLUMN_LNG, track.lng);
+		values.put(COLUMN_ALT, track.alt);
 		values.put(COLUMN_SPEED, track.speed);
 		values.put(COLUMN_TIME, track.time);
-		values.put(COLUMN_ROAD, track.road);
+		values.put(COLUMN_ROAD_ID, track.road_id);
 		return values;
 	}
 
@@ -42,10 +45,14 @@ public class Tracks {
 
 	// Database creation SQL statement
 	private static final String DATABASE_CREATE = "create table "
-			+ TABLE_TRACKS + "(" + COLUMN_ID
-			+ " integer primary key autoincrement, " + COLUMN_LAT
-			+ " real not null, " + COLUMN_LNG + " real not null,"
-			+ COLUMN_SPEED + " real not null, " + COLUMN_TIME + " real not null, " + COLUMN_ROAD + " integer not null"
+			+ TABLE_TRACKS + "(" 
+			+ COLUMN_ID + " integer primary key autoincrement, " 
+			+ COLUMN_LAT + " real not null, " 
+			+ COLUMN_LNG + " real not null, "
+			+ COLUMN_ALT + " real not null, "
+			+ COLUMN_SPEED + " real not null, " 
+			+ COLUMN_TIME + " real not null, " 
+			+ COLUMN_ROAD_ID + " integer not null"
 			+ ");";
 
 	public static void onCreate(SQLiteDatabase database) {

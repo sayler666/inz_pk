@@ -17,8 +17,8 @@ public class Running implements ISport {
 		
 		Log.d(this.getClass().toString(), weight +"; lbs "+ ((float)weight * 2.20462262));
 		
-		float calories = (float) (0.046 * mph * lbs)
-				+ (float) (0.066 * Math.pow(mph, 3))*(((float)time)/3600) ;
+		float calories = ((float) (0.046 * mph * lbs)
+				+ (float) (0.066 * Math.pow(mph, 3)))*(((float)time)/3600) ;
 
 		return calories;
 	}

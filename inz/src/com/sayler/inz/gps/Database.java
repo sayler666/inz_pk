@@ -8,7 +8,7 @@ import android.database.sqlite.SQLiteOpenHelper;
 public class Database extends SQLiteOpenHelper {
 
 	private static final String DATABASE_NAME = "gps.db";
-	private static final int DATABASE_VERSION = 3;
+	private static final int DATABASE_VERSION = 4;
 
 	public Database(Context context) {
 		super(context, DATABASE_NAME, null, DATABASE_VERSION);
@@ -37,6 +37,30 @@ public class Database extends SQLiteOpenHelper {
 		}
 		return id;
 	}
+	
+	/**
+	 * Add Roads to database
+	 * 
+	 * @param roads
+	 * @return id of added roads
+	 */
+	public long addRoad(Roads road) {
+
+		SQLiteDatabase database = this.getWritableDatabase();
+		database.beginTransaction();
+		long id = 0;
+
+		try {
+			id = database.insert(Roads.TABLE_ROADS, null,
+					Roads.getValues(road));
+			database.setTransactionSuccessful();
+		} catch (Exception e) {
+			database.endTransaction();
+		} finally {
+			database.endTransaction();
+		}
+		return id;
+	}
 
 	// SELECTS
 	//
@@ -47,7 +71,7 @@ public class Database extends SQLiteOpenHelper {
 		SQLiteDatabase database = this.getReadableDatabase();
 
 		Cursor roadIdCursor = database.rawQuery("SELECT max("
-				+ Tracks.COLUMN_ROAD + ")+1 FROM " + Tracks.TABLE_TRACKS, null);
+				+ Tracks.COLUMN_ROAD_ID + ")+1 FROM " + Tracks.TABLE_TRACKS, null);
 		roadIdCursor.moveToFirst();
 		if(roadIdCursor.getInt(0) == 0){
 			return 1;
@@ -63,12 +87,17 @@ public class Database extends SQLiteOpenHelper {
 	public void onCreate(SQLiteDatabase database) {
 
 		Tracks.onCreate(database);
+		
+		Roads.onCreate(database);
 	}
 
 	@Override
 	public void onUpgrade(SQLiteDatabase database, int oldVersion,
 			int newVersion) {
+		
 		Tracks.onUpgrade(database, oldVersion, newVersion);
+		
+		Roads.onUpgrade(database, oldVersion, newVersion);
 
 	}
 
