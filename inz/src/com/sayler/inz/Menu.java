@@ -2,6 +2,9 @@ package com.sayler.inz;
 
 import java.util.ArrayList;
 
+import com.sayler.inz.Launch.RestorableFragment;
+
+import android.app.Activity;
 import android.content.Context;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -15,83 +18,107 @@ import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
 
-public class Menu extends ListFragment {
+public class Menu extends ListFragment implements RestorableFragment {
 
-	static String TAG="Menu";
-	
+	static String TAG = "Menu";
+
 	private MenuListAdapter mListAdapter;
 	private String[] menu_sections, menu_icons, menu_fragments;
 	private ArrayList<Fragment> initializedFragments;
+
 	
-	public View onCreateView(LayoutInflater inflater, ViewGroup container,
-			Bundle savedInstanceState) {
-		return inflater.inflate(R.layout.menu_layout, null);
-	}
 
 	@Override
-	public void onActivityCreated(Bundle savedInstanceState) {
-		super.onActivityCreated(savedInstanceState);
+	public void onCreate(Bundle savedInstanceState) {
 		menu_sections = getResources().getStringArray(R.array.menu_sections);
 		menu_fragments = getResources().getStringArray(R.array.menu_fragments);
 		menu_icons = getResources().getStringArray(R.array.menu_icons);
+
+		Log.d(TAG, menu_fragments[0]);
+		super.onCreate(savedInstanceState);
+		Log.v(TAG, "In frag's on create");
+		this.setRetainInstance(true);
+	}
+
+	public View onCreateView(LayoutInflater inflater, ViewGroup container,
+			Bundle savedInstanceState) {
 
 		mListAdapter = new MenuListAdapter(getActivity(), menu_sections,
 				menu_sections, menu_icons);
 
 		setListAdapter(mListAdapter);
-		
+
 		initializedFragments = new ArrayList<Fragment>();
+
+		return inflater.inflate(R.layout.menu_layout, null);
 	}
 
 	@Override
 	public void onListItemClick(ListView l, View v, int position, long id) {
-		
+
+		this.setActiveMenuItem(position);
+
+		super.onListItemClick(l, v, position, id);
+	}
+
+	private void setActiveMenuItem(int position) {
 		Class<?> fragmentClass;
 		Fragment newFragment = null;
 		boolean exists = false;
 		try {
-			//class name of chosen fragment
+			// class name of chosen fragment
 			fragmentClass = Class.forName(menu_fragments[position]);
-			
-			//if chosen fragment instance already exists in array of initialized fragment
-			for (Fragment f : initializedFragments) {
-				if(f.getClass() == fragmentClass){
-					Log.d(TAG,"instantion already exists. "+f.getClass().toString()+ " "+fragmentClass.toString());
-					exists = true;
-					newFragment = f;
-					Log.d(TAG,menu_fragments[position]+" - old instantion");
-					break;
-				}
-			}
-			//if fragment instance not exists - creating new instance
-			if(!exists){
+
+			// if chosen fragment instance already exists in array of
+			// initialized fragment
+//			for (Fragment f : initializedFragments) {
+//				if (f.getClass() == fragmentClass) {
+//					Log.d(TAG,
+//							"instantion already exists. "
+//									+ f.getClass().toString() + " "
+//									+ fragmentClass.toString());
+//					exists = true;
+//					newFragment = f;
+//					Log.d(TAG, menu_fragments[position] + " - old instantion");
+//					break;
+//				}
+//			}
+			// if fragment instance not exists - creating new instance
+			if (!exists) {
 				newFragment = (Fragment) fragmentClass.newInstance();
 				initializedFragments.add(newFragment);
-				Log.d(TAG,menu_fragments[position]+" - new instantion");
+				Log.d(TAG, menu_fragments[position] + " - new instantion");
 			}
-			
-			//replace old fragment with new
-			if(getActivity() instanceof FragmentSwitchable){
+
+			// replace old fragment with new
+			if (getActivity() instanceof FragmentSwitchable) {
 				FragmentSwitchable fragmentSwitcher = (FragmentSwitchable) getActivity();
-				fragmentSwitcher.switchFragment(newFragment,exists, menu_sections[position]);
-			}else{
-				Log.d(TAG,"Activity must be instance of FragmentSwitchable!");  
+				fragmentSwitcher.switchFragment(newFragment, exists,
+						menu_sections[position], fragmentClass);
+			} else {
+				Log.d(TAG, "Activity must be instance of FragmentSwitchable!");
 			}
-			
+
 		} catch (ClassNotFoundException e) {
-			Log.d(TAG,menu_fragments[position]+" - class not found");
+			Log.d(TAG, menu_fragments[position] + " - class not found");
 			e.printStackTrace();
 		} catch (java.lang.InstantiationException e) {
-			Log.d(TAG,menu_fragments[position]+" - is not a Fragment");
+			Log.d(TAG, menu_fragments[position] + " - is not a Fragment");
 			e.printStackTrace();
 		} catch (IllegalAccessException e) {
-			
+
 			e.printStackTrace();
 		}
-		
-		
-		
-		super.onListItemClick(l, v, position, id);
+	}
+
+	@Override
+	public void restoreFragment(Class<?> fragmentClass) {
+		try {
+			Log.d(TAG, fragmentClass.toString() + " " + menu_sections[0]);
+		} catch (java.lang.NullPointerException e) {
+			e.printStackTrace();
+		}
+
 	}
 
 	/**
@@ -104,7 +131,9 @@ public class Menu extends ListFragment {
 		 * @param f
 		 *            fragment chosen from menu, to be shown in activity
 		 */
-		void switchFragment(Fragment f, boolean exists, String title);
+		void switchFragment(Fragment f, boolean exists, String title,
+				Class<?> fragmentClass);
+
 	}
 
 	// MENU LIST ADPATER

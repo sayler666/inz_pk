@@ -12,22 +12,26 @@ public class Roads {
 	public static final String COLUMN_DISTANCE = "distance";
 	public static final String COLUMN_DURATION = "duration";
 	public static final String COLUMN_AVG_SPEED = "avg_speed";
+	public static final String COLUMN_CALORIES = "calories";
 	
 
 	private double distance, duration,avg_speed;
-	
+	private int calories;
+	private long id;
 	/**
 	 * Create a new Roads object
 	 * @param distance in m
 	 * @param duration in seconds
 	 * @param avg_speed in KM/h
+	 * @calories calories
 	 */
-	public Roads(double distance, double duration,double avg_speed) {
+	public Roads(double distance, double duration,double avg_speed, int calories,long id) {
 
 		this.distance = distance;
 		this.duration = duration;
 		this.avg_speed = avg_speed;
-		
+		this.calories = calories;
+		this.id = id;
 	}
 
 	public static ContentValues getValues(Roads road) {
@@ -36,7 +40,8 @@ public class Roads {
 		values.put(COLUMN_DISTANCE, road.distance);
 		values.put(COLUMN_DURATION, road.duration);
 		values.put(COLUMN_AVG_SPEED, road.avg_speed);
-	
+		values.put(COLUMN_CALORIES, road.calories);
+		values.put(COLUMN_ID, road.id);
 		return values;
 	}
 
@@ -48,7 +53,8 @@ public class Roads {
 			+ COLUMN_ID + " integer primary key, " 
 			+ COLUMN_DISTANCE + " real not null, " 
 			+ COLUMN_DURATION + " real not null, "
-			+ COLUMN_AVG_SPEED + " real not null "
+			+ COLUMN_AVG_SPEED + " real not null, "
+			+ COLUMN_CALORIES + " integer not null "
 			+ ");";
 
 	public static void onCreate(SQLiteDatabase database) {
@@ -65,3 +71,4 @@ public class Roads {
 	}
 
 }
+

@@ -39,7 +39,7 @@ public class TimerView extends TextView {
 			minutes = minutes % 60;
 			TimerView.this.setText(String.format("%02d:%02d:%02d", hours,
 					minutes, seconds));
-
+			//Log.d(this.getClass().toString(),"tick...");
 			return false;
 		}
 	});

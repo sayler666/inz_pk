@@ -13,7 +13,7 @@
     <!-- MENU -->
     <string-array name="menu_sections">
         <item>Trening</item>
-        <item>Test 2</item>
+        <item>Settings</item>
     </string-array>
     <string-array name="menu_icons">
         <item>trening</item>
@@ -21,7 +21,7 @@
     </string-array>
     <string-array name="menu_fragments">
         <item>com.sayler.inz.gps.GpsFragment</item>
-        <item>Test 2</item>
+        <item>com.sayler.inz.settings.SettingsFragment</item>
     </string-array>
 
     <!-- GPS -->
@@ -35,6 +35,9 @@
     <string name="end_recording_dialog_message">Are you sure to end recording?</string>
     <string name="time_elapsed">Time: </string>
     <string name="distance">Distance: </string>
-    <string name="calories">"Calories: "</string>
+    <string name="calories">Calories: </string>
+    <string name="welcome_text">Welcome, choose something from menu.</string>
+    <string name="turn_on_gps_dialog_message">Gps is off, would you like to turn it on?</string>
+    <string name="settings_text">Settings</string>
 
 </resources>
