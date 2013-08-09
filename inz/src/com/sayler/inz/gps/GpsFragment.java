@@ -24,6 +24,7 @@ import com.sayler.inz.R;
 import com.sayler.inz.gps.EndRecordingDialog.EndRecordingDialogListener;
 import com.sayler.inz.gps.GpsNotFixedDialog.GpsNotFixedDialogListener;
 import com.sayler.inz.gps.TurnOnGpsDialog.TurnOnGpsDialogListener;
+import com.sayler.inz.gps.service.RequestUpdateUIEvent;
 import com.sayler.inz.gps.service.StartRecordingEvent;
 import com.sayler.inz.gps.service.StopRecordingEvent;
 import com.sayler.inz.gps.service.UpdateUiEvent;
@@ -132,6 +133,8 @@ public class GpsFragment extends SherlockFragment implements OnClickListener,
 			EventBus.getDefault().register(this);
 		} catch (EventBusException e) {
 			Log.d(TAG, "event bus already registered");
+		}finally{
+			EventBus.getDefault().post(new RequestUpdateUIEvent());
 		}
 
 		return view;
@@ -170,7 +173,7 @@ public class GpsFragment extends SherlockFragment implements OnClickListener,
 	// UpdateUI event
 	// if service is recording when user start activity with this fragment
 	public void onEventMainThread(UpdateUiEvent e) {
-		//Log.d(TAG, " updateUI gps fixed? " + e.isGpsFixed);
+		Log.d(TAG, " updateUI gps fixed? " + e.isGpsFixed);
 
 		this.gpsFix(e.isGpsFixed);
 		this.recording(e.isRecording);
@@ -241,7 +244,6 @@ public class GpsFragment extends SherlockFragment implements OnClickListener,
 
 		// stop timer
 		timerView.end();
-		Log.d(TAG, "STOP TIMER!");
 		//
 		// Database
 		// save roads details into Roads table

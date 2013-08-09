@@ -17,6 +17,8 @@ import com.sayler.inz.gps.Tracks;
 
 import de.greenrobot.event.EventBus;
 
+//TODO update ui even if gps is no on
+
 public class WorkoutService extends Service implements LocationListener {
 	final static String TAG = "WorkoutService";
 
@@ -37,7 +39,6 @@ public class WorkoutService extends Service implements LocationListener {
 	// static field
 
 	static boolean isRecording = false;
-
 	static boolean isRunning = false;
 
 	/**
@@ -73,7 +74,7 @@ public class WorkoutService extends Service implements LocationListener {
 		// database
 		gpsDb = new Database(this.getApplicationContext());
 
-		//
+		// register event bus
 		EventBus.getDefault().register(this);
 
 		return START_STICKY;
@@ -113,7 +114,23 @@ public class WorkoutService extends Service implements LocationListener {
 		// stop recording
 		isRecording = false;
 		// last UI update
-		//this.updateUI();
+		this.updateUI();
+
+	}
+	
+	/**
+	 * Request update event
+	 * 
+	 * @param e
+	 *            empty
+	 */
+	public void onEvent(RequestUpdateUIEvent e) {
+
+		Log.d(TAG, "onEventRequestUpdateUI ");
+
+		
+		// last UI update
+		this.updateUI();
 
 	}
 
@@ -159,9 +176,8 @@ public class WorkoutService extends Service implements LocationListener {
 	}
 
 	public void updateUI() {
-		//
+
 		// send event to UPDATE UI
-		//
 		EventBus.getDefault().post(
 				new UpdateUiEvent(distance, time, isGpsFix, isRecording,
 						currentRoadId));
