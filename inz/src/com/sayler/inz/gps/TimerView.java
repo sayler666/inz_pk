@@ -14,22 +14,24 @@ import android.widget.TextView;
 public class TimerView extends TextView {
 
 	private long startTime;
-	private Timer timer;
+	private Timer timer = null;
 	/**
 	 * seconds
 	 */
 	private int elapsedTime;
+
 	public TimerView(Context context, AttributeSet attrs) {
 		super(context, attrs);
 		this.clear();
+
 	}
 
 	final Handler h = new Handler(new Callback() {
 
 		@Override
 		public boolean handleMessage(Message msg) {
-			elapsedTime = (int)((System.currentTimeMillis() - startTime)/1000);
-			
+			elapsedTime = (int) ((System.currentTimeMillis() - startTime) / 1000);
+
 			long millis = System.currentTimeMillis() - startTime;
 
 			int seconds = (int) (millis / 1000);
@@ -39,7 +41,7 @@ public class TimerView extends TextView {
 			minutes = minutes % 60;
 			TimerView.this.setText(String.format("%02d:%02d:%02d", hours,
 					minutes, seconds));
-			//Log.d(this.getClass().toString(),"tick...");
+			// Log.d(this.getClass().toString(),"timer "+millis);
 			return false;
 		}
 	});
@@ -53,27 +55,42 @@ public class TimerView extends TextView {
 	};
 
 	public void start() {
+		Log.d(this.getClass().toString(), "start");
 		timer = new Timer();
 		startTime = System.currentTimeMillis();
 		timer.schedule(new TimeCounter(), 0, 500);
 	}
 
+	public void start(long time) {
+		if (timer == null) {
+			Log.d(this.getClass().toString(), "start");
+			timer = new Timer();
+			startTime = time;
+			timer.schedule(new TimeCounter(), 0, 500);
+		}
+	}
+
 	public void end() {
-		timer.cancel();
-		
-	} 
-	
+		Log.d(this.getClass().toString(), "stop");
+		if (timer != null) {
+			timer.cancel();
+			timer = null;
+		}
+
+	}
+
 	public void clear() {
 		this.setText("00:00:00");
 	}
 
 	/**
 	 * elapsed time in seconds
+	 * 
 	 * @return seconds
 	 */
-	public int getElapsedTime(){
-		
-		return  elapsedTime;
+	public int getElapsedTime() {
+
+		return elapsedTime;
 	}
-	
+
 }

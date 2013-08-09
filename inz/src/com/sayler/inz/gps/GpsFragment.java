@@ -2,13 +2,10 @@ package com.sayler.inz.gps;
 
 import android.content.Context;
 import android.content.Intent;
-import android.location.GpsStatus;
-import android.location.Location;
-import android.location.LocationListener;
 import android.location.LocationManager;
 import android.os.Bundle;
-import android.os.SystemClock;
 import android.provider.Settings;
+import android.provider.ContactsContract.CommonDataKinds.Event;
 import android.support.v4.app.FragmentManager;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -27,6 +24,8 @@ import com.sayler.inz.R;
 import com.sayler.inz.gps.EndRecordingDialog.EndRecordingDialogListener;
 import com.sayler.inz.gps.GpsNotFixedDialog.GpsNotFixedDialogListener;
 import com.sayler.inz.gps.TurnOnGpsDialog.TurnOnGpsDialogListener;
+import com.sayler.inz.gps.service.StartRecordingEvent;
+import com.sayler.inz.gps.service.StopRecordingEvent;
 import com.sayler.inz.gps.service.UpdateUiEvent;
 import com.sayler.inz.gps.service.WorkoutService;
 import com.sayler.inz.gps.sports.Calories;
@@ -34,24 +33,23 @@ import com.sayler.inz.gps.sports.ISport;
 import com.sayler.inz.gps.sports.Running;
 
 import de.greenrobot.event.EventBus;
+import de.greenrobot.event.EventBusException;
 
 public class GpsFragment extends SherlockFragment implements OnClickListener,
-		LocationListener, GpsNotFixedDialogListener, EndRecordingDialogListener,TurnOnGpsDialogListener {
-
+		GpsNotFixedDialogListener, EndRecordingDialogListener,
+		TurnOnGpsDialogListener {
 
 	private final static String TAG = "GpsFragment";
 
 	private FragmentManager fm;
 
 	private LocationManager locationManager;
-	private Location mLastLocation = null;
-	private long mLastLocationMillis;
 
 	private Calories caloriesCalculator = new Calories();
 	private ISport sport;
 
 	private float distance = 0;
-	private float calories;
+	private float calories = 0;
 
 	private Database gpsDb;
 
@@ -70,12 +68,8 @@ public class GpsFragment extends SherlockFragment implements OnClickListener,
 	private boolean isRecording;
 	private boolean isGpsFix = false;
 
-
-
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
-
-
 
 		super.onCreate(savedInstanceState);
 		setHasOptionsMenu(true);
@@ -112,19 +106,33 @@ public class GpsFragment extends SherlockFragment implements OnClickListener,
 			TurnOnGpsDialog gpsTurnOnDialog = new TurnOnGpsDialog();
 			gpsTurnOnDialog.setTargetFragment(this, 0);
 			gpsTurnOnDialog.show(fm, "turn_on_gps");
-			
+
 		}
 
-		locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER,
-				1000, 3, this);
-
-		locationManager.addGpsStatusListener(mGPSListener);
+		// TODO choosing sport type
+		sport = new Running();
+		// choose sport
+		caloriesCalculator.setCaloriesCalculateStrategy(sport);
 
 		// instance of Db
 		gpsDb = new Database(getActivity().getApplicationContext());
 
-		// TODO choosing sport type
-		sport = new Running();
+		// is service running
+		if (!WorkoutService.isRunning()) {
+			Intent workoutSe = new Intent(getActivity(), WorkoutService.class);
+			getActivity().startService(workoutSe);
+
+		} else {
+			Toast.makeText(getActivity(), "Service is already running - loading data...",
+					Toast.LENGTH_LONG).show();
+		}
+
+		// register event bus
+		try {
+			EventBus.getDefault().register(this);
+		} catch (EventBusException e) {
+			Log.d(TAG, "event bus already registered");
+		}
 
 		return view;
 	}
@@ -159,6 +167,34 @@ public class GpsFragment extends SherlockFragment implements OnClickListener,
 
 	}
 
+	// UpdateUI event
+	// if service is recording when user start activity with this fragment
+	public void onEventMainThread(UpdateUiEvent e) {
+		//Log.d(TAG, " updateUI gps fixed? " + e.isGpsFixed);
+
+		this.gpsFix(e.isGpsFixed);
+		this.recording(e.isRecording);
+
+		if (e.isRecording) {
+			// setting UI controls to match data collected by recording service
+
+			// set timer view
+			this.timerView.start(e.time);
+
+			// update distance view
+			distanceTextView.setText(String.format("%.0f m", e.distance));
+
+			// calories calculation
+			float cal = caloriesCalculator.calculate(e.distance, 75, 1,
+					(int) e.time);
+			// update calories view
+			caloriesTextView.setText(String.format("%.0f kcal", cal));
+
+			// roadId from service
+			this.currentRoadId = e.currentRoadId;
+		}
+	}
+
 	private void gpsFix(boolean b) {
 		this.isGpsFix = b;
 
@@ -168,146 +204,44 @@ public class GpsFragment extends SherlockFragment implements OnClickListener,
 			gpsStatusView.setText(R.string.gps_not_fixed);
 	}
 
-	private GpsStatus.Listener mGPSListener = new GpsStatus.Listener() {
-		@Override
-		public void onGpsStatusChanged(final int event) {
-			switch (event) {
-			case GpsStatus.GPS_EVENT_STARTED:
-				break;
-			case GpsStatus.GPS_EVENT_FIRST_FIX:
+	private void recording(boolean b) {
+		this.isRecording = b;
 
-				gpsFix(true);
-				break;
-			case GpsStatus.GPS_EVENT_STOPPED:
-
-				break;
-			case GpsStatus.GPS_EVENT_SATELLITE_STATUS:
-				if (mLastLocation != null)
-					isGpsFix = (SystemClock.elapsedRealtime() - mLastLocationMillis) < 10000;
-
-				if (isGpsFix) { // A fix has been acquired.
-					gpsFix(true);
-				} else { // The fix has been lost.
-					gpsFix(false);
-				}
-				break;
-			default:
-				break;
-			}
+		if (b) {
+			// show necessary buttons
+			startButton.setVisibility(View.GONE);
+			endButton.setVisibility(View.VISIBLE);
+		} else {
+			// hide necessary buttons
+			startButton.setVisibility(View.VISIBLE);
+			endButton.setVisibility(View.GONE);
 		}
-	};
-
-	@Override
-	public void onProviderDisabled(String provider) {
-		Log.d(this.getClass().toString(), provider + "  enabled ");
 	}
 
-	@Override
-	public void onProviderEnabled(String provider) {
-		Log.d(this.getClass().toString(), provider + "  disable ");
-	}
-
-	@Override
-	public void onStatusChanged(String provider, int status, Bundle extras) {
-		Log.d(this.getClass().toString(), " status changed: ");
-	}
-
-	public void onEventMainThread(UpdateUiEvent e){
-		Log.d(TAG,"update");
-		distanceTextView.append("a");
-	}
-
-	
-	// all recording goes here
+	// if user start recording manually
 	public void startRecording() {
-		this.isRecording = true;
-
-		if(!WorkoutService.isRunning()){
-			Intent workoutSe = new Intent(getActivity(),WorkoutService.class);
-			getActivity().startService(workoutSe);
-			
-			EventBus.getDefault().register(this);
-		}else{
-			Toast.makeText(getActivity(), "service is running already",Toast.LENGTH_LONG).show();
-		}
-		
-		
-		
-		// show necessary buttons
-		startButton.setVisibility(View.GONE);
-		endButton.setVisibility(View.VISIBLE);
 
 		// generate new road id (highest id + 1)
 		currentRoadId = gpsDb.getNexRoadId();
 
-		// reset distance
-		distance = 0;
-		distanceTextView.setText(String.format("%.0f m", distance));
-
-		// choose sport
-		caloriesCalculator.setCaloriesCalculateStrategy(sport);
-
 		// start timer
 		timerView.start();
+
+		// start recording in service
+		EventBus.getDefault().post(new StartRecordingEvent(currentRoadId));
+		
+		this.recording(true);
 	}
 
-	@Override
-	public void onLocationChanged(Location location) {
-
-		// GPS fixing stuff
-		if (location == null)
-			return;
-
-		mLastLocationMillis = SystemClock.elapsedRealtime();
-
-		// if not recording - do not bother about rest
-		if (isRecording == false)
-			return;
-
-		double lat = location.getLatitude();
-		double lng = location.getLongitude();
-		float speed = location.getSpeed();
-		long time = location.getTime();
-		double alt = location.getAltitude();
-
-		// calculate distance
-		if (mLastLocation != null) {
-			float[] results = new float[5];
-			Location.distanceBetween(mLastLocation.getLatitude(),
-					mLastLocation.getLongitude(), location.getLatitude(),
-					location.getLongitude(), results);
-			distance += results[0];
-		}
-		// update distance view
-		distanceTextView.setText(String.format("%.0f m", distance));
-
-		// calories calculation
-		calories = caloriesCalculator.calculate(distance, 75, 1,
-				timerView.getElapsedTime());
-		// update calories view
-		caloriesTextView.setText(String.format("%.0f kcal", calories));
-
-		//
-		// Database
-		// save track to database
-		Tracks track = new Tracks(lat, lng, alt, speed, time,
-				this.currentRoadId);
-		gpsDb.addTrack(track);
-
-		// remember last location
-		mLastLocation = location;
-	}
-
+	// if user end recording manually
 	public void endRecording() {
-		this.isRecording = false;
 
-		// hide necessary buttons
-		startButton.setVisibility(View.VISIBLE);
-		endButton.setVisibility(View.GONE);
+		// stop recording in service
+		EventBus.getDefault().post(new StopRecordingEvent());
 
 		// stop timer
 		timerView.end();
-
+		Log.d(TAG, "STOP TIMER!");
 		//
 		// Database
 		// save roads details into Roads table
@@ -329,14 +263,16 @@ public class GpsFragment extends SherlockFragment implements OnClickListener,
 
 	}
 
-	private final int ID_MENU_EXIT = 1;
+	// private final int ID_MENU_EXIT = 1;
 
 	@Override
 	public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
 		inflater.inflate(R.menu.gps_fragment_menu, menu);
 
-		MenuItem item = menu.add(Menu.NONE, ID_MENU_EXIT, Menu.NONE, "test")
-				.setShowAsActionFlags(MenuItem.SHOW_AS_ACTION_IF_ROOM);
+		/*
+		 * MenuItem item = menu.add(Menu.NONE, ID_MENU_EXIT, Menu.NONE, "test")
+		 * .setShowAsActionFlags(MenuItem.SHOW_AS_ACTION_IF_ROOM);
+		 */
 
 		super.onCreateOptionsMenu(menu, inflater);
 	}
@@ -352,6 +288,12 @@ public class GpsFragment extends SherlockFragment implements OnClickListener,
 	public void onTurnOnGpsDialogPositiveClick() {
 		Intent intent = new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS);
 		startActivity(intent);
+	}
+
+	@Override
+	public void onDestroy() {
+		EventBus.getDefault().unregister(this);
+		super.onDestroy();
 	}
 
 }
