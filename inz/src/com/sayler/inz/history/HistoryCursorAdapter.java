@@ -11,7 +11,7 @@ import android.widget.TextView;
 
 import com.sayler.inz.R;
 
-public class HistoryCursorAdapter extends CursorAdapter{
+public class HistoryCursorAdapter extends CursorAdapter {
 
 	@SuppressWarnings("deprecation")
 	public HistoryCursorAdapter(Context context, Cursor c) {
@@ -20,22 +20,29 @@ public class HistoryCursorAdapter extends CursorAdapter{
 
 	@Override
 	public void bindView(View view, Context context, Cursor cursor) {
-		TextView textViewPersonName = (TextView) view.findViewById(R.id.title);
-		long time = cursor.getLong(cursor.getColumnIndex(cursor.getColumnName(6)));
-		CharSequence relativeTime = DateUtils
-				.getRelativeTimeSpanString(time);
-        textViewPersonName.setText(relativeTime);
- 
-        TextView textViewPersonPIN = (TextView) view.findViewById(R.id.subtitle);
-        textViewPersonPIN.setText(cursor.getString(cursor.getColumnIndex(cursor.getColumnName(3))));
+		TextView textViewRelativeTime = (TextView) view.findViewById(R.id.title);
+		long time = cursor.getLong(cursor.getColumnIndex(cursor
+				.getColumnName(6)));
+		CharSequence relativeTime = DateUtils.getRelativeTimeSpanString(time);
+		textViewRelativeTime.setText(relativeTime);
+
+		TextView textViewSubtitle = (TextView) view
+				.findViewById(R.id.subtitle);
+		textViewSubtitle.setText(cursor.getString(cursor.getColumnIndex(cursor
+				.getColumnName(3))));
+		
+		TextView textViewRoadId = (TextView) view
+				.findViewById(R.id.road_id);
+		textViewRoadId.setText(cursor.getString(cursor.getColumnIndex(cursor
+				.getColumnName(1))));
 	}
 
 	@Override
 	public View newView(Context context, Cursor cursor, ViewGroup parent) {
 		LayoutInflater inflater = LayoutInflater.from(parent.getContext());
-        View retView = inflater.inflate(R.layout.history_row, parent, false);
- 
-        return retView;
+		View retView = inflater.inflate(R.layout.history_row, parent, false);
+
+		return retView;
 	}
 
 }

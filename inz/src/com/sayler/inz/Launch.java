@@ -77,9 +77,9 @@ public class Launch extends SherlockFragmentActivity implements
 		fm.beginTransaction().replace(R.id.left_drawer, menu).commit();
 
 		mDrawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
+		mDrawerLayout.setScrimColor(0x88cccccc);
 		mDrawerLayout.setDrawerShadow(R.drawable.drawer_shadow,
 				GravityCompat.START);
-		mDrawerLayout.setScrimColor(Color.GRAY);
 
 		mDrawerToggle = new ActionBarDrawerToggle(this, mDrawerLayout,
 				R.drawable.ic_drawer, R.string.drawer_open,

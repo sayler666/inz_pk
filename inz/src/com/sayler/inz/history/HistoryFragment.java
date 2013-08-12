@@ -1,17 +1,25 @@
 package com.sayler.inz.history;
 
+import android.annotation.SuppressLint;
+import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
+import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ListView;
+import android.widget.TextView;
+import android.widget.Toast;
 
 import com.actionbarsherlock.app.SherlockFragment;
 import com.sayler.inz.R;
 import com.sayler.inz.gps.Database;
 
-public class HistoryFragment extends SherlockFragment {
+@SuppressLint("ShowToast")
+public class HistoryFragment extends SherlockFragment implements
+		OnItemClickListener {
 
 	private HistoryCursorAdapter customAdapter;
 	private Database gpsDb;
@@ -25,19 +33,34 @@ public class HistoryFragment extends SherlockFragment {
 				false);
 
 		listView = (ListView) view.findViewById(R.id.listView);
-		
+
 		gpsDb = new Database(getActivity());
-		
+
 		new Handler().post(new Runnable() {
 			@Override
 			public void run() {
-				customAdapter = new HistoryCursorAdapter(getActivity().getApplicationContext(),
-						gpsDb.getAllRoads());
+				customAdapter = new HistoryCursorAdapter(getActivity()
+						.getApplicationContext(), gpsDb.getAllRoads());
 				listView.setAdapter(customAdapter);
 			}
 		});
 
+		listView.setOnItemClickListener(this);
+
 		return view;
+	}
+
+	@Override
+	public void onItemClick(AdapterView<?> arg0, View arg1, int arg2, long arg3) {
+		// extract RoadId from invisible textview
+		long roadId = Long.valueOf(((TextView) arg1.findViewById(R.id.road_id))
+				.getText().toString());
+
+		
+		Intent roadActivityIntent = new Intent(getActivity(),RoadActivity.class);
+		roadActivityIntent.putExtra("roadId", roadId);
+		startActivity(roadActivityIntent);		
+		
 	}
 
 }

@@ -16,5 +16,13 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="TextView" />
+    
+    <TextView
+        android:id="@+id/road_id"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Large Text"
+        android:textAppearance="?android:attr/textAppearanceLarge" 
+        android:visibility="gone"/>
 
 </LinearLayout>
