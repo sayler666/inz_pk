@@ -4,11 +4,13 @@ import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
+import android.util.Log;
 
 public class Database extends SQLiteOpenHelper {
 
 	private static final String DATABASE_NAME = "gps.db";
-	private static final int DATABASE_VERSION = 6;
+	private static final int DATABASE_VERSION = 7;
+	private static final String TAG = "Database";
 
 	public Database(Context context) {
 		super(context, DATABASE_NAME, null, DATABASE_VERSION);
@@ -37,7 +39,7 @@ public class Database extends SQLiteOpenHelper {
 		}
 		return id;
 	}
-	
+
 	/**
 	 * Add Roads to database
 	 * 
@@ -51,8 +53,8 @@ public class Database extends SQLiteOpenHelper {
 		long id = 0;
 
 		try {
-			id = database.insert(Roads.TABLE_ROADS, null,
-					Roads.getValues(road));
+			id = database
+					.insert(Roads.TABLE_ROADS, null, Roads.getValues(road));
 			database.setTransactionSuccessful();
 		} catch (Exception e) {
 			database.endTransaction();
@@ -70,16 +72,27 @@ public class Database extends SQLiteOpenHelper {
 
 		SQLiteDatabase database = this.getReadableDatabase();
 
-		Cursor roadIdCursor = database.rawQuery("SELECT max("
-				+ Roads.COLUMN_ID + ")+1 FROM " + Roads.TABLE_ROADS, null);
+		Cursor roadIdCursor = database.rawQuery("SELECT max(" + Roads.COLUMN_ID
+				+ ")+1 FROM " + Roads.TABLE_ROADS, null);
 		roadIdCursor.moveToFirst();
-		if(roadIdCursor.getInt(0) == 0){
+		if (roadIdCursor.getInt(0) == 0) {
 			return 1;
-		}else{
+		} else {
 			return roadIdCursor.getInt(0);
 		}
+
+	}
+
+	public Cursor getAllRoads() {
+
+		SQLiteDatabase database = this.getReadableDatabase();
 		
-		
+		//cursorAdapter need column _id
+		String buildSQL = "SELECT rowid _id,* FROM " + Roads.TABLE_ROADS + " ORDER BY "+Roads.COLUMN_ID + " DESC";
+
+		Log.d(TAG, "getAllRoads SQL: " + buildSQL);
+
+		return database.rawQuery(buildSQL, null);
 	}
 
 	// Create all tables
@@ -87,16 +100,16 @@ public class Database extends SQLiteOpenHelper {
 	public void onCreate(SQLiteDatabase database) {
 
 		Tracks.onCreate(database);
-		
+
 		Roads.onCreate(database);
 	}
 
 	@Override
 	public void onUpgrade(SQLiteDatabase database, int oldVersion,
 			int newVersion) {
-		
+
 		Tracks.onUpgrade(database, oldVersion, newVersion);
-		
+
 		Roads.onUpgrade(database, oldVersion, newVersion);
 
 	}

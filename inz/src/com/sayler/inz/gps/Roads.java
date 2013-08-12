@@ -13,6 +13,7 @@ public class Roads {
 	public static final String COLUMN_DURATION = "duration";
 	public static final String COLUMN_AVG_SPEED = "avg_speed";
 	public static final String COLUMN_CALORIES = "calories";
+	public static final String COLUMN_DATE = "date";
 	
 
 	private double distance, duration,avg_speed;
@@ -42,6 +43,7 @@ public class Roads {
 		values.put(COLUMN_AVG_SPEED, road.avg_speed);
 		values.put(COLUMN_CALORIES, road.calories);
 		values.put(COLUMN_ID, road.id);
+		values.put(COLUMN_DATE, System.currentTimeMillis());
 		return values;
 	}
 
@@ -54,7 +56,8 @@ public class Roads {
 			+ COLUMN_DISTANCE + " real not null, " 
 			+ COLUMN_DURATION + " real not null, "
 			+ COLUMN_AVG_SPEED + " real not null, "
-			+ COLUMN_CALORIES + " integer not null "
+			+ COLUMN_CALORIES + " integer not null, "
+			+ COLUMN_DATE + " integer not null "
 			+ ");";
 
 	public static void onCreate(SQLiteDatabase database) {

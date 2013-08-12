@@ -139,12 +139,15 @@ public class WorkoutService extends Service implements LocationListener {
 		// GPS fixing stuff
 		if (location == null)
 			return;
-
+		
 		mLastLocationMillis = SystemClock.elapsedRealtime();
 
-		// if not recording - do not bother about rest
+		// if not recording - do not bother about rest calc, but update UI (maybe gps've been fixed)
 		if (isRecording == false)
 			return;
+		else
+			// Update ui
+			this.updateUI();
 
 		double lat = location.getLatitude();
 		double lng = location.getLongitude();
@@ -213,15 +216,16 @@ public class WorkoutService extends Service implements LocationListener {
 			case GpsStatus.GPS_EVENT_STARTED:
 				break;
 			case GpsStatus.GPS_EVENT_FIRST_FIX:
-				isGpsFix = true;
-
+				//TODO something wrong here on 4.2.2
+				//isGpsFix = true;
+				//Log.d(TAG, "fixed: ");
 				break;
 			case GpsStatus.GPS_EVENT_STOPPED:
 
 				break;
 			case GpsStatus.GPS_EVENT_SATELLITE_STATUS:
 				if (mLastLocation != null)
-					isGpsFix = (SystemClock.elapsedRealtime() - mLastLocationMillis) < 10000;
+					isGpsFix = (SystemClock.elapsedRealtime() - mLastLocationMillis) < 3000;
 
 				break;
 			default:
@@ -233,7 +237,6 @@ public class WorkoutService extends Service implements LocationListener {
 
 	@Override
 	public IBinder onBind(Intent arg0) {
-		// TODO Auto-generated method stub
 		return null;
 	}
 }

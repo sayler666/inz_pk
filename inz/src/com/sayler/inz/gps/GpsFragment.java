@@ -183,18 +183,22 @@ public class GpsFragment extends SherlockFragment implements OnClickListener,
 
 			// set timer view
 			this.timerView.start(e.time);
-
+			
 			// update distance view
 			distanceTextView.setText(String.format("%.0f m", e.distance));
 
 			// calories calculation
-			float cal = caloriesCalculator.calculate(e.distance, 75, 1,
+			calories = caloriesCalculator.calculate(e.distance, 75, 1,
 					(int) e.time);
 			// update calories view
-			caloriesTextView.setText(String.format("%.0f kcal", cal));
+			caloriesTextView.setText(String.format("%.0f kcal", calories));
 
 			// roadId from service
 			this.currentRoadId = e.currentRoadId;
+			
+			//update variable
+			distance = e.distance;
+			
 		}
 	}
 

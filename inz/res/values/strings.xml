@@ -13,14 +13,19 @@
     <!-- MENU -->
     <string-array name="menu_sections">
         <item>Trening</item>
+        <item>History</item>
         <item>Settings</item>
+        
     </string-array>
     <string-array name="menu_icons">
         <item>trening</item>
         <item>collections_go_to_today</item>
+        <item>action_settings</item>
+        
     </string-array>
     <string-array name="menu_fragments">
         <item>com.sayler.inz.gps.GpsFragment</item>
+        <item>com.sayler.inz.history.HistoryFragment</item>
         <item>com.sayler.inz.settings.SettingsFragment</item>
     </string-array>
 
