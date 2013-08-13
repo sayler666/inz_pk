@@ -14,6 +14,7 @@ public class Tracks {
 	public static final String COLUMN_ALT = "alt";
 	public static final String COLUMN_SPEED = "speed";
 	public static final String COLUMN_TIME = "time";
+	// TODO change road_id to roads_id
 	public static final String COLUMN_ROAD_ID = "road_id";
 
 	private double lat, lng,alt, speed;

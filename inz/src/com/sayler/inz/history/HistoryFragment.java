@@ -25,6 +25,8 @@ public class HistoryFragment extends SherlockFragment implements
 	private Database gpsDb;
 	private ListView listView;
 
+	private static String TAG = "HistoryFragment"; 
+	
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
 			Bundle savedInstanceState) {
@@ -32,10 +34,13 @@ public class HistoryFragment extends SherlockFragment implements
 		View view = inflater.inflate(R.layout.history_fragment, container,
 				false);
 
+		// database
+		gpsDb = new Database(getActivity());
+		
+		// listView
 		listView = (ListView) view.findViewById(R.id.listView);
 
-		gpsDb = new Database(getActivity());
-
+		// load cursor on separate thread
 		new Handler().post(new Runnable() {
 			@Override
 			public void run() {
@@ -45,6 +50,7 @@ public class HistoryFragment extends SherlockFragment implements
 			}
 		});
 
+		// set listener on list items
 		listView.setOnItemClickListener(this);
 
 		return view;
@@ -56,11 +62,12 @@ public class HistoryFragment extends SherlockFragment implements
 		long roadId = Long.valueOf(((TextView) arg1.findViewById(R.id.road_id))
 				.getText().toString());
 
-		
-		Intent roadActivityIntent = new Intent(getActivity(),RoadActivity.class);
+		// start Road activity
+		Intent roadActivityIntent = new Intent(getActivity(),
+				RoadActivity.class);
 		roadActivityIntent.putExtra("roadId", roadId);
-		startActivity(roadActivityIntent);		
-		
+		startActivity(roadActivityIntent);
+
 	}
 
 }

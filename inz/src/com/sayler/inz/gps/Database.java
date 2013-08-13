@@ -68,6 +68,11 @@ public class Database extends SQLiteOpenHelper {
 	//
 	// Track table
 
+	/**
+	 * next road id
+	 * 
+	 * @return
+	 */
 	public int getNexRoadId() {
 
 		SQLiteDatabase database = this.getReadableDatabase();
@@ -83,15 +88,35 @@ public class Database extends SQLiteOpenHelper {
 
 	}
 
+	/**
+	 * Get all roads
+	 * 
+	 * @return
+	 */
 	public Cursor getAllRoads() {
 
 		SQLiteDatabase database = this.getReadableDatabase();
+
+		// cursorAdapter need column _id
+		String buildSQL = "SELECT rowid _id,* FROM " + Roads.TABLE_ROADS
+				+ " ORDER BY " + Roads.COLUMN_ID + " DESC";
+
+		// Log.d(TAG, "getAllRoads SQL: " + buildSQL);
+
+		return database.rawQuery(buildSQL, null);
+	}
+
+	public Cursor getRoadById(long roadId) {
+		SQLiteDatabase database = this.getReadableDatabase();
+
+		String buildSQL = "SELECT * FROM " + Tracks.TABLE_TRACKS + " JOIN "
+				+ Roads.TABLE_ROADS + "  ON " + Roads.TABLE_ROADS + "."
+				+ Roads.COLUMN_ID + "  = " + Tracks.TABLE_TRACKS + "."
+				+ Tracks.COLUMN_ROAD_ID + " where " + Roads.COLUMN_ID + " = "
+				+ roadId;
+
+		Log.d(TAG, "getRoadById SQL: " + buildSQL);
 		
-		//cursorAdapter need column _id
-		String buildSQL = "SELECT rowid _id,* FROM " + Roads.TABLE_ROADS + " ORDER BY "+Roads.COLUMN_ID + " DESC";
-
-		Log.d(TAG, "getAllRoads SQL: " + buildSQL);
-
 		return database.rawQuery(buildSQL, null);
 	}
 

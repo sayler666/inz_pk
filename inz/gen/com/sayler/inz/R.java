@@ -1139,7 +1139,7 @@ containing a value of this type.
         public static final int linearLayout2=0x7f05003e;
         public static final int listMode=0x7f050006;
         public static final int listView=0x7f050043;
-        public static final int map_content=0x7f050048;
+        public static final int map=0x7f050048;
         public static final int none=0x7f050000;
         public static final int normal=0x7f050001;
         public static final int road_id=0x7f050046;
