@@ -13,6 +13,7 @@ import android.widget.TextView;
 
 public class TimerView extends TextView {
 
+	private static final String TAG = "TimerView";
 	private long startTime;
 	private Timer timer = null;
 	/**
@@ -32,15 +33,8 @@ public class TimerView extends TextView {
 		public boolean handleMessage(Message msg) {
 			elapsedTime = (int) ((System.currentTimeMillis() - startTime) / 1000);
 
-			long millis = System.currentTimeMillis() - startTime;
-
-			int seconds = (int) (millis / 1000);
-			int minutes = seconds / 60;
-			int hours = (int) (millis / 3600000);
-			seconds = seconds % 60;
-			minutes = minutes % 60;
-			TimerView.this.setText(String.format("%02d:%02d:%02d", hours,
-					minutes, seconds));
+			long milis = System.currentTimeMillis() - startTime;
+			setTime(elapsedTime);
 			// Log.d(this.getClass().toString(),"timer "+millis);
 			return false;
 		}
@@ -83,6 +77,19 @@ public class TimerView extends TextView {
 		this.setText("00:00:00");
 	}
 
+	public void setTime(long seconds){
+		int minutes = (int)seconds / 60;
+		int hours = (int) (seconds / 3600);
+		seconds = seconds % 60;
+		minutes = minutes % 60;
+		Log.d(TAG," "+seconds);
+		Log.d(TAG,String.format("%02d:%02d:%02d", hours,
+				minutes, seconds) );
+		TimerView.this.setText(String.format("%02d:%02d:%02d", hours,
+				minutes, seconds));
+		
+	}
+	
 	/**
 	 * elapsed time in seconds
 	 * 

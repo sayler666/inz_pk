@@ -102,15 +102,14 @@ public class Database extends SQLiteOpenHelper {
 				+ " ORDER BY " + Roads.COLUMN_ID + " DESC";
 
 		// Log.d(TAG, "getAllRoads SQL: " + buildSQL);
-
 		return database.rawQuery(buildSQL, null);
 	}
 
 	public Cursor getRoadById(long roadId) {
 		SQLiteDatabase database = this.getReadableDatabase();
 
-		String buildSQL = "SELECT * FROM " + Tracks.TABLE_TRACKS + " JOIN "
-				+ Roads.TABLE_ROADS + "  ON " + Roads.TABLE_ROADS + "."
+		String buildSQL = "SELECT * FROM " + Roads.TABLE_ROADS + " LEFT JOIN "
+				+ Tracks.TABLE_TRACKS + "  ON " + Roads.TABLE_ROADS + "."
 				+ Roads.COLUMN_ID + "  = " + Tracks.TABLE_TRACKS + "."
 				+ Tracks.COLUMN_ROAD_ID + " where " + Roads.COLUMN_ID + " = "
 				+ roadId;

@@ -5,10 +5,12 @@ import android.database.Cursor;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.util.Log;
+import android.widget.TextView;
 
 import com.actionbarsherlock.app.ActionBar;
 import com.actionbarsherlock.app.SherlockFragmentActivity;
 import com.actionbarsherlock.view.MenuItem;
+import com.google.android.gms.internal.eu.d;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.GoogleMap.OnCameraChangeListener;
@@ -20,6 +22,8 @@ import com.google.android.gms.maps.model.LatLngBounds;
 import com.google.android.gms.maps.model.PolylineOptions;
 import com.sayler.inz.R;
 import com.sayler.inz.gps.Database;
+import com.sayler.inz.gps.Roads;
+import com.sayler.inz.gps.TimerView;
 import com.sayler.inz.gps.Tracks;
 
 public class RoadActivity extends SherlockFragmentActivity {
@@ -28,6 +32,10 @@ public class RoadActivity extends SherlockFragmentActivity {
 	private static String TAG = "RoadActivity";
 	private Database db;
 	private long roadId;
+
+	private TextView distanceTextView;
+	private TextView caloriesTextView;
+	private TimerView timerView;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -40,7 +48,6 @@ public class RoadActivity extends SherlockFragmentActivity {
 		// intent
 		Intent intent = getIntent();
 		roadId = intent.getLongExtra("roadId", 0);
-		Log.d(TAG, " roadid  " + roadId);
 
 		// database
 		db = new Database(this);
@@ -55,7 +62,7 @@ public class RoadActivity extends SherlockFragmentActivity {
 		// bounds - need to center map over road
 		final LatLngBounds.Builder bc = new LatLngBounds.Builder();
 
-		// get latlng from cursor
+		// get latlng from Cursor
 		while (roadCur.moveToNext()) {
 			double lat = roadCur.getDouble(roadCur
 					.getColumnIndex(Tracks.COLUMN_LAT));
@@ -66,8 +73,6 @@ public class RoadActivity extends SherlockFragmentActivity {
 
 			roadLine.add(ll);
 			bc.include(ll);
-
-			Log.d(TAG, " lat:lng " + lat + " " + lng);
 		}
 
 		// maps stuff
@@ -81,7 +86,7 @@ public class RoadActivity extends SherlockFragmentActivity {
 			@Override
 			public void onCameraChange(CameraPosition position) {
 				if (roadCur.getCount() > 0) {
-					// Move camera.
+					// Move camera
 					map.moveCamera(CameraUpdateFactory.newLatLngBounds(
 							bc.build(), 50));
 					// Remove listener to prevent position reset on camera move.
@@ -94,6 +99,26 @@ public class RoadActivity extends SherlockFragmentActivity {
 		// action bar back
 		ActionBar ab = getSupportActionBar();
 		ab.setDisplayHomeAsUpEnabled(true);
+
+		// road info
+		roadCur.moveToFirst();
+
+		distanceTextView = (TextView) findViewById(R.id.distanceTextView);
+		caloriesTextView = (TextView) findViewById(R.id.caloriesTextView);
+		timerView = (TimerView) findViewById(R.id.timerView1);
+		
+		try {
+			timerView.setTime((long) roadCur.getDouble(roadCur
+					.getColumnIndex(Roads.COLUMN_DURATION)));
+			caloriesTextView.setText(roadCur.getDouble(roadCur
+					.getColumnIndex(Roads.COLUMN_CALORIES)) + " kcal");
+			distanceTextView.setText(roadCur.getDouble(roadCur
+					.getColumnIndex(Roads.COLUMN_DISTANCE)) + " m");
+
+		} catch (Exception e) {
+			Log.d(TAG, "exception");
+			e.printStackTrace();
+		}
 
 	}
 

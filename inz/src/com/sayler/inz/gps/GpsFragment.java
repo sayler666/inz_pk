@@ -84,6 +84,7 @@ public class GpsFragment extends SherlockFragment implements OnClickListener,
 		gpsStatusView = (TextView) view.findViewById(R.id.gpsStatusText);
 		distanceTextView = (TextView) view.findViewById(R.id.distanceTextView);
 		caloriesTextView = (TextView) view.findViewById(R.id.caloriesTextView);
+		timerView = (TimerView) view.findViewById(R.id.timerView1);
 
 		fm = getSherlockActivity().getSupportFragmentManager();
 
@@ -91,8 +92,6 @@ public class GpsFragment extends SherlockFragment implements OnClickListener,
 		endButton = (Button) view.findViewById(R.id.endButton);
 		startButton.setOnClickListener(this);
 		endButton.setOnClickListener(this);
-
-		timerView = (TimerView) view.findViewById(R.id.timerView1);
 
 		// Get the location manager
 		locationManager = (LocationManager) getActivity().getSystemService(
@@ -124,7 +123,8 @@ public class GpsFragment extends SherlockFragment implements OnClickListener,
 			getActivity().startService(workoutSe);
 
 		} else {
-			Toast.makeText(getActivity(), "Service is already running - loading data...",
+			Toast.makeText(getActivity(),
+					"Service is already running - loading data...",
 					Toast.LENGTH_LONG).show();
 		}
 
@@ -133,7 +133,7 @@ public class GpsFragment extends SherlockFragment implements OnClickListener,
 			EventBus.getDefault().register(this);
 		} catch (EventBusException e) {
 			Log.d(TAG, "event bus already registered");
-		}finally{
+		} finally {
 			EventBus.getDefault().post(new RequestUpdateUIEvent());
 		}
 
@@ -183,7 +183,7 @@ public class GpsFragment extends SherlockFragment implements OnClickListener,
 
 			// set timer view
 			this.timerView.start(e.time);
-			
+
 			// update distance view
 			distanceTextView.setText(String.format("%.0f m", e.distance));
 
@@ -195,10 +195,10 @@ public class GpsFragment extends SherlockFragment implements OnClickListener,
 
 			// roadId from service
 			this.currentRoadId = e.currentRoadId;
-			
-			//update variable
+
+			// update variable
 			distance = e.distance;
-			
+
 		}
 	}
 
@@ -236,7 +236,7 @@ public class GpsFragment extends SherlockFragment implements OnClickListener,
 
 		// start recording in service
 		EventBus.getDefault().post(new StartRecordingEvent(currentRoadId));
-		
+
 		this.recording(true);
 	}
 
