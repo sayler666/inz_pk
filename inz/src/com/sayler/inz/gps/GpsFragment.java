@@ -32,6 +32,7 @@ import com.sayler.inz.gps.service.WorkoutService;
 import com.sayler.inz.gps.sports.Calories;
 import com.sayler.inz.gps.sports.ISport;
 import com.sayler.inz.gps.sports.Running;
+import com.sayler.inz.history.RoadActivity;
 
 import de.greenrobot.event.EventBus;
 import de.greenrobot.event.EventBusException;
@@ -256,6 +257,13 @@ public class GpsFragment extends SherlockFragment implements OnClickListener,
 		Roads newRoad = new Roads(distance, time, avg_speed, (int) calories,
 				this.currentRoadId);
 		gpsDb.addRoad(newRoad);
+		
+		// start Road activity - show the road
+		Intent roadActivityIntent = new Intent(getActivity(),
+				RoadActivity.class);
+		roadActivityIntent.putExtra("roadId", this.currentRoadId);
+		startActivity(roadActivityIntent);
+		getActivity().overridePendingTransition(R.animator.left_to_right_show, R.animator.left_to_right_hide);
 	}
 
 	@Override
