@@ -3,6 +3,7 @@ package com.sayler.inz.history;
 import android.content.Intent;
 import android.database.Cursor;
 import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.util.Log;
 import android.widget.TextView;
@@ -106,7 +107,7 @@ public class RoadActivity extends SherlockFragmentActivity {
 		distanceTextView = (TextView) findViewById(R.id.distanceTextView);
 		caloriesTextView = (TextView) findViewById(R.id.caloriesTextView);
 		timerView = (TimerView) findViewById(R.id.timerView1);
-		
+
 		try {
 			timerView.setTime((long) roadCur.getDouble(roadCur
 					.getColumnIndex(Roads.COLUMN_DURATION)));
@@ -126,10 +127,19 @@ public class RoadActivity extends SherlockFragmentActivity {
 	public boolean onOptionsItemSelected(MenuItem item) {
 		switch (item.getItemId()) {
 		case android.R.id.home:
-			this.finish();
+			this.onBackPressed();
+			
 			return true;
 		}
 		return super.onOptionsItemSelected(item);
+	}
+
+	@Override
+	public void onBackPressed() {
+
+		super.onBackPressed();
+		overridePendingTransition(R.animator.right_to_left_show,
+				R.animator.right_to_left_hide);
 	}
 
 }

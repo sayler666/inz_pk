@@ -2,6 +2,7 @@ package com.sayler.inz;
 
 import android.content.res.Configuration;
 import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.support.v4.app.ActionBarDrawerToggle;
 import android.support.v4.app.Fragment;
@@ -11,12 +12,8 @@ import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.util.Log;
 import android.view.Gravity;
-import android.view.View;
-import android.widget.FrameLayout;
 
 import com.actionbarsherlock.app.SherlockFragmentActivity;
-import com.actionbarsherlock.view.Menu;
-import com.actionbarsherlock.view.MenuInflater;
 import com.actionbarsherlock.view.MenuItem;
 import com.sayler.inz.Menu.FragmentSwitchable;
 import com.sayler.inz.welcome.WelcomeFragment;
@@ -69,6 +66,8 @@ public class Launch extends SherlockFragmentActivity implements
 		super.onCreate(savedInstanceState);
 		fm = getSupportFragmentManager();
 
+		
+		
 		setContentView(R.layout.activity_launch);
 		activeFragment = null;
 

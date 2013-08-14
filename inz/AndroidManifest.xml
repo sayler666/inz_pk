@@ -46,7 +46,6 @@
             android:configChanges="orientation|keyboardHidden"
             android:label="@string/road_activity"
             android:screenOrientation="portrait" >
-           
         </activity>
         
         <service android:name="com.sayler.inz.gps.service.WorkoutService" >

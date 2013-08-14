@@ -11,7 +11,6 @@ import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ListView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.actionbarsherlock.app.SherlockFragment;
 import com.sayler.inz.R;
@@ -67,6 +66,7 @@ public class HistoryFragment extends SherlockFragment implements
 				RoadActivity.class);
 		roadActivityIntent.putExtra("roadId", roadId);
 		startActivity(roadActivityIntent);
+		getActivity().overridePendingTransition(R.animator.left_to_right_show, R.animator.left_to_right_hide);
 
 	}
 
