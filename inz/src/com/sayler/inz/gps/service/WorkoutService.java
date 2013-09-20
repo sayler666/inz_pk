@@ -153,7 +153,7 @@ public class WorkoutService extends Service implements LocationListener {
 			return;
 		else
 			// Update ui
-			this.updateUI();
+			//this.updateUI();
 
 		// check accuracy
 		// TODO if accuracy < minimum_accuracy don't save track
@@ -242,7 +242,7 @@ public class WorkoutService extends Service implements LocationListener {
 			default:
 				break;
 			}
-			updateUI();
+			//updateUI();
 		}
 	};
 

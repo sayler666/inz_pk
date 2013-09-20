@@ -2,6 +2,7 @@ package com.sayler.inz.gps;
 
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Color;
 import android.location.LocationManager;
 import android.os.Bundle;
 import android.provider.Settings;
@@ -27,6 +28,7 @@ import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.Circle;
 import com.google.android.gms.maps.model.CircleOptions;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.PolylineOptions;
 import com.sayler.inz.R;
 import com.sayler.inz.gps.EndRecordingDialog.EndRecordingDialogListener;
 import com.sayler.inz.gps.GpsNotFixedDialog.GpsNotFixedDialogListener;
@@ -82,7 +84,6 @@ public class GpsFragment extends SherlockFragment implements OnClickListener,
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
-
 		super.onCreate(savedInstanceState);
 		setHasOptionsMenu(true);
 	}
@@ -117,7 +118,6 @@ public class GpsFragment extends SherlockFragment implements OnClickListener,
 			TurnOnGpsDialog gpsTurnOnDialog = new TurnOnGpsDialog();
 			gpsTurnOnDialog.setTargetFragment(this, 0);
 			gpsTurnOnDialog.show(fm, "turn_on_gps");
-
 		}
 
 		// TODO choosing sport type
@@ -187,6 +187,9 @@ public class GpsFragment extends SherlockFragment implements OnClickListener,
 
 	}
 
+	private Circle circle = null;
+	private LatLng lastLatLng = null;
+
 	// UpdateUI event
 	// if service is recording when user start activity with this fragment
 	public void onEventMainThread(final UpdateUiEvent e) {
@@ -230,6 +233,29 @@ public class GpsFragment extends SherlockFragment implements OnClickListener,
 					.newCameraPosition(new CameraPosition(new LatLng(e.lat,
 							e.lng), 15, 0, 0)));
 
+			CircleOptions circ_opt = new CircleOptions().radius(e.accuracy)
+					.fillColor(Color.argb(150, 0, 0, 250)).strokeWidth(2)
+					.strokeColor(Color.argb(250, 0, 0, 250))
+					.center(new LatLng(e.lat, e.lng));
+			Log.d(TAG, "add circle");
+
+			PolylineOptions roadLine = new PolylineOptions().width(5).color(
+					Color.RED);
+
+			if (lastLatLng != null) {
+				roadLine.add(lastLatLng);
+				roadLine.add(new LatLng(e.lat, e.lng));
+				map.addPolyline(roadLine);
+			}
+
+			if (circle == null) {
+				circle = map.addCircle(circ_opt);
+			} else {
+				circle.setRadius(e.accuracy);
+				circle.setCenter(new LatLng(e.lat, e.lng));
+			}
+
+			lastLatLng = new LatLng(e.lat, e.lng);
 		}
 	}
 
