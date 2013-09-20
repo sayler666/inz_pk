@@ -5,7 +5,6 @@ import android.content.Intent;
 import android.location.LocationManager;
 import android.os.Bundle;
 import android.provider.Settings;
-import android.provider.ContactsContract.CommonDataKinds.Event;
 import android.support.v4.app.FragmentManager;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -20,6 +19,14 @@ import com.actionbarsherlock.app.SherlockFragment;
 import com.actionbarsherlock.view.Menu;
 import com.actionbarsherlock.view.MenuInflater;
 import com.actionbarsherlock.view.MenuItem;
+import com.google.android.gms.maps.CameraUpdateFactory;
+import com.google.android.gms.maps.GoogleMap;
+import com.google.android.gms.maps.SupportMapFragment;
+import com.google.android.gms.maps.GoogleMap.OnCameraChangeListener;
+import com.google.android.gms.maps.model.CameraPosition;
+import com.google.android.gms.maps.model.Circle;
+import com.google.android.gms.maps.model.CircleOptions;
+import com.google.android.gms.maps.model.LatLng;
 import com.sayler.inz.R;
 import com.sayler.inz.gps.EndRecordingDialog.EndRecordingDialogListener;
 import com.sayler.inz.gps.GpsNotFixedDialog.GpsNotFixedDialogListener;
@@ -69,6 +76,9 @@ public class GpsFragment extends SherlockFragment implements OnClickListener,
 
 	private boolean isRecording;
 	private boolean isGpsFix = false;
+
+	private GoogleMap map;
+	private SupportMapFragment mapFragment;
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
@@ -138,6 +148,12 @@ public class GpsFragment extends SherlockFragment implements OnClickListener,
 			EventBus.getDefault().post(new RequestUpdateUIEvent());
 		}
 
+		// maps stuff
+		mapFragment = new SupportMapFragment();
+		getChildFragmentManager().beginTransaction()
+				.add(R.id.linearLayoutMap, mapFragment, "MapFragment").commit();
+		getChildFragmentManager().executePendingTransactions();
+
 		return view;
 	}
 
@@ -173,7 +189,7 @@ public class GpsFragment extends SherlockFragment implements OnClickListener,
 
 	// UpdateUI event
 	// if service is recording when user start activity with this fragment
-	public void onEventMainThread(UpdateUiEvent e) {
+	public void onEventMainThread(final UpdateUiEvent e) {
 		Log.d(TAG, " updateUI gps fixed? " + e.isGpsFixed);
 
 		this.gpsFix(e.isGpsFixed);
@@ -199,6 +215,20 @@ public class GpsFragment extends SherlockFragment implements OnClickListener,
 
 			// update variable
 			distance = e.distance;
+
+			//
+			//
+			//
+			// TODO add gmap to this fragment and draw current road and accuracy
+			//
+			//
+			//
+
+			// move gmap
+			map = mapFragment.getMap();
+			map.moveCamera(CameraUpdateFactory
+					.newCameraPosition(new CameraPosition(new LatLng(e.lat,
+							e.lng), 15, 0, 0)));
 
 		}
 	}
@@ -249,7 +279,7 @@ public class GpsFragment extends SherlockFragment implements OnClickListener,
 
 		// stop timer
 		timerView.end();
-		//
+
 		// Database
 		// save roads details into Roads table
 		int time = timerView.getElapsedTime();
@@ -257,13 +287,14 @@ public class GpsFragment extends SherlockFragment implements OnClickListener,
 		Roads newRoad = new Roads(distance, time, avg_speed, (int) calories,
 				this.currentRoadId);
 		gpsDb.addRoad(newRoad);
-		
+
 		// start Road activity - show the road
 		Intent roadActivityIntent = new Intent(getActivity(),
 				RoadActivity.class);
 		roadActivityIntent.putExtra("roadId", this.currentRoadId);
 		startActivity(roadActivityIntent);
-		getActivity().overridePendingTransition(R.animator.left_to_right_show, R.animator.left_to_right_hide);
+		getActivity().overridePendingTransition(R.animator.left_to_right_show,
+				R.animator.left_to_right_hide);
 	}
 
 	@Override

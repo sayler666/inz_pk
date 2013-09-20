@@ -31,15 +31,21 @@ public class WorkoutService extends Service implements LocationListener {
 	private float distance = 0;
 	private long time = 0;
 	private boolean isGpsFix = false;
+	private double lat, lng;
+	private float accuracy;
 
 	// database
 	private Database gpsDb;
 	private long currentRoadId = -1;
 
 	// static field
-
 	static boolean isRecording = false;
 	static boolean isRunning = false;
+
+	// -- miscellaneous
+
+	// if accuracy above do not save track
+	private final int minimumAccuracy = 20;
 
 	/**
 	 * if recording tarcks
@@ -117,7 +123,7 @@ public class WorkoutService extends Service implements LocationListener {
 		this.updateUI();
 
 	}
-	
+
 	/**
 	 * Request update event
 	 * 
@@ -128,7 +134,6 @@ public class WorkoutService extends Service implements LocationListener {
 
 		Log.d(TAG, "onEventRequestUpdateUI ");
 
-		
 		// last UI update
 		this.updateUI();
 
@@ -139,18 +144,24 @@ public class WorkoutService extends Service implements LocationListener {
 		// GPS fixing stuff
 		if (location == null)
 			return;
-		
+
 		mLastLocationMillis = SystemClock.elapsedRealtime();
 
-		// if not recording - do not bother about rest calc, but update UI (maybe gps've been fixed)
+		// if not recording - do not bother about rest calc, but update UI
+		// (maybe gps've been fixed)
 		if (isRecording == false)
 			return;
 		else
 			// Update ui
 			this.updateUI();
 
-		double lat = location.getLatitude();
-		double lng = location.getLongitude();
+		// check accuracy
+		// TODO if accuracy < minimum_accuracy don't save track
+
+		lat = location.getLatitude();
+		lng = location.getLongitude();
+		accuracy = location.getAccuracy();
+
 		float speed = location.getSpeed();
 		long time = location.getTime();
 		double alt = location.getAltitude();
@@ -183,7 +194,7 @@ public class WorkoutService extends Service implements LocationListener {
 		// send event to UPDATE UI
 		EventBus.getDefault().post(
 				new UpdateUiEvent(distance, time, isGpsFix, isRecording,
-						currentRoadId));
+						currentRoadId, lat, lng, accuracy));
 	}
 
 	@Override
@@ -216,9 +227,9 @@ public class WorkoutService extends Service implements LocationListener {
 			case GpsStatus.GPS_EVENT_STARTED:
 				break;
 			case GpsStatus.GPS_EVENT_FIRST_FIX:
-				//TODO something wrong here on 4.2.2
-				//isGpsFix = true;
-				//Log.d(TAG, "fixed: ");
+				// TODO something wrong here on 4.2.2
+				// isGpsFix = true;
+				// Log.d(TAG, "fixed: ");
 				break;
 			case GpsStatus.GPS_EVENT_STOPPED:
 

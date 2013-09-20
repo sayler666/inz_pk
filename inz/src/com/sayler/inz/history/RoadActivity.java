@@ -3,7 +3,6 @@ package com.sayler.inz.history;
 import android.content.Intent;
 import android.database.Cursor;
 import android.graphics.Color;
-import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.util.Log;
 import android.widget.TextView;
@@ -11,7 +10,6 @@ import android.widget.TextView;
 import com.actionbarsherlock.app.ActionBar;
 import com.actionbarsherlock.app.SherlockFragmentActivity;
 import com.actionbarsherlock.view.MenuItem;
-import com.google.android.gms.internal.eu.d;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.GoogleMap.OnCameraChangeListener;
@@ -77,8 +75,8 @@ public class RoadActivity extends SherlockFragmentActivity {
 		}
 
 		// maps stuff
-		GoogleMapOptions op = new GoogleMapOptions();
-		op.camera(new CameraPosition(new LatLng(50.1243, 19.1243), 11, 0, 0));
+		//GoogleMapOptions op = new GoogleMapOptions();
+		//op.camera(new CameraPosition(new LatLng(50.1243, 19.1243), 11, 0, 0));
 		map = ((SupportMapFragment) getSupportFragmentManager()
 				.findFragmentById(R.id.map)).getMap();
 		map.addPolyline(roadLine);
