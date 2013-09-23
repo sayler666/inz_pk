@@ -20,6 +20,12 @@ public final class R {
         /**  MENU 
          */
         public static final int menu_sections=0x7f0c0000;
+        /**  SPORTS CLASS 
+         */
+        public static final int sports_classes=0x7f0c0004;
+        /**  SPORTS 
+         */
+        public static final int sports_list=0x7f0c0003;
     }
     public static final class attr {
         /**  Custom divider drawable to use for elements in the action bar. 
@@ -1126,8 +1132,7 @@ containing a value of this type.
         public static final int abs__textButton=0x7f060017;
         public static final int abs__title=0x7f06001f;
         public static final int abs__up=0x7f06000f;
-        public static final int action_settings=0x7f06004e;
-        public static final int bicycle=0x7f06004c;
+        public static final int action_settings=0x7f06004b;
         public static final int caloriesTextView=0x7f060041;
         public static final int content_frame=0x7f060037;
         public static final int controlsLayout=0x7f060039;
@@ -1151,12 +1156,10 @@ containing a value of this type.
         public static final int none=0x7f060000;
         public static final int normal=0x7f060001;
         public static final int road_id=0x7f060048;
-        public static final int running=0x7f06004d;
         public static final int satellite=0x7f060002;
         public static final int showCustom=0x7f06000c;
         public static final int showHome=0x7f060009;
         public static final int showTitle=0x7f06000b;
-        public static final int sports_menu=0x7f06004b;
         public static final int startButton=0x7f06003a;
         public static final int subtitle=0x7f060047;
         public static final int tabMode=0x7f060007;
@@ -1205,8 +1208,7 @@ containing a value of this type.
         public static final int welcome_fragment=0x7f03001f;
     }
     public static final class menu {
-        public static final int gps_fragment_menu=0x7f0d0000;
-        public static final int launch=0x7f0d0001;
+        public static final int launch=0x7f0d0000;
     }
     public static final class string {
         /**  Content description for the action bar "home" affordance. [CHAR LIMIT=NONE] 

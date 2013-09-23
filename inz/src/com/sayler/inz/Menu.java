@@ -69,20 +69,6 @@ public class Menu extends ListFragment implements RestorableFragment {
 			// class name of chosen fragment
 			fragmentClass = Class.forName(menu_fragments[position]);
 
-			// if chosen fragment instance already exists in array of
-			// initialized fragment
-//			for (Fragment f : initializedFragments) {
-//				if (f.getClass() == fragmentClass) {
-//					Log.d(TAG,
-//							"instantion already exists. "
-//									+ f.getClass().toString() + " "
-//									+ fragmentClass.toString());
-//					exists = true;
-//					newFragment = f;
-//					Log.d(TAG, menu_fragments[position] + " - old instantion");
-//					break;
-//				}
-//			}
 			// if fragment instance not exists - creating new instance
 			if (!exists) {
 				newFragment = (Fragment) fragmentClass.newInstance();

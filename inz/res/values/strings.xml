@@ -30,6 +30,20 @@
         <item>com.sayler.inz.settings.SettingsFragment</item>
     </string-array>
 
+    
+    <!-- SPORTS -->
+    <string-array name="sports_list">
+        <item>Running</item>
+        <item>Bycycle</item>
+    </string-array>
+    <!-- SPORTS CLASS -->
+    <string-array name="sports_classes">
+         <item>com.sayler.inz.gps.sports.Running</item>
+        <item>com.sayler.inz.gps.sports.Bicycle</item>
+        
+    </string-array>
+    
+    
     <!-- GPS -->
     <!-- controls buttons -->
     <string name="start_button">Start</string>
@@ -46,4 +60,7 @@
     <string name="turn_on_gps_dialog_message">Gps is off, would you like to turn it on?</string>
     <string name="settings_text">Settings</string>
 
+    
+    
+    
 </resources>

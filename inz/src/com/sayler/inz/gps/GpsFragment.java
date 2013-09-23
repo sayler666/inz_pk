@@ -16,14 +16,15 @@ import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.actionbarsherlock.app.ActionBar.OnNavigationListener;
 import com.actionbarsherlock.app.SherlockFragment;
 import com.actionbarsherlock.view.Menu;
 import com.actionbarsherlock.view.MenuInflater;
 import com.actionbarsherlock.view.MenuItem;
+import com.actionbarsherlock.view.SubMenu;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.SupportMapFragment;
-import com.google.android.gms.maps.GoogleMap.OnCameraChangeListener;
 import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.Circle;
 import com.google.android.gms.maps.model.CircleOptions;
@@ -48,8 +49,10 @@ import de.greenrobot.event.EventBusException;
 
 public class GpsFragment extends SherlockFragment implements OnClickListener,
 		GpsNotFixedDialogListener, EndRecordingDialogListener,
-		TurnOnGpsDialogListener {
+		TurnOnGpsDialogListener, OnNavigationListener {
 
+	private String[] sportsList,sportsClasses; 
+	
 	private final static String TAG = "GpsFragment";
 
 	private FragmentManager fm;
@@ -81,6 +84,8 @@ public class GpsFragment extends SherlockFragment implements OnClickListener,
 
 	private GoogleMap map;
 	private SupportMapFragment mapFragment;
+	private Circle circle = null;
+	private LatLng lastLatLng = null;
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
@@ -154,6 +159,9 @@ public class GpsFragment extends SherlockFragment implements OnClickListener,
 				.add(R.id.linearLayoutMap, mapFragment, "MapFragment").commit();
 		getChildFragmentManager().executePendingTransactions();
 
+		// navigation spinner
+		String[] actions = new String[] { "Bookmark", "Subscribe", "Share" };
+
 		return view;
 	}
 
@@ -187,9 +195,6 @@ public class GpsFragment extends SherlockFragment implements OnClickListener,
 
 	}
 
-	private Circle circle = null;
-	private LatLng lastLatLng = null;
-
 	// UpdateUI event
 	// if service is recording when user start activity with this fragment
 	public void onEventMainThread(final UpdateUiEvent e) {
@@ -219,35 +224,36 @@ public class GpsFragment extends SherlockFragment implements OnClickListener,
 			// update variable
 			distance = e.distance;
 
-			//
-			//
-			//
-			// TODO add gmap to this fragment and draw current road and accuracy
-			//
-			//
-			//
-
-			// move gmap
+			// get map object
 			map = mapFragment.getMap();
+
+			// move map camera
+			float zoomLevel = 16.0f;
+			if (lastLatLng != null) {
+				zoomLevel = map.getCameraPosition().zoom;
+			}
 			map.moveCamera(CameraUpdateFactory
 					.newCameraPosition(new CameraPosition(new LatLng(e.lat,
-							e.lng), 15, 0, 0)));
+							e.lng), zoomLevel, 0, 0)));
 
+			// add accuracy circle
 			CircleOptions circ_opt = new CircleOptions().radius(e.accuracy)
 					.fillColor(Color.argb(150, 0, 0, 250)).strokeWidth(2)
 					.strokeColor(Color.argb(250, 0, 0, 250))
 					.center(new LatLng(e.lat, e.lng));
-			Log.d(TAG, "add circle");
 
+			// add road so far
 			PolylineOptions roadLine = new PolylineOptions().width(5).color(
 					Color.RED);
 
+			// draw line
 			if (lastLatLng != null) {
 				roadLine.add(lastLatLng);
 				roadLine.add(new LatLng(e.lat, e.lng));
 				map.addPolyline(roadLine);
 			}
 
+			// draw accuracy circle (or move it)
 			if (circle == null) {
 				circle = map.addCircle(circ_opt);
 			} else {
@@ -255,6 +261,7 @@ public class GpsFragment extends SherlockFragment implements OnClickListener,
 				circle.setCenter(new LatLng(e.lat, e.lng));
 			}
 
+			// save last location
 			lastLatLng = new LatLng(e.lat, e.lng);
 		}
 	}
@@ -334,24 +341,53 @@ public class GpsFragment extends SherlockFragment implements OnClickListener,
 
 	}
 
-	// private final int ID_MENU_EXIT = 1;
+	
 
 	@Override
 	public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
-		inflater.inflate(R.menu.gps_fragment_menu, menu);
+		
+		SubMenu sportsMenu = menu.addSubMenu("sports");
+		sportsMenu.getItem().setShowAsAction(2);
+		
+		sportsList = getResources().getStringArray(R.array.sports_list);
+		sportsClasses = getResources().getStringArray(R.array.sports_classes);
+		
+		int i=0;
+		for (String sport : sportsList) {
+			
+			MenuItem item = sportsMenu.add( Menu.NONE,i, Menu.NONE,
+					sport);
+			i++;
+		}
+		
 
-		/*
-		 * MenuItem item = menu.add(Menu.NONE, ID_MENU_EXIT, Menu.NONE, "test")
-		 * .setShowAsActionFlags(MenuItem.SHOW_AS_ACTION_IF_ROOM);
-		 */
-
-		super.onCreateOptionsMenu(menu, inflater);
+		super.onCreateOptionsMenu(sportsMenu, inflater);
 	}
 
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
 		Log.d(this.getClass().toString(),
-				"context item selected" + item.getTitle());
+				"context item selected" + item.getTitle() +" " + item.getItemId());
+		
+		// class name of chosen sport
+		Class<ISport> sportClass = null;
+		try {
+			
+			sportClass= (Class<ISport>) Class.forName(sportsClasses[item.getItemId()]);
+		} catch (ClassNotFoundException e) {
+			e.printStackTrace();
+		}finally{
+			try {
+				this.sport = sportClass.newInstance();
+				
+			} catch (java.lang.InstantiationException e) {
+				e.printStackTrace();
+			} catch (IllegalAccessException e) {
+				e.printStackTrace();
+			}
+		}
+		
+		
 		return super.onOptionsItemSelected(item);
 	}
 
@@ -365,6 +401,12 @@ public class GpsFragment extends SherlockFragment implements OnClickListener,
 	public void onDestroy() {
 		EventBus.getDefault().unregister(this);
 		super.onDestroy();
+	}
+
+	@Override
+	public boolean onNavigationItemSelected(int itemPosition, long itemId) {
+		// TODO Auto-generated method stub
+		return false;
 	}
 
 }
