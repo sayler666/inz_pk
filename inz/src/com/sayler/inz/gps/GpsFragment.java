@@ -51,8 +51,8 @@ public class GpsFragment extends SherlockFragment implements OnClickListener,
 		GpsNotFixedDialogListener, EndRecordingDialogListener,
 		TurnOnGpsDialogListener, OnNavigationListener {
 
-	private String[] sportsList,sportsClasses; 
-	
+	private String[] sportsList, sportsClasses;
+
 	private final static String TAG = "GpsFragment";
 
 	private FragmentManager fm;
@@ -73,6 +73,7 @@ public class GpsFragment extends SherlockFragment implements OnClickListener,
 	private Button endButton;
 
 	private TextView gpsStatusView;
+	private TextView sportChosenTextView;
 
 	private TextView distanceTextView;
 	private TextView caloriesTextView;
@@ -101,6 +102,8 @@ public class GpsFragment extends SherlockFragment implements OnClickListener,
 		gpsStatusView = (TextView) view.findViewById(R.id.gpsStatusText);
 		distanceTextView = (TextView) view.findViewById(R.id.distanceTextView);
 		caloriesTextView = (TextView) view.findViewById(R.id.caloriesTextView);
+		sportChosenTextView = (TextView) view.findViewById(R.id.sportChosen);
+
 		timerView = (TimerView) view.findViewById(R.id.timerView1);
 
 		fm = getSherlockActivity().getSupportFragmentManager();
@@ -125,10 +128,8 @@ public class GpsFragment extends SherlockFragment implements OnClickListener,
 			gpsTurnOnDialog.show(fm, "turn_on_gps");
 		}
 
-		// TODO choosing sport type
-		sport = new Running();
 		// choose sport
-		caloriesCalculator.setCaloriesCalculateStrategy(sport);
+		this.changeSport(new Running(),"Running");
 
 		// instance of Db
 		gpsDb = new Database(getActivity().getApplicationContext());
@@ -341,54 +342,62 @@ public class GpsFragment extends SherlockFragment implements OnClickListener,
 
 	}
 
-	
-
 	@Override
 	public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
-		
-		SubMenu sportsMenu = menu.addSubMenu("sports");
+
+		// create menu with sports to choose
+		SubMenu sportsMenu = menu.addSubMenu(Menu.NONE, -1, Menu.NONE,
+				R.string.sports_title);
 		sportsMenu.getItem().setShowAsAction(2);
-		
+
+		// get sports list and corresponding classes
 		sportsList = getResources().getStringArray(R.array.sports_list);
 		sportsClasses = getResources().getStringArray(R.array.sports_classes);
-		
-		int i=0;
+
+		// add items to menu in AB
+		int i = 0;
 		for (String sport : sportsList) {
-			
-			MenuItem item = sportsMenu.add( Menu.NONE,i, Menu.NONE,
-					sport);
+			sportsMenu.add(Menu.NONE, i, Menu.NONE, sport);
 			i++;
 		}
-		
-
 		super.onCreateOptionsMenu(sportsMenu, inflater);
 	}
 
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
 		Log.d(this.getClass().toString(),
-				"context item selected" + item.getTitle() +" " + item.getItemId());
-		
-		// class name of chosen sport
-		Class<ISport> sportClass = null;
-		try {
-			
-			sportClass= (Class<ISport>) Class.forName(sportsClasses[item.getItemId()]);
-		} catch (ClassNotFoundException e) {
-			e.printStackTrace();
-		}finally{
+				"context item selected" + item.getTitle() + " "
+						+ item.getItemId());
+
+		// if sport chosen 
+		if (item.getItemId() >= 0 && item.getItemId() < sportsClasses.length) {
+
+			// class name of chosen sport
+			Class<ISport> sportClass = null;
 			try {
-				this.sport = sportClass.newInstance();
-				
-			} catch (java.lang.InstantiationException e) {
+				sportClass = (Class<ISport>) Class.forName(sportsClasses[item
+						.getItemId()]);
+			} catch (ClassNotFoundException e) {
 				e.printStackTrace();
-			} catch (IllegalAccessException e) {
-				e.printStackTrace();
+			} finally {
+				try {
+
+					this.changeSport(sportClass.newInstance(), item.getTitle());
+				} catch (java.lang.InstantiationException e) {
+					e.printStackTrace();
+				} catch (IllegalAccessException e) {
+					e.printStackTrace();
+				}
 			}
 		}
-		
-		
+
 		return super.onOptionsItemSelected(item);
+	}
+
+	private void changeSport(ISport sport, CharSequence sportName) {
+		this.sport = sport;
+		this.caloriesCalculator.setCaloriesCalculateStrategy(this.sport);
+		this.sportChosenTextView.setText(sportName);
 	}
 
 	@Override

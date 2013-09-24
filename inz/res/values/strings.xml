@@ -34,15 +34,15 @@
     <!-- SPORTS -->
     <string-array name="sports_list">
         <item>Running</item>
-        <item>Bycycle</item>
+        <item>Bicycling</item>
     </string-array>
     <!-- SPORTS CLASS -->
     <string-array name="sports_classes">
          <item>com.sayler.inz.gps.sports.Running</item>
-        <item>com.sayler.inz.gps.sports.Bicycle</item>
+        <item>com.sayler.inz.gps.sports.Bicycling</item>
         
     </string-array>
-    
+     <string name="sports_title">Sports</string>
     
     <!-- GPS -->
     <!-- controls buttons -->
@@ -59,6 +59,7 @@
     <string name="welcome_text">Welcome, choose something from menu.</string>
     <string name="turn_on_gps_dialog_message">Gps is off, would you like to turn it on?</string>
     <string name="settings_text">Settings</string>
+    <string name="main_setitings_category_title">Main Settings</string>
 
     
     

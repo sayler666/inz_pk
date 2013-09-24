@@ -111,8 +111,8 @@ public class RoadActivity extends SherlockFragmentActivity {
 					.getColumnIndex(Roads.COLUMN_DURATION)));
 			caloriesTextView.setText(roadCur.getDouble(roadCur
 					.getColumnIndex(Roads.COLUMN_CALORIES)) + " kcal");
-			distanceTextView.setText(roadCur.getDouble(roadCur
-					.getColumnIndex(Roads.COLUMN_DISTANCE)) + " m");
+			distanceTextView.setText(Math.round(roadCur.getDouble(roadCur
+					.getColumnIndex(Roads.COLUMN_DISTANCE))*100)/100.d + " m");
 
 		} catch (Exception e) {
 			Log.d(TAG, "exception");

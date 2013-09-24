@@ -2,7 +2,7 @@ package com.sayler.inz.gps.sports;
 
 import android.util.Log;
 
-public class Bicycle implements ISport {
+public class Bicycling implements ISport {
 
 	@Override
 	public float calculateCalories(float distance, int weight, int height,
