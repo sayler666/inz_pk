@@ -119,6 +119,17 @@ public class Database extends SQLiteOpenHelper {
 		return database.rawQuery(buildSQL, null);
 	}
 
+	public Cursor getRoadSoFarById(long roadId) {
+		SQLiteDatabase database = this.getReadableDatabase();
+
+		String buildSQL = "SELECT * FROM " + Tracks.TABLE_TRACKS  +  " where " + Tracks.COLUMN_ROAD_ID + " = "
+				+ roadId;
+
+		Log.d(TAG, "getRoadSoFarById SQL: " + buildSQL);
+		
+		return database.rawQuery(buildSQL, null);
+	}
+	
 	// Create all tables
 	@Override
 	public void onCreate(SQLiteDatabase database) {

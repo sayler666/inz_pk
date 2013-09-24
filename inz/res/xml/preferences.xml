@@ -1,5 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android" >
-    <PreferenceCategory  android:title="@string/main_setitings_category_title"></PreferenceCategory>
+    <PreferenceCategory  android:title="@string/main_setitings_category_title">
+        <EditTextPreference android:title="@string/weight_title" android:key="weight" android:inputType="number" android:defaultValue="70"/>
+        <EditTextPreference android:key="bike_weight" android:title="@string/bike_weight_title" android:inputType="number" android:defaultValue="10"/>
+        
+    </PreferenceCategory>
     
 </PreferenceScreen>

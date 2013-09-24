@@ -2,9 +2,13 @@ package com.sayler.inz.gps;
 
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
+import android.content.SharedPreferences.Editor;
+import android.database.Cursor;
 import android.graphics.Color;
 import android.location.LocationManager;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.provider.Settings;
 import android.support.v4.app.FragmentManager;
 import android.util.Log;
@@ -41,7 +45,6 @@ import com.sayler.inz.gps.service.UpdateUiEvent;
 import com.sayler.inz.gps.service.WorkoutService;
 import com.sayler.inz.gps.sports.Calories;
 import com.sayler.inz.gps.sports.ISport;
-import com.sayler.inz.gps.sports.Running;
 import com.sayler.inz.history.RoadActivity;
 
 import de.greenrobot.event.EventBus;
@@ -59,7 +62,7 @@ public class GpsFragment extends SherlockFragment implements OnClickListener,
 
 	private LocationManager locationManager;
 
-	private Calories caloriesCalculator = new Calories();
+	private Calories caloriesCalculator;
 	private ISport sport;
 
 	private float distance = 0;
@@ -88,6 +91,8 @@ public class GpsFragment extends SherlockFragment implements OnClickListener,
 	private Circle circle = null;
 	private LatLng lastLatLng = null;
 
+	private SharedPreferences sharedPref;
+
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -113,6 +118,18 @@ public class GpsFragment extends SherlockFragment implements OnClickListener,
 		startButton.setOnClickListener(this);
 		endButton.setOnClickListener(this);
 
+		// shared pref
+		sharedPref = PreferenceManager.getDefaultSharedPreferences(this
+				.getActivity());
+
+		// get sports list and corresponding classes
+		sportsList = getResources().getStringArray(R.array.sports_list);
+		sportsClasses = getResources().getStringArray(R.array.sports_classes);
+
+		caloriesCalculator = new Calories();
+		// load prefs
+		this.loadPrefs();
+
 		// Get the location manager
 		locationManager = (LocationManager) getActivity().getSystemService(
 				Context.LOCATION_SERVICE);
@@ -128,9 +145,6 @@ public class GpsFragment extends SherlockFragment implements OnClickListener,
 			gpsTurnOnDialog.show(fm, "turn_on_gps");
 		}
 
-		// choose sport
-		this.changeSport(new Running(),"Running");
-
 		// instance of Db
 		gpsDb = new Database(getActivity().getApplicationContext());
 
@@ -145,6 +159,19 @@ public class GpsFragment extends SherlockFragment implements OnClickListener,
 					Toast.LENGTH_LONG).show();
 		}
 
+		// maps stuff
+		if (savedInstanceState == null) {
+			getChildFragmentManager()
+					.beginTransaction()
+					.add(R.id.linearLayoutMap, new SupportMapFragment(),
+							"MapFragment").commit();
+			getChildFragmentManager().executePendingTransactions();
+
+		}
+		mapFragment = (SupportMapFragment) getChildFragmentManager()
+				.findFragmentById(R.id.linearLayoutMap);
+
+		// when everything else is set request for event
 		// register event bus
 		try {
 			EventBus.getDefault().register(this);
@@ -153,15 +180,6 @@ public class GpsFragment extends SherlockFragment implements OnClickListener,
 		} finally {
 			EventBus.getDefault().post(new RequestUpdateUIEvent());
 		}
-
-		// maps stuff
-		mapFragment = new SupportMapFragment();
-		getChildFragmentManager().beginTransaction()
-				.add(R.id.linearLayoutMap, mapFragment, "MapFragment").commit();
-		getChildFragmentManager().executePendingTransactions();
-
-		// navigation spinner
-		String[] actions = new String[] { "Bookmark", "Subscribe", "Share" };
 
 		return view;
 	}
@@ -196,6 +214,8 @@ public class GpsFragment extends SherlockFragment implements OnClickListener,
 
 	}
 
+	private PolylineOptions roadLineSoFar;
+
 	// UpdateUI event
 	// if service is recording when user start activity with this fragment
 	public void onEventMainThread(final UpdateUiEvent e) {
@@ -214,8 +234,9 @@ public class GpsFragment extends SherlockFragment implements OnClickListener,
 			distanceTextView.setText(String.format("%.0f m", e.distance));
 
 			// calories calculation
-			calories = caloriesCalculator.calculate(e.distance, 75, 1,
-					(int) e.time);
+			calories = caloriesCalculator.calculate(e.distance, (int) e.time,
+					sharedPref);
+
 			// update calories view
 			caloriesTextView.setText(String.format("%.0f kcal", calories));
 
@@ -227,6 +248,36 @@ public class GpsFragment extends SherlockFragment implements OnClickListener,
 
 			// get map object
 			map = mapFragment.getMap();
+
+			// draw road so far
+			if (map == null) {
+				Log.d(TAG, "nie ma mapki");
+
+				// get road gps tracks of road so far
+				final Cursor roadCur = gpsDb
+						.getRoadSoFarById(this.currentRoadId);
+
+				// draw road on map
+				roadLineSoFar = new PolylineOptions().width(5).color(Color.RED);
+
+				// get latlng from Cursor
+				while (roadCur.moveToNext()) {
+					double lat = roadCur.getDouble(roadCur
+							.getColumnIndex(Tracks.COLUMN_LAT));
+					double lng = roadCur.getDouble(roadCur
+							.getColumnIndex(Tracks.COLUMN_LNG));
+					LatLng ll = new LatLng(lat, lng);
+					roadLineSoFar.add(ll);
+				}
+
+				return;
+			} else {
+				if (roadLineSoFar != null) {
+					map.addPolyline(roadLineSoFar);
+					roadLineSoFar = null;
+				}
+
+			}
 
 			// move map camera
 			float zoomLevel = 16.0f;
@@ -314,6 +365,13 @@ public class GpsFragment extends SherlockFragment implements OnClickListener,
 		// stop timer
 		timerView.end();
 
+		// reset gmap drawing
+		circle = null;
+		lastLatLng = null;
+
+		map = mapFragment.getMap();
+		map.clear();
+
 		// Database
 		// save roads details into Roads table
 		int time = timerView.getElapsedTime();
@@ -350,10 +408,6 @@ public class GpsFragment extends SherlockFragment implements OnClickListener,
 				R.string.sports_title);
 		sportsMenu.getItem().setShowAsAction(2);
 
-		// get sports list and corresponding classes
-		sportsList = getResources().getStringArray(R.array.sports_list);
-		sportsClasses = getResources().getStringArray(R.array.sports_classes);
-
 		// add items to menu in AB
 		int i = 0;
 		for (String sport : sportsList) {
@@ -368,36 +422,51 @@ public class GpsFragment extends SherlockFragment implements OnClickListener,
 		Log.d(this.getClass().toString(),
 				"context item selected" + item.getTitle() + " "
 						+ item.getItemId());
-
-		// if sport chosen 
+		// if sport chosen
 		if (item.getItemId() >= 0 && item.getItemId() < sportsClasses.length) {
-
-			// class name of chosen sport
-			Class<ISport> sportClass = null;
-			try {
-				sportClass = (Class<ISport>) Class.forName(sportsClasses[item
-						.getItemId()]);
-			} catch (ClassNotFoundException e) {
-				e.printStackTrace();
-			} finally {
-				try {
-
-					this.changeSport(sportClass.newInstance(), item.getTitle());
-				} catch (java.lang.InstantiationException e) {
-					e.printStackTrace();
-				} catch (IllegalAccessException e) {
-					e.printStackTrace();
-				}
-			}
+			// change sport
+			this.changeSport(sportsClasses[item.getItemId()]);
 		}
-
 		return super.onOptionsItemSelected(item);
 	}
 
-	private void changeSport(ISport sport, CharSequence sportName) {
-		this.sport = sport;
+	private void changeSport(String sportClassName) {
+		String sportName = "";
+		try {
+
+			Class<ISport> sportClass = (Class<ISport>) Class
+					.forName(sportClassName);
+			int i = 0;
+			for (String sport : sportsClasses) {
+				if (sport.equals(sportClassName))
+					break;
+				i++;
+			}
+			sportName = sportsList[i];
+			this.sport = sportClass.newInstance();
+
+		} catch (ClassNotFoundException e) {
+			e.printStackTrace();
+		} catch (java.lang.InstantiationException e) {
+			e.printStackTrace();
+		} catch (IllegalAccessException e) {
+			e.printStackTrace();
+		}
+
 		this.caloriesCalculator.setCaloriesCalculateStrategy(this.sport);
 		this.sportChosenTextView.setText(sportName);
+
+		// edit shared preference with sport
+		Editor editor = sharedPref.edit();
+		editor.putString("chosen_sport", sport.getClass().getCanonicalName());
+		editor.commit();
+	}
+
+	public void loadPrefs() {
+		// set previously chosen sport
+		String sportClassName = sharedPref.getString("chosen_sport", "");
+		// change sport
+		this.changeSport(sportClassName);
 	}
 
 	@Override
@@ -408,6 +477,10 @@ public class GpsFragment extends SherlockFragment implements OnClickListener,
 
 	@Override
 	public void onDestroy() {
+		Log.d(TAG, "stop timer");
+		// stop timer
+		timerView.end();
+
 		EventBus.getDefault().unregister(this);
 		super.onDestroy();
 	}

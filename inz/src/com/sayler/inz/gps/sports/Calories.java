@@ -1,18 +1,18 @@
 package com.sayler.inz.gps.sports;
 
-
+import android.content.SharedPreferences;
 
 //different sports type - different calories calculation strategy
-public class Calories{
-	
+public class Calories {
+
 	protected ISport _sport;
-	
-	public void setCaloriesCalculateStrategy(ISport sport){
+
+	public void setCaloriesCalculateStrategy(ISport sport) {
 		this._sport = sport;
 	}
-	
-	public  float calculate(float distance, int weight, int height, int time){
-		return _sport.calculateCalories(distance, weight, height, time);
+
+	public float calculate(float distance, int time, SharedPreferences sharedPref) {
+		return _sport.calculateCalories(distance, time, sharedPref);
 	}
-	
+
 }

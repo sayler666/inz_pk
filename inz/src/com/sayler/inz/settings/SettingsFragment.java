@@ -1,15 +1,13 @@
 package com.sayler.inz.settings;
 
 import android.os.Bundle;
-import android.preference.PreferenceFragment;
-import android.view.LayoutInflater;
-import android.view.View;
-import android.view.ViewGroup;
 
 import com.sayler.inz.R;
 
-public class SettingsFragment extends PreferenceFragment {
+public class SettingsFragment extends android.support.v4.preference.PreferenceFragment {
 
+	
+	
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 

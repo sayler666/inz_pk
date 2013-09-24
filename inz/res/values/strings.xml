@@ -60,6 +60,9 @@
     <string name="turn_on_gps_dialog_message">Gps is off, would you like to turn it on?</string>
     <string name="settings_text">Settings</string>
     <string name="main_setitings_category_title">Main Settings</string>
+    <string name="weight_title">Body weight</string>
+    <string name="bike_weight_title">Bike weight</string>
+    <string name="default_sport_title">Default sport</string>
 
     
     
