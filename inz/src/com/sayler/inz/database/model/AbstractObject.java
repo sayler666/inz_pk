@@ -2,8 +2,9 @@ package com.sayler.inz.database.model;
 
 import java.util.Date;
 
+import android.util.Log;
+
 import com.j256.ormlite.field.DatabaseField;
-import com.j256.ormlite.table.DatabaseTable;
 
 
 public abstract class AbstractObject implements Identifiable  {
@@ -16,6 +17,7 @@ public abstract class AbstractObject implements Identifiable  {
 	
 	public AbstractObject(){
 		super();
+		
 	}
 	
 	public AbstractObject(long id, Date createdAt) {

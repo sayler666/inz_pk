@@ -1,6 +1,7 @@
 package com.sayler.inz.database.model;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import com.j256.ormlite.dao.ForeignCollection;
@@ -26,6 +27,7 @@ public class Road extends AbstractObject {
 
 	public Road() {
 		super();
+		
 	}
 
 	public Road(double distance, double duration, double avg_speed, int calories) {
@@ -34,6 +36,7 @@ public class Road extends AbstractObject {
 		this.duration = duration;
 		this.avg_speed = avg_speed;
 		this.calories = calories;
+		this.createdAt = new Date();
 	}
 
 	public Road(double distance, double duration, double avg_speed,
@@ -44,6 +47,7 @@ public class Road extends AbstractObject {
 		this.avg_speed = avg_speed;
 		this.calories = calories;
 		this.tracks = tracks;
+		this.createdAt = new Date();
 	}
 
 	public double getDistance() {

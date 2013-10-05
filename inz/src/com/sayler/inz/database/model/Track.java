@@ -15,7 +15,7 @@ public class Track extends AbstractObject {
 	@DatabaseField()
 	private double speed;
 	@DatabaseField()
-	private int time;
+	private long time;
 	@DatabaseField(foreign = true, foreignAutoRefresh = true)
 	private Road road;
 
@@ -24,7 +24,7 @@ public class Track extends AbstractObject {
 
 	}
 
-	public Track(double lat, double lng, double alt, double speed, int time,
+	public Track(double lat, double lng, double alt, double speed, long time,
 			Road road) {
 		super();
 		this.lat = lat;
@@ -35,7 +35,7 @@ public class Track extends AbstractObject {
 		this.road = road;
 	}
 
-	public Track(double lat, double lng, double alt, double speed, int time) {
+	public Track(double lat, double lng, double alt, double speed, long time) {
 		super();
 		this.lat = lat;
 		this.lng = lng;
@@ -80,7 +80,7 @@ public class Track extends AbstractObject {
 		return time;
 	}
 
-	public void setTime(int time) {
+	public void setTime(long time) {
 		this.time = time;
 	}
 

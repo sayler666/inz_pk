@@ -14,6 +14,8 @@ import com.sayler.inz.database.model.Track;
 
 public class DBSqliteOpenHelper extends OrmLiteSqliteOpenHelper {
 	
+	private final String TAG = "DBSqliteOpenHelper";
+	
 	private static final String DATABASE_NAME = "gps_ormed.db";
 	private static final int DATABASE_VERSION = 4;
 	
@@ -29,7 +31,7 @@ public class DBSqliteOpenHelper extends OrmLiteSqliteOpenHelper {
 		try {
 			TableUtils.createTable(connectionSource, Road.class);			
 			TableUtils.createTable(connectionSource, Track.class);
-			Log.d("DBSqliteOpenHelper", "on create v: "+DATABASE_VERSION);
+			Log.d(TAG ,"on create v: "+DATABASE_VERSION);
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
@@ -38,7 +40,7 @@ public class DBSqliteOpenHelper extends OrmLiteSqliteOpenHelper {
 
 	@Override
 	public void onUpgrade(SQLiteDatabase db, ConnectionSource connectionSource, int oldVersion, int newVersion) {
-		Log.d("DBSqliteOpenHelper", "on update v: "+DATABASE_VERSION);
+		Log.d(TAG, "on update v: "+DATABASE_VERSION);
 		try {
 			TableUtils.dropTable(connectionSource, Road.class, true);
 			TableUtils.dropTable(connectionSource, Track.class, true);			

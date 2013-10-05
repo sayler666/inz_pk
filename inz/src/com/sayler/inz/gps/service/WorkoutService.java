@@ -1,5 +1,7 @@
 package com.sayler.inz.gps.service;
 
+import java.util.Date;
+
 import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
@@ -12,6 +14,11 @@ import android.os.IBinder;
 import android.os.SystemClock;
 import android.util.Log;
 
+import com.sayler.inz.data.TrackDataProvider;
+import com.sayler.inz.database.DBSqliteOpenHelper;
+import com.sayler.inz.database.DaoHelper;
+import com.sayler.inz.database.model.Road;
+import com.sayler.inz.database.model.Track;
 import com.sayler.inz.gps.Database;
 import com.sayler.inz.gps.Tracks;
 
@@ -37,6 +44,9 @@ public class WorkoutService extends Service implements LocationListener {
 	// database
 	private Database gpsDb;
 	private long currentRoadId = -1;
+
+	// ORM
+	private Road currentRoad = null;
 
 	// static field
 	static boolean isRecording = false;
@@ -70,11 +80,11 @@ public class WorkoutService extends Service implements LocationListener {
 		locationManager = (LocationManager) this
 				.getSystemService(Context.LOCATION_SERVICE);
 
-		// immediately listen for location update - for fixing gps
+		// immediately listen for location update - for fixing GPS
 		locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER,
 				1000, 3, this);
 
-		// start gps status listener
+		// start GPS status listener
 		locationManager.addGpsStatusListener(mGPSListener);
 
 		// database
@@ -96,6 +106,11 @@ public class WorkoutService extends Service implements LocationListener {
 		// set road id
 		this.currentRoadId = e.currentRoadId;
 		// start recording tracks
+
+		// ORM
+		DaoHelper.setOpenHelper(this.getApplicationContext(),
+				DBSqliteOpenHelper.class);
+		this.currentRoad = e.currentRoad;
 
 		// reset variable
 		time = (long) System.currentTimeMillis();
@@ -134,7 +149,7 @@ public class WorkoutService extends Service implements LocationListener {
 
 		Log.d(TAG, "onEventRequestUpdateUI ");
 
-		// last UI update
+		// UI update
 		this.updateUI();
 
 	}
@@ -147,14 +162,14 @@ public class WorkoutService extends Service implements LocationListener {
 
 		mLastLocationMillis = SystemClock.elapsedRealtime();
 
-		// if not recording - do not bother about rest calc, but update UI
+		// if not recording - do not bother about rest calculations, but update
+		// UI
 		// (maybe gps've been fixed)
-		if (isRecording == false)
+		if (isRecording == false) {
+			this.updateUI();
 			return;
-		else
-			// Update ui
-			//this.updateUI();
 
+		}
 		// check accuracy
 		// TODO if accuracy < minimum_accuracy don't save track
 
@@ -182,10 +197,16 @@ public class WorkoutService extends Service implements LocationListener {
 				this.currentRoadId);
 		gpsDb.addTrack(track);
 
+		// ORM
+		Track trackOrm = new Track(lat, lng, alt, speed, time, this.currentRoad);
+		trackOrm.setCreatedAt(new Date());
+		TrackDataProvider trackData = new TrackDataProvider();
+		trackData.save(trackOrm);
+
 		// remember last location
 		mLastLocation = location;
 
-		// Update ui
+		// Update UI
 		this.updateUI();
 	}
 
@@ -194,7 +215,7 @@ public class WorkoutService extends Service implements LocationListener {
 		// send event to UPDATE UI
 		EventBus.getDefault().post(
 				new UpdateUiEvent(distance, time, isGpsFix, isRecording,
-						currentRoadId, lat, lng, accuracy));
+						currentRoadId, lat, lng, accuracy, currentRoad));
 	}
 
 	@Override
@@ -242,7 +263,7 @@ public class WorkoutService extends Service implements LocationListener {
 			default:
 				break;
 			}
-			//updateUI();
+			updateUI();
 		}
 	};
 
