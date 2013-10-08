@@ -35,7 +35,6 @@ public class TimerView extends TextView {
 
 			long milis = System.currentTimeMillis() - startTime;
 			setTime(elapsedTime);
-			// Log.d(this.getClass().toString(),"timer "+millis);
 			return false;
 		}
 	});
@@ -49,7 +48,7 @@ public class TimerView extends TextView {
 	};
 
 	public void start() {
-		Log.d(this.getClass().toString(), "start");
+		//Log.d(this.getClass().toString(), "start");
 		timer = new Timer();
 		startTime = System.currentTimeMillis();
 		timer.schedule(new TimeCounter(), 0, 500);
@@ -57,7 +56,7 @@ public class TimerView extends TextView {
 
 	public void start(long time) {
 		if (timer == null) {
-			Log.d(this.getClass().toString(), "start");
+			//Log.d(this.getClass().toString(), "start");
 			timer = new Timer();
 			startTime = time;
 			timer.schedule(new TimeCounter(), 0, 500);
@@ -65,7 +64,7 @@ public class TimerView extends TextView {
 	}
 
 	public void end() {
-		Log.d(this.getClass().toString(), "stop");
+		//Log.d(this.getClass().toString(), "stop");
 		if (timer != null) {
 			timer.cancel();
 			timer = null;
@@ -82,9 +81,9 @@ public class TimerView extends TextView {
 		int hours = (int) (seconds / 3600);
 		seconds = seconds % 60;
 		minutes = minutes % 60;
-		Log.d(TAG," "+seconds);
-		Log.d(TAG,String.format("%02d:%02d:%02d", hours,
-				minutes, seconds) );
+//		Log.d(TAG," "+seconds);
+//		Log.d(TAG,String.format("%02d:%02d:%02d", hours,
+//				minutes, seconds) );
 		TimerView.this.setText(String.format("%02d:%02d:%02d", hours,
 				minutes, seconds));
 		

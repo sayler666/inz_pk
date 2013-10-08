@@ -1,9 +1,13 @@
 package com.sayler.inz.history;
 
+import java.sql.SQLException;
+import java.util.List;
+
 import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -14,14 +18,16 @@ import android.widget.TextView;
 
 import com.actionbarsherlock.app.SherlockFragment;
 import com.sayler.inz.R;
+import com.sayler.inz.data.RoadDataProvider;
+import com.sayler.inz.database.DBSqliteOpenHelper;
+import com.sayler.inz.database.DaoHelper;
+import com.sayler.inz.database.model.Road;
 import com.sayler.inz.gps.Database;
 
 @SuppressLint("ShowToast")
 public class HistoryFragment extends SherlockFragment implements
 		OnItemClickListener {
 
-	private HistoryCursorAdapter customAdapter;
-	private Database gpsDb;
 	private ListView listView;
 
 	private static String TAG = "HistoryFragment"; 
@@ -33,9 +39,6 @@ public class HistoryFragment extends SherlockFragment implements
 		View view = inflater.inflate(R.layout.history_fragment, container,
 				false);
 
-		// database
-		gpsDb = new Database(getActivity());
-		
 		// listView
 		listView = (ListView) view.findViewById(R.id.listView);
 
@@ -43,9 +46,25 @@ public class HistoryFragment extends SherlockFragment implements
 		new Handler().post(new Runnable() {
 			@Override
 			public void run() {
-				customAdapter = new HistoryCursorAdapter(getActivity()
-						.getApplicationContext(), gpsDb.getAllRoads());
-				listView.setAdapter(customAdapter);
+
+				// ORM
+				DaoHelper.setOpenHelper(getActivity().getApplicationContext(),
+						DBSqliteOpenHelper.class);
+				RoadDataProvider roadData = new RoadDataProvider();
+				
+				try {
+					List<Road> roads = roadData.getAll();
+					for (Road r : roads) {
+						Log.d(TAG, r.toString());
+					}
+					
+					HistoryArrayAdapter arrayAdapter = new HistoryArrayAdapter(getActivity()
+							.getApplicationContext(), R.layout.history_row, roadData.getAll());
+					listView.setAdapter(arrayAdapter);
+				} catch (SQLException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
 			}
 		});
 

@@ -1,6 +1,7 @@
 package com.sayler.inz.data;
 
 import java.sql.SQLException;
+import java.util.List;
 
 import com.j256.ormlite.dao.Dao;
 import com.sayler.inz.database.DaoHelper;
@@ -17,13 +18,16 @@ public class RoadDataProvider extends DataProvider<Road> {
 		}
 		return null;
 	}
-	
-	
+
+	@Override
+	public List<Road> getAll() throws SQLException {
+
+		return dao.queryBuilder().orderBy("id", false).query();
+	}
 
 	@Override
 	public void postOnMainThread() {
-		
-		
+
 	}
 
 }

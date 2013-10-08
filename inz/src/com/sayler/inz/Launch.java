@@ -1,8 +1,8 @@
 package com.sayler.inz;
 
 import android.content.res.Configuration;
-import android.graphics.Color;
-import android.graphics.drawable.ColorDrawable;
+import android.graphics.drawable.Drawable;
+import android.graphics.drawable.GradientDrawable;
 import android.os.Bundle;
 import android.support.v4.app.ActionBarDrawerToggle;
 import android.support.v4.app.Fragment;
@@ -89,7 +89,8 @@ public class Launch extends SherlockFragmentActivity implements
 
 		getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 		getSupportActionBar().setHomeButtonEnabled(true);
-
+		
+		
 		// restore state
 		if (savedInstanceState == null) {
 

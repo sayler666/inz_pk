@@ -31,14 +31,14 @@ public class WelcomeFragment extends SherlockFragment {
 				false);
 
 		
-		DaoHelper.setOpenHelper(this.getActivity().getApplicationContext(),DBSqliteOpenHelper.class);
-		
-		TrackDataProvider trackData = new TrackDataProvider();
-		RoadDataProvider roadData = new RoadDataProvider();
-		
-		Road r1 = new Road(1,2,3,4);
-		
-		roadData.save(r1);
+//		DaoHelper.setOpenHelper(this.getActivity().getApplicationContext(),DBSqliteOpenHelper.class);
+//		
+//		TrackDataProvider trackData = new TrackDataProvider();
+//		RoadDataProvider roadData = new RoadDataProvider();
+//		
+//		Road r1 = new Road(1,2,3,4);
+//		
+//		roadData.save(r1);
 		
 //		Track t1 = new Track(1,2,3,4,5,r1);
 //		Track t2 = new Track(1,2,3,4,5,r1);

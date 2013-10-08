@@ -1094,9 +1094,11 @@ containing a value of this type.
         public static final int common_signin_btn_text_pressed_dark=0x7f020088;
         public static final int common_signin_btn_text_pressed_light=0x7f020089;
         public static final int drawer_shadow=0x7f02008a;
-        public static final int ic_drawer=0x7f02008b;
-        public static final int ic_launcher=0x7f02008c;
-        public static final int trening=0x7f02008d;
+        public static final int history_divider=0x7f02008b;
+        public static final int ic_drawer=0x7f02008c;
+        public static final int ic_launcher=0x7f02008d;
+        public static final int menu_gradient=0x7f02008e;
+        public static final int trening=0x7f02008f;
     }
     public static final class id {
         public static final int abs__action_bar=0x7f0a0024;

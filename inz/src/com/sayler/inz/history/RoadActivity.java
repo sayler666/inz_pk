@@ -1,10 +1,10 @@
 package com.sayler.inz.history;
 
+import java.sql.SQLException;
+
 import android.content.Intent;
-import android.database.Cursor;
 import android.graphics.Color;
 import android.os.Bundle;
-import android.util.Log;
 import android.widget.TextView;
 
 import com.actionbarsherlock.app.ActionBar;
@@ -13,23 +13,23 @@ import com.actionbarsherlock.view.MenuItem;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.GoogleMap.OnCameraChangeListener;
-import com.google.android.gms.maps.GoogleMapOptions;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.LatLngBounds;
 import com.google.android.gms.maps.model.PolylineOptions;
 import com.sayler.inz.R;
-import com.sayler.inz.gps.Database;
-import com.sayler.inz.gps.Roads;
+import com.sayler.inz.data.RoadDataProvider;
+import com.sayler.inz.database.DBSqliteOpenHelper;
+import com.sayler.inz.database.DaoHelper;
+import com.sayler.inz.database.model.Road;
+import com.sayler.inz.database.model.Track;
 import com.sayler.inz.gps.TimerView;
-import com.sayler.inz.gps.Tracks;
 
 public class RoadActivity extends SherlockFragmentActivity {
 	private GoogleMap map;
 
 	private static String TAG = "RoadActivity";
-	private Database db;
 	private long roadId;
 
 	private TextView distanceTextView;
@@ -48,12 +48,6 @@ public class RoadActivity extends SherlockFragmentActivity {
 		Intent intent = getIntent();
 		roadId = intent.getLongExtra("roadId", 0);
 
-		// database
-		db = new Database(this);
-
-		// get road gps tracks
-		final Cursor roadCur = db.getRoadById(roadId);
-
 		// draw road on map
 		PolylineOptions roadLine = new PolylineOptions().width(5).color(
 				Color.RED);
@@ -61,62 +55,56 @@ public class RoadActivity extends SherlockFragmentActivity {
 		// bounds - need to center map over road
 		final LatLngBounds.Builder bc = new LatLngBounds.Builder();
 
-		// get latlng from Cursor
-		while (roadCur.moveToNext()) {
-			double lat = roadCur.getDouble(roadCur
-					.getColumnIndex(Tracks.COLUMN_LAT));
-			double lng = roadCur.getDouble(roadCur
-					.getColumnIndex(Tracks.COLUMN_LNG));
-
-			LatLng ll = new LatLng(lat, lng);
-
-			roadLine.add(ll);
-			bc.include(ll);
-		}
-
-		// maps stuff
-		//GoogleMapOptions op = new GoogleMapOptions();
-		//op.camera(new CameraPosition(new LatLng(50.1243, 19.1243), 11, 0, 0));
-		map = ((SupportMapFragment) getSupportFragmentManager()
-				.findFragmentById(R.id.map)).getMap();
-		map.addPolyline(roadLine);
-		map.setOnCameraChangeListener(new OnCameraChangeListener() {
-
-			@Override
-			public void onCameraChange(CameraPosition position) {
-				if (roadCur.getCount() > 0) {
-					// Move camera
-					map.moveCamera(CameraUpdateFactory.newLatLngBounds(
-							bc.build(), 50));
-					// Remove listener to prevent position reset on camera move.
-					map.setOnCameraChangeListener(null);
-				}
-
-			}
-		});
-
-		// action bar back
-		ActionBar ab = getSupportActionBar();
-		ab.setDisplayHomeAsUpEnabled(true);
-
-		// road info
-		roadCur.moveToFirst();
-
-		distanceTextView = (TextView) findViewById(R.id.distanceTextView);
-		caloriesTextView = (TextView) findViewById(R.id.caloriesTextView);
-		timerView = (TimerView) findViewById(R.id.timerView1);
+		// ORM
+		DaoHelper.setOpenHelper(getApplicationContext(),
+				DBSqliteOpenHelper.class);
+		RoadDataProvider roadData = new RoadDataProvider();
 
 		try {
-			timerView.setTime((long) roadCur.getDouble(roadCur
-					.getColumnIndex(Roads.COLUMN_DURATION)));
-			caloriesTextView.setText(roadCur.getDouble(roadCur
-					.getColumnIndex(Roads.COLUMN_CALORIES)) + " kcal");
-			distanceTextView.setText(Math.round(roadCur.getDouble(roadCur
-					.getColumnIndex(Roads.COLUMN_DISTANCE))*100)/100.d + " m");
+			final Road road = roadData.get(roadId);
 
-		} catch (Exception e) {
-			Log.d(TAG, "exception");
-			e.printStackTrace();
+			for (Track t : road.getTracks()) {
+				LatLng ll = new LatLng(t.getLat(), t.getLng());
+				roadLine.add(ll);
+				bc.include(ll);
+			}
+
+			// maps stuff
+			map = ((SupportMapFragment) getSupportFragmentManager()
+					.findFragmentById(R.id.map)).getMap();
+			map.addPolyline(roadLine);
+			map.setOnCameraChangeListener(new OnCameraChangeListener() {
+
+				@Override
+				public void onCameraChange(CameraPosition position) {
+					if (road.getTracks().size() > 0) {
+						// Move camera
+						map.moveCamera(CameraUpdateFactory.newLatLngBounds(
+								bc.build(), 50));
+						// Remove listener to prevent position reset on camera
+						// move.
+						map.setOnCameraChangeListener(null);
+					}
+
+				}
+			});
+
+			// action bar back
+			ActionBar ab = getSupportActionBar();
+			ab.setDisplayHomeAsUpEnabled(true);
+
+			// road info
+
+			distanceTextView = (TextView) findViewById(R.id.distanceTextView);
+			caloriesTextView = (TextView) findViewById(R.id.caloriesTextView);
+			timerView = (TimerView) findViewById(R.id.timerView1);
+
+			timerView.setTime((long) road.getDuration());
+			caloriesTextView.setText(road.getCalories() + " kcal");
+			distanceTextView.setText(Math.round(road.getDistance() * 100)
+					/ 100.d + " m");
+		} catch (SQLException e1) {
+			e1.printStackTrace();
 		}
 
 	}
@@ -126,7 +114,7 @@ public class RoadActivity extends SherlockFragmentActivity {
 		switch (item.getItemId()) {
 		case android.R.id.home:
 			this.onBackPressed();
-			
+
 			return true;
 		}
 		return super.onOptionsItemSelected(item);

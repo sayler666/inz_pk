@@ -1,6 +1,8 @@
 package com.sayler.inz.gps;
 
+import java.sql.SQLException;
 import java.util.Date;
+import java.util.List;
 
 import android.content.Context;
 import android.content.Intent;
@@ -38,10 +40,10 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.PolylineOptions;
 import com.sayler.inz.R;
 import com.sayler.inz.data.RoadDataProvider;
-import com.sayler.inz.data.TrackDataProvider;
 import com.sayler.inz.database.DBSqliteOpenHelper;
 import com.sayler.inz.database.DaoHelper;
 import com.sayler.inz.database.model.Road;
+import com.sayler.inz.database.model.Track;
 import com.sayler.inz.gps.EndRecordingDialog.EndRecordingDialogListener;
 import com.sayler.inz.gps.GpsNotFixedDialog.GpsNotFixedDialogListener;
 import com.sayler.inz.gps.TurnOnGpsDialog.TurnOnGpsDialogListener;
@@ -79,7 +81,8 @@ public class GpsFragment extends SherlockFragment implements OnClickListener,
 
 	private long currentRoadId = -1;
 	// ORM
-	private Road currentRoad=null;
+	private Road currentRoad = null;
+	private RoadDataProvider roadData = null;
 
 	private Button startButton;
 	private Button endButton;
@@ -113,10 +116,10 @@ public class GpsFragment extends SherlockFragment implements OnClickListener,
 			Bundle savedInstanceState) {
 		View view = inflater.inflate(R.layout.gps_fragment, container, false);
 
-		//FragmentManager
+		// FragmentManager
 		fm = getSherlockActivity().getSupportFragmentManager();
-		
-		//views
+
+		// views
 		gpsStatusView = (TextView) view.findViewById(R.id.gpsStatusText);
 		distanceTextView = (TextView) view.findViewById(R.id.distanceTextView);
 		caloriesTextView = (TextView) view.findViewById(R.id.caloriesTextView);
@@ -124,8 +127,8 @@ public class GpsFragment extends SherlockFragment implements OnClickListener,
 		timerView = (TimerView) view.findViewById(R.id.timerView1);
 		startButton = (Button) view.findViewById(R.id.startButton);
 		endButton = (Button) view.findViewById(R.id.endButton);
-		
-		//buttons
+
+		// buttons
 		startButton.setOnClickListener(this);
 		endButton.setOnClickListener(this);
 
@@ -159,7 +162,9 @@ public class GpsFragment extends SherlockFragment implements OnClickListener,
 		// instance of Database
 		gpsDb = new Database(getActivity().getApplicationContext());
 		// ORM
-		DaoHelper.setOpenHelper(this.getActivity().getApplicationContext(),DBSqliteOpenHelper.class);
+		DaoHelper.setOpenHelper(this.getActivity().getApplicationContext(),
+				DBSqliteOpenHelper.class);
+		roadData = new RoadDataProvider();
 
 		// is service is NOT running
 		if (!WorkoutService.isRunning()) {
@@ -182,7 +187,7 @@ public class GpsFragment extends SherlockFragment implements OnClickListener,
 		}
 		mapFragment = (SupportMapFragment) getChildFragmentManager()
 				.findFragmentById(R.id.linearLayoutMap);
-		
+
 		// when everything else is set request for event
 		// register event bus
 		try {
@@ -195,9 +200,9 @@ public class GpsFragment extends SherlockFragment implements OnClickListener,
 
 		return view;
 	}
-	
-	public void setUpViews(){
-		
+
+	public void setUpViews() {
+
 	}
 
 	@Override
@@ -230,8 +235,6 @@ public class GpsFragment extends SherlockFragment implements OnClickListener,
 
 	}
 
-	private PolylineOptions roadLineSoFar;
-
 	// UpdateUI event
 	// if service is recording when user start activity with this fragment
 	public void onEventMainThread(final UpdateUiEvent e) {
@@ -245,7 +248,7 @@ public class GpsFragment extends SherlockFragment implements OnClickListener,
 
 			// ORM
 			this.currentRoad = e.currentRoad;
-			
+
 			// set timer view
 			this.timerView.start(e.time);
 
@@ -268,35 +271,28 @@ public class GpsFragment extends SherlockFragment implements OnClickListener,
 			// get map object
 			map = mapFragment.getMap();
 
-			// draw road so far
+			// if map has been created
 			if (map == null) {
 				Log.d(TAG, "nie ma mapki");
-
-				// get road gps tracks of road so far
-				final Cursor roadCur = gpsDb
-						.getRoadSoFarById(this.currentRoadId);
-
-				// draw road on map
-				roadLineSoFar = new PolylineOptions().width(5).color(Color.RED);
-
-				// get latlng from Cursor
-				while (roadCur.moveToNext()) {
-					double lat = roadCur.getDouble(roadCur
-							.getColumnIndex(Tracks.COLUMN_LAT));
-					double lng = roadCur.getDouble(roadCur
-							.getColumnIndex(Tracks.COLUMN_LNG));
-					LatLng ll = new LatLng(lat, lng);
-					roadLineSoFar.add(ll);
-				}
-
 				return;
-			} else {
-				if (roadLineSoFar != null) {
-					map.addPolyline(roadLineSoFar);
-					roadLineSoFar = null;
-				}
-
 			}
+			
+			// draw road on map
+			PolylineOptions roadLineSoFar = new PolylineOptions().width(5).color(Color.RED);
+
+			// ORM
+			// get road gps tracks of road so far
+			Road rsf;
+			try {
+				rsf = roadData.get(currentRoad.getId());
+				List<Track> tracksSoFar = rsf.getTracks();
+				for (Track t : tracksSoFar) {
+					roadLineSoFar.add(new LatLng(t.getLat(), t.getLng()));
+				}
+			} catch (SQLException e1) {
+				e1.printStackTrace();
+			}
+			map.addPolyline(roadLineSoFar);
 
 			// move map camera
 			float zoomLevel = 16.0f;
@@ -308,25 +304,14 @@ public class GpsFragment extends SherlockFragment implements OnClickListener,
 							e.lng), zoomLevel, 0, 0)));
 
 			// add accuracy circle
-			CircleOptions circ_opt = new CircleOptions().radius(e.accuracy)
+			CircleOptions circOpt = new CircleOptions().radius(e.accuracy)
 					.fillColor(Color.argb(150, 0, 0, 250)).strokeWidth(2)
 					.strokeColor(Color.argb(250, 0, 0, 250))
 					.center(new LatLng(e.lat, e.lng));
 
-			// add road so far
-			PolylineOptions roadLine = new PolylineOptions().width(5).color(
-					Color.RED);
-
-			// draw line
-			if (lastLatLng != null) {
-				roadLine.add(lastLatLng);
-				roadLine.add(new LatLng(e.lat, e.lng));
-				map.addPolyline(roadLine);
-			}
-
 			// draw accuracy circle (or move it)
 			if (circle == null) {
-				circle = map.addCircle(circ_opt);
+				circle = map.addCircle(circOpt);
 			} else {
 				circle.setRadius(e.accuracy);
 				circle.setCenter(new LatLng(e.lat, e.lng));
@@ -368,14 +353,14 @@ public class GpsFragment extends SherlockFragment implements OnClickListener,
 		// ORM
 		this.currentRoad = new Road();
 		this.currentRoad.setCreatedAt(new Date());
-		RoadDataProvider roadData = new RoadDataProvider();
 		roadData.save(this.currentRoad);
-		
+
 		// start timer
 		timerView.start();
 
 		// start recording in service
-		EventBus.getDefault().post(new StartRecordingEvent(currentRoadId,currentRoad));
+		EventBus.getDefault().post(
+				new StartRecordingEvent(currentRoadId, currentRoad));
 
 		this.recording(true);
 	}
@@ -406,17 +391,16 @@ public class GpsFragment extends SherlockFragment implements OnClickListener,
 
 		// ORM
 		this.currentRoad.setAvg_speed(avg_speed);
-		this.currentRoad.setCalories((int)calories);
+		this.currentRoad.setCalories((int) calories);
 		this.currentRoad.setDistance(distance);
 		this.currentRoad.setDuration(time);
-		
-		RoadDataProvider roadData = new RoadDataProvider();
+
 		roadData.save(this.currentRoad);
-		
+
 		// start Road activity - show the road
 		Intent roadActivityIntent = new Intent(getActivity(),
 				RoadActivity.class);
-		roadActivityIntent.putExtra("roadId", this.currentRoadId);
+		roadActivityIntent.putExtra("roadId", this.currentRoad.getId());
 		startActivity(roadActivityIntent);
 		getActivity().overridePendingTransition(R.animator.left_to_right_show,
 				R.animator.left_to_right_hide);
@@ -497,7 +481,7 @@ public class GpsFragment extends SherlockFragment implements OnClickListener,
 
 	public void loadPrefs() {
 		// set previously chosen sport
-		String sportClassName = sharedPref.getString("chosen_sport", "");
+		String sportClassName = sharedPref.getString("chosen_sport", "com.sayler.inz.gps.sports.Running");
 		// change sport
 		this.changeSport(sportClassName);
 	}
