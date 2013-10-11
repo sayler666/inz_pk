@@ -1098,7 +1098,10 @@ containing a value of this type.
         public static final int ic_drawer=0x7f02008c;
         public static final int ic_launcher=0x7f02008d;
         public static final int menu_gradient=0x7f02008e;
-        public static final int trening=0x7f02008f;
+        public static final int menu_row_active_gradient=0x7f02008f;
+        public static final int menu_row_hover_gradient=0x7f020090;
+        public static final int menu_selector=0x7f020091;
+        public static final int trening=0x7f020092;
     }
     public static final class id {
         public static final int abs__action_bar=0x7f0a0024;
@@ -1399,6 +1402,7 @@ containing a value of this type.
         Base application theme for API 14+. This theme completely replaces
         AppBaseTheme from BOTH res/values/styles.xml and
         res/values-v11/styles.xml on API 14+ devices.
+
     
  API 14 theme customizations can go here. 
          */
@@ -1444,12 +1448,14 @@ containing a value of this type.
         public static final int TextAppearance_Sherlock_Widget_PopupMenu_Large=0x7f0c0040;
         public static final int TextAppearance_Sherlock_Widget_PopupMenu_Small=0x7f0c0042;
         public static final int TextAppearance_Sherlock_Widget_TextView_SpinnerItem=0x7f0c0044;
+        public static final int Theme_MyTheme=0x7f0c005b;
         public static final int Theme_Sherlock=0x7f0c0054;
         public static final int Theme_Sherlock_Light=0x7f0c0055;
         public static final int Theme_Sherlock_Light_DarkActionBar=0x7f0c0056;
         public static final int Theme_Sherlock_Light_NoActionBar=0x7f0c0058;
         public static final int Theme_Sherlock_NoActionBar=0x7f0c0057;
         public static final int Widget=0x7f0c0000;
+        public static final int Widget_MyTheme_ActionBar=0x7f0c005c;
         public static final int Widget_Sherlock_ActionBar=0x7f0c0002;
         public static final int Widget_Sherlock_ActionBar_Solid=0x7f0c0003;
         public static final int Widget_Sherlock_ActionBar_TabBar=0x7f0c000a;

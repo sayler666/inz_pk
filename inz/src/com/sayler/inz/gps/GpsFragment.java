@@ -8,7 +8,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
-import android.database.Cursor;
 import android.graphics.Color;
 import android.location.LocationManager;
 import android.os.Bundle;
@@ -77,9 +76,6 @@ public class GpsFragment extends SherlockFragment implements OnClickListener,
 	private float distance = 0;
 	private float calories = 0;
 
-	private Database gpsDb;
-
-	private long currentRoadId = -1;
 	// ORM
 	private Road currentRoad = null;
 	private RoadDataProvider roadData = null;
@@ -159,8 +155,7 @@ public class GpsFragment extends SherlockFragment implements OnClickListener,
 			gpsTurnOnDialog.show(fm, "turn_on_gps");
 		}
 
-		// instance of Database
-		gpsDb = new Database(getActivity().getApplicationContext());
+
 		// ORM
 		DaoHelper.setOpenHelper(this.getActivity().getApplicationContext(),
 				DBSqliteOpenHelper.class);
@@ -262,9 +257,6 @@ public class GpsFragment extends SherlockFragment implements OnClickListener,
 			// update calories view
 			caloriesTextView.setText(String.format("%.0f kcal", calories));
 
-			// roadId from service
-			this.currentRoadId = e.currentRoadId;
-
 			// update variable
 			distance = e.distance;
 
@@ -348,8 +340,7 @@ public class GpsFragment extends SherlockFragment implements OnClickListener,
 	// if user start recording manually
 	public void startRecording() {
 
-		// generate new road id (highest id + 1)
-		currentRoadId = gpsDb.getNexRoadId();
+
 		// ORM
 		this.currentRoad = new Road();
 		this.currentRoad.setCreatedAt(new Date());
@@ -360,7 +351,7 @@ public class GpsFragment extends SherlockFragment implements OnClickListener,
 
 		// start recording in service
 		EventBus.getDefault().post(
-				new StartRecordingEvent(currentRoadId, currentRoad));
+				new StartRecordingEvent(currentRoad));
 
 		this.recording(true);
 	}
@@ -385,9 +376,6 @@ public class GpsFragment extends SherlockFragment implements OnClickListener,
 		// save roads details into Roads table
 		int time = timerView.getElapsedTime();
 		double avg_speed = (distance / 1000.0) / (time / 3600.0);
-		Roads newRoad = new Roads(distance, time, avg_speed, (int) calories,
-				this.currentRoadId);
-		gpsDb.addRoad(newRoad);
 
 		// ORM
 		this.currentRoad.setAvg_speed(avg_speed);

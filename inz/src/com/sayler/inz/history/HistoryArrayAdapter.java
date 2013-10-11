@@ -48,7 +48,7 @@ public class HistoryArrayAdapter extends ArrayAdapter<Road> {
     		TextView textViewRoadId = (TextView) view
     				.findViewById(R.id.road_id);
     		textViewRoadId.setText(String.valueOf(item.getId()));
-        	Log.d("HistoryFragment","row id"+item.getId());
+        	
          }
 
         return view;

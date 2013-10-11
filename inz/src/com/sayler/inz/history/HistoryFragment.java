@@ -22,7 +22,6 @@ import com.sayler.inz.data.RoadDataProvider;
 import com.sayler.inz.database.DBSqliteOpenHelper;
 import com.sayler.inz.database.DaoHelper;
 import com.sayler.inz.database.model.Road;
-import com.sayler.inz.gps.Database;
 
 @SuppressLint("ShowToast")
 public class HistoryFragment extends SherlockFragment implements

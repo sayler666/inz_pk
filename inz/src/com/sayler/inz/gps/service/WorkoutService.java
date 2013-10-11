@@ -19,8 +19,6 @@ import com.sayler.inz.database.DBSqliteOpenHelper;
 import com.sayler.inz.database.DaoHelper;
 import com.sayler.inz.database.model.Road;
 import com.sayler.inz.database.model.Track;
-import com.sayler.inz.gps.Database;
-import com.sayler.inz.gps.Tracks;
 
 import de.greenrobot.event.EventBus;
 
@@ -41,10 +39,6 @@ public class WorkoutService extends Service implements LocationListener {
 	private double lat, lng;
 	private float accuracy;
 
-	// database
-	private Database gpsDb;
-	private long currentRoadId = -1;
-
 	// ORM
 	private Road currentRoad = null;
 
@@ -58,7 +52,7 @@ public class WorkoutService extends Service implements LocationListener {
 	private final int minimumAccuracy = 20;
 
 	/**
-	 * if recording tarcks
+	 * if recording track
 	 */
 	public static boolean isRecording() {
 		return isRecording;
@@ -87,8 +81,9 @@ public class WorkoutService extends Service implements LocationListener {
 		// start GPS status listener
 		locationManager.addGpsStatusListener(mGPSListener);
 
-		// database
-		gpsDb = new Database(this.getApplicationContext());
+		// ORM
+		DaoHelper.setOpenHelper(this.getApplicationContext(),
+				DBSqliteOpenHelper.class);
 
 		// register event bus
 		EventBus.getDefault().register(this);
@@ -103,18 +98,13 @@ public class WorkoutService extends Service implements LocationListener {
 	 *            contains currentRoadId
 	 */
 	public void onEvent(StartRecordingEvent e) {
-		// set road id
-		this.currentRoadId = e.currentRoadId;
+
 		// start recording tracks
 
-		// ORM
-		DaoHelper.setOpenHelper(this.getApplicationContext(),
-				DBSqliteOpenHelper.class);
 		this.currentRoad = e.currentRoad;
 
 		// reset variable
 		time = (long) System.currentTimeMillis();
-		Log.d(TAG, "onEvent start recording " + currentRoadId);
 		distance = 0;
 
 		// recording is on
@@ -129,8 +119,6 @@ public class WorkoutService extends Service implements LocationListener {
 	 *            empty
 	 */
 	public void onEvent(StopRecordingEvent e) {
-
-		Log.d(TAG, "onEvent stop recording " + currentRoadId);
 
 		// stop recording
 		isRecording = false;
@@ -190,13 +178,6 @@ public class WorkoutService extends Service implements LocationListener {
 			distance += results[0];
 		}
 
-		//
-		// Database
-		// save track to database
-		Tracks track = new Tracks(lat, lng, alt, speed, time,
-				this.currentRoadId);
-		gpsDb.addTrack(track);
-
 		// ORM
 		Track trackOrm = new Track(lat, lng, alt, speed, time, this.currentRoad);
 		trackOrm.setCreatedAt(new Date());
@@ -214,8 +195,7 @@ public class WorkoutService extends Service implements LocationListener {
 
 		// send event to UPDATE UI
 		EventBus.getDefault().post(
-				new UpdateUiEvent(distance, time, isGpsFix, isRecording,
-						currentRoadId, lat, lng, accuracy, currentRoad));
+				new UpdateUiEvent(distance, time, isGpsFix, isRecording, lat, lng, accuracy, currentRoad));
 	}
 
 	@Override
@@ -225,7 +205,6 @@ public class WorkoutService extends Service implements LocationListener {
 
 	@Override
 	public void onDestroy() {
-		Log.d(TAG, "onDestroy" + " idRoad " + currentRoadId);
 		locationManager.removeUpdates(this);
 		super.onDestroy();
 	}

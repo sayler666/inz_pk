@@ -4,7 +4,7 @@ import com.sayler.inz.database.model.Road;
 
 public class UpdateUiEvent {
 	public float distance;
-	public long time, currentRoadId;
+	public long time;
 	public boolean isGpsFixed;
 	public boolean isRecording;
 	public double lat;
@@ -13,13 +13,12 @@ public class UpdateUiEvent {
 	public Road currentRoad;
 
 	public UpdateUiEvent(float distance, long time, boolean isGpsFixed,
-			boolean isRecording, long currentRoadId, double lat, double lng,
+			boolean isRecording, double lat, double lng,
 			float accuracy, Road currentRoad) {
 		this.distance = distance;
 		this.time = time;
 		this.isGpsFixed = isGpsFixed;
 		this.isRecording = isRecording;
-		this.currentRoadId = currentRoadId;
 		this.lat = lat;
 		this.lng = lng;
 		this.accuracy = accuracy;

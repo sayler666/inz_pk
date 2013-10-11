@@ -1,6 +1,8 @@
 package com.sayler.inz;
 
 import android.content.res.Configuration;
+import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.Drawable;
 import android.graphics.drawable.GradientDrawable;
 import android.os.Bundle;
@@ -89,7 +91,7 @@ public class Launch extends SherlockFragmentActivity implements
 
 		getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 		getSupportActionBar().setHomeButtonEnabled(true);
-		
+		//getSupportActionBar().setBackgroundDrawable(new ColorDrawable(Color.rgb(82,171,43)));
 		
 		// restore state
 		if (savedInstanceState == null) {
