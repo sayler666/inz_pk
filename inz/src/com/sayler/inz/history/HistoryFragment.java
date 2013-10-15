@@ -17,6 +17,9 @@ import android.widget.ListView;
 import android.widget.TextView;
 
 import com.actionbarsherlock.app.SherlockFragment;
+import com.actionbarsherlock.view.Menu;
+import com.actionbarsherlock.view.MenuInflater;
+import com.actionbarsherlock.view.MenuItem;
 import com.sayler.inz.R;
 import com.sayler.inz.data.RoadDataProvider;
 import com.sayler.inz.database.DBSqliteOpenHelper;
@@ -29,15 +32,17 @@ public class HistoryFragment extends SherlockFragment implements
 
 	private ListView listView;
 
-	private static String TAG = "HistoryFragment"; 
-	
+	private static String TAG = "HistoryFragment";
+
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
 			Bundle savedInstanceState) {
 
 		View view = inflater.inflate(R.layout.history_fragment, container,
 				false);
-
+		
+		setHasOptionsMenu(true);
+		
 		// listView
 		listView = (ListView) view.findViewById(R.id.listView);
 
@@ -50,15 +55,16 @@ public class HistoryFragment extends SherlockFragment implements
 				DaoHelper.setOpenHelper(getActivity().getApplicationContext(),
 						DBSqliteOpenHelper.class);
 				RoadDataProvider roadData = new RoadDataProvider();
-				
+
 				try {
 					List<Road> roads = roadData.getAll();
 					for (Road r : roads) {
 						Log.d(TAG, r.toString());
 					}
-					
-					HistoryArrayAdapter arrayAdapter = new HistoryArrayAdapter(getActivity()
-							.getApplicationContext(), R.layout.history_row, roadData.getAll());
+
+					HistoryArrayAdapter arrayAdapter = new HistoryArrayAdapter(
+							getActivity().getApplicationContext(),
+							R.layout.history_row, roadData.getAll());
 					listView.setAdapter(arrayAdapter);
 				} catch (SQLException e) {
 					// TODO Auto-generated catch block
@@ -84,8 +90,25 @@ public class HistoryFragment extends SherlockFragment implements
 				RoadActivity.class);
 		roadActivityIntent.putExtra("roadId", roadId);
 		startActivity(roadActivityIntent);
-		getActivity().overridePendingTransition(R.animator.left_to_right_show, R.animator.left_to_right_hide);
+		getActivity().overridePendingTransition(R.animator.left_to_right_show,
+				R.animator.left_to_right_hide);
 
+	}
+
+	@Override
+	public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+		Log.d(TAG, "menu?");
+		inflater.inflate(R.menu.history_menu, menu);
+		super.onCreateOptionsMenu(menu, inflater);
+	}
+
+	@Override
+	public boolean onOptionsItemSelected(MenuItem item) {
+		Log.d(TAG,
+				"context item selected" + item.getTitle() + " "
+						+ item.getItemId());
+
+		return super.onOptionsItemSelected(item);
 	}
 
 }

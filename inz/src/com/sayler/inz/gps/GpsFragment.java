@@ -155,7 +155,6 @@ public class GpsFragment extends SherlockFragment implements OnClickListener,
 			gpsTurnOnDialog.show(fm, "turn_on_gps");
 		}
 
-
 		// ORM
 		DaoHelper.setOpenHelper(this.getActivity().getApplicationContext(),
 				DBSqliteOpenHelper.class);
@@ -194,10 +193,6 @@ public class GpsFragment extends SherlockFragment implements OnClickListener,
 		}
 
 		return view;
-	}
-
-	public void setUpViews() {
-
 	}
 
 	@Override
@@ -268,9 +263,10 @@ public class GpsFragment extends SherlockFragment implements OnClickListener,
 				Log.d(TAG, "nie ma mapki");
 				return;
 			}
-			
+
 			// draw road on map
-			PolylineOptions roadLineSoFar = new PolylineOptions().width(5).color(Color.RED);
+			PolylineOptions roadLineSoFar = new PolylineOptions().width(5)
+					.color(Color.RED);
 
 			// ORM
 			// get road gps tracks of road so far
@@ -340,7 +336,6 @@ public class GpsFragment extends SherlockFragment implements OnClickListener,
 	// if user start recording manually
 	public void startRecording() {
 
-
 		// ORM
 		this.currentRoad = new Road();
 		this.currentRoad.setCreatedAt(new Date());
@@ -350,8 +345,7 @@ public class GpsFragment extends SherlockFragment implements OnClickListener,
 		timerView.start();
 
 		// start recording in service
-		EventBus.getDefault().post(
-				new StartRecordingEvent(currentRoad));
+		EventBus.getDefault().post(new StartRecordingEvent(currentRoad));
 
 		this.recording(true);
 	}
@@ -408,6 +402,12 @@ public class GpsFragment extends SherlockFragment implements OnClickListener,
 	@Override
 	public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
 
+		// have to be done here because it seems like onCreateOptionsMenu is
+		// fired before onCreateView on some Androids (like G S2)
+		sportsList = getResources().getStringArray(R.array.sports_list);
+		sportsClasses = getResources().getStringArray(R.array.sports_classes);
+
+		Log.d(TAG, "sport list: " + sportsList.toString());
 		// create menu with sports to choose
 		SubMenu sportsMenu = menu.addSubMenu(Menu.NONE, -1, Menu.NONE,
 				R.string.sports_title);
@@ -424,7 +424,7 @@ public class GpsFragment extends SherlockFragment implements OnClickListener,
 
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
-		Log.d(this.getClass().toString(),
+		Log.d(TAG,
 				"context item selected" + item.getTitle() + " "
 						+ item.getItemId());
 		// if sport chosen
@@ -469,7 +469,8 @@ public class GpsFragment extends SherlockFragment implements OnClickListener,
 
 	public void loadPrefs() {
 		// set previously chosen sport
-		String sportClassName = sharedPref.getString("chosen_sport", "com.sayler.inz.gps.sports.Running");
+		String sportClassName = sharedPref.getString("chosen_sport",
+				"com.sayler.inz.gps.sports.Running");
 		// change sport
 		this.changeSport(sportClassName);
 	}

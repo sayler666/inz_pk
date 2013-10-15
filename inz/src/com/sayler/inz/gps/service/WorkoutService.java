@@ -76,7 +76,7 @@ public class WorkoutService extends Service implements LocationListener {
 
 		// immediately listen for location update - for fixing GPS
 		locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER,
-				1000, 3, this);
+				1000, 1, this);
 
 		// start GPS status listener
 		locationManager.addGpsStatusListener(mGPSListener);
@@ -99,8 +99,7 @@ public class WorkoutService extends Service implements LocationListener {
 	 */
 	public void onEvent(StartRecordingEvent e) {
 
-		// start recording tracks
-
+		// current road instance
 		this.currentRoad = e.currentRoad;
 
 		// reset variable
@@ -144,6 +143,7 @@ public class WorkoutService extends Service implements LocationListener {
 
 	@Override
 	public void onLocationChanged(Location location) {
+		Log.d(TAG, "location changed ");
 		// GPS fixing stuff
 		if (location == null)
 			return;
@@ -151,13 +151,13 @@ public class WorkoutService extends Service implements LocationListener {
 		mLastLocationMillis = SystemClock.elapsedRealtime();
 
 		// if not recording - do not bother about rest calculations, but update
-		// UI
-		// (maybe gps've been fixed)
+		// UI (maybe gps've been fixed)
 		if (isRecording == false) {
 			this.updateUI();
 			return;
 
 		}
+
 		// check accuracy
 		// TODO if accuracy < minimum_accuracy don't save track
 
@@ -195,7 +195,8 @@ public class WorkoutService extends Service implements LocationListener {
 
 		// send event to UPDATE UI
 		EventBus.getDefault().post(
-				new UpdateUiEvent(distance, time, isGpsFix, isRecording, lat, lng, accuracy, currentRoad));
+				new UpdateUiEvent(distance, time, isGpsFix, isRecording, lat,
+						lng, accuracy, currentRoad));
 	}
 
 	@Override
@@ -235,8 +236,10 @@ public class WorkoutService extends Service implements LocationListener {
 
 				break;
 			case GpsStatus.GPS_EVENT_SATELLITE_STATUS:
-				if (mLastLocation != null)
+				if (mLastLocation != null) {
 					isGpsFix = (SystemClock.elapsedRealtime() - mLastLocationMillis) < 3000;
+					Log.d(TAG, "GPS SATELLITE STATUS : " + isGpsFix);
+				}
 
 				break;
 			default:

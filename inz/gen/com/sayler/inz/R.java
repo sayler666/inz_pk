@@ -1097,11 +1097,12 @@ containing a value of this type.
         public static final int history_divider=0x7f02008b;
         public static final int ic_drawer=0x7f02008c;
         public static final int ic_launcher=0x7f02008d;
-        public static final int menu_gradient=0x7f02008e;
-        public static final int menu_row_active_gradient=0x7f02008f;
-        public static final int menu_row_hover_gradient=0x7f020090;
-        public static final int menu_selector=0x7f020091;
-        public static final int trening=0x7f020092;
+        public static final int import_gpx=0x7f02008e;
+        public static final int menu_gradient=0x7f02008f;
+        public static final int menu_row_active_gradient=0x7f020090;
+        public static final int menu_row_hover_gradient=0x7f020091;
+        public static final int menu_selector=0x7f020092;
+        public static final int trening=0x7f020093;
     }
     public static final class id {
         public static final int abs__action_bar=0x7f0a0024;
@@ -1143,7 +1144,7 @@ containing a value of this type.
         public static final int abs__textButton=0x7f0a0017;
         public static final int abs__title=0x7f0a001f;
         public static final int abs__up=0x7f0a000f;
-        public static final int action_settings=0x7f0a0050;
+        public static final int action_settings=0x7f0a0051;
         public static final int back_button=0x7f0a004c;
         public static final int button_bar=0x7f0a004b;
         public static final int caloriesTextView=0x7f0a0041;
@@ -1158,6 +1159,7 @@ containing a value of this type.
         public static final int homeAsUp=0x7f0a000a;
         public static final int hybrid=0x7f0a0004;
         public static final int icon=0x7f0a004a;
+        public static final int import_gpx=0x7f0a0050;
         public static final int left_drawer=0x7f0a0038;
         public static final int linearLayout1=0x7f0a003c;
         public static final int linearLayout2=0x7f0a003e;
@@ -1226,7 +1228,8 @@ containing a value of this type.
         public static final int welcome_fragment=0x7f030020;
     }
     public static final class menu {
-        public static final int launch=0x7f0e0000;
+        public static final int history_menu=0x7f0e0000;
+        public static final int launch=0x7f0e0001;
     }
     public static final class string {
         /**  Content description for the action bar "home" affordance. [CHAR LIMIT=NONE] 
@@ -1365,6 +1368,7 @@ containing a value of this type.
         public static final int gps_not_fixed_dialog_message=0x7f080033;
         public static final int gps_searching=0x7f080031;
         public static final int ignore=0x7f08002b;
+        public static final int import_gpx=0x7f08003f;
         public static final int main_setitings_category_title=0x7f08003b;
         public static final int next_button_label=0x7f080001;
         public static final int road_activity=0x7f080026;

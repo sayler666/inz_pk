@@ -1,10 +1,6 @@
 package com.sayler.inz;
 
 import android.content.res.Configuration;
-import android.graphics.Color;
-import android.graphics.drawable.ColorDrawable;
-import android.graphics.drawable.Drawable;
-import android.graphics.drawable.GradientDrawable;
 import android.os.Bundle;
 import android.support.v4.app.ActionBarDrawerToggle;
 import android.support.v4.app.Fragment;
@@ -38,10 +34,8 @@ public class Launch extends SherlockFragmentActivity implements
 
 		// delete old fragments
 		if (fragmentClass != null) {
-
 			Log.d(TAG, "onSaveInstanceState ");
 			outState.putString("fragmentClass", fragmentClass.getName());
-
 		}
 		super.onSaveInstanceState(outState);
 	}
@@ -68,8 +62,6 @@ public class Launch extends SherlockFragmentActivity implements
 		super.onCreate(savedInstanceState);
 		fm = getSupportFragmentManager();
 
-		
-		
 		setContentView(R.layout.activity_launch);
 		activeFragment = null;
 
@@ -91,8 +83,7 @@ public class Launch extends SherlockFragmentActivity implements
 
 		getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 		getSupportActionBar().setHomeButtonEnabled(true);
-		//getSupportActionBar().setBackgroundDrawable(new ColorDrawable(Color.rgb(82,171,43)));
-		
+
 		// restore state
 		if (savedInstanceState == null) {
 
@@ -100,10 +91,8 @@ public class Launch extends SherlockFragmentActivity implements
 			fm.beginTransaction().replace(R.id.content_frame, welcomeF)
 					.commit();
 		} else {
-
 			Log.d(TAG,
 					"w bundle " + savedInstanceState.getString("fragmentClass"));
-
 		}
 
 	}
@@ -148,30 +137,12 @@ public class Launch extends SherlockFragmentActivity implements
 
 		this.fragmentClass = fragmentClass;
 		this.activeFragment = f;
-	
-		
+
+		// replace fragments
 		fm.beginTransaction().replace(R.id.content_frame, f).commit();
 		activeFragment = f;
-		
-		// if (welcomeF.isVisible()) {
-		// fm.beginTransaction().remove(welcomeF).commit();
-		// }
 
-		// if (exists) {
-		// if (activeFragment != null)
-		// fm.beginTransaction().hide(activeFragment).show(f).commit();
-		// else
-		// fm.beginTransaction().show(f).commit();
-		//
-		// activeFragment = f;
-		// } else {
-		// if (activeFragment != null)
-		// fm.beginTransaction().hide(activeFragment)
-		// .add(R.id.content_frame, f).commit();
-		// else
-		// fm.beginTransaction().add(R.id.content_frame, f).commit();
-		// activeFragment = f;
-		// }
+		// set title
 		getSupportActionBar().setTitle(title);
 		mDrawerLayout.closeDrawer(Gravity.START);
 

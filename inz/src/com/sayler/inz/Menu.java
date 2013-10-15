@@ -2,9 +2,6 @@ package com.sayler.inz;
 
 import java.util.ArrayList;
 
-import com.sayler.inz.Launch.RestorableFragment;
-
-import android.app.Activity;
 import android.content.Context;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -17,6 +14,8 @@ import android.widget.BaseAdapter;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
+
+import com.sayler.inz.Launch.RestorableFragment;
 
 public class Menu extends ListFragment implements RestorableFragment {
 
