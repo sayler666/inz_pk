@@ -1,5 +1,6 @@
 package com.sayler.inz;
 
+import android.content.Intent;
 import android.content.res.Configuration;
 import android.os.Bundle;
 import android.support.v4.app.ActionBarDrawerToggle;
@@ -28,6 +29,7 @@ public class Launch extends SherlockFragmentActivity implements
 	private Class<?> fragmentClass = null;
 	private ListFragment menu;
 	private WelcomeFragment welcomeF = new WelcomeFragment();
+
 
 	@Override
 	protected void onSaveInstanceState(Bundle outState) {
@@ -147,4 +149,12 @@ public class Launch extends SherlockFragmentActivity implements
 		mDrawerLayout.closeDrawer(Gravity.START);
 
 	}
+	
+	@Override
+	protected void onActivityResult(int arg0, int arg1, Intent arg2) {
+		// TODO Auto-generated method stub
+		super.onActivityResult(arg0, arg1, arg2);
+	}
+
+	
 }

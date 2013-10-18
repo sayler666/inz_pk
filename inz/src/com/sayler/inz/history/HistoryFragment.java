@@ -4,6 +4,7 @@ import java.sql.SQLException;
 import java.util.List;
 
 import android.annotation.SuppressLint;
+import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
@@ -32,6 +33,8 @@ public class HistoryFragment extends SherlockFragment implements
 
 	private ListView listView;
 
+	static final int PICK_FILE_REQUEST = 1;
+
 	private static String TAG = "HistoryFragment";
 
 	@Override
@@ -40,9 +43,9 @@ public class HistoryFragment extends SherlockFragment implements
 
 		View view = inflater.inflate(R.layout.history_fragment, container,
 				false);
-		
+
 		setHasOptionsMenu(true);
-		
+
 		// listView
 		listView = (ListView) view.findViewById(R.id.listView);
 
@@ -58,10 +61,6 @@ public class HistoryFragment extends SherlockFragment implements
 
 				try {
 					List<Road> roads = roadData.getAll();
-					for (Road r : roads) {
-						Log.d(TAG, r.toString());
-					}
-
 					HistoryArrayAdapter arrayAdapter = new HistoryArrayAdapter(
 							getActivity().getApplicationContext(),
 							R.layout.history_row, roadData.getAll());
@@ -104,11 +103,36 @@ public class HistoryFragment extends SherlockFragment implements
 
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
-		Log.d(TAG,
-				"context item selected" + item.getTitle() + " "
-						+ item.getItemId());
 
+		switch (item.getItemId()) {
+		case R.id.import_gpx:
+			Intent intent = new Intent(Intent.ACTION_GET_CONTENT);
+			intent.setType("file/*");
+			startActivityForResult(intent, PICK_FILE_REQUEST);
+			break;
+		}
 		return super.onOptionsItemSelected(item);
 	}
 
+	@Override
+	public void onActivityResult(int requestCode, int resultCode, Intent data) {
+
+		switch (requestCode) {
+		case PICK_FILE_REQUEST:
+			if (resultCode == Activity.RESULT_OK){
+				
+				String path =  data.getData().getPath();
+				Log.d(TAG, "selected file: " + path);
+				
+				//Import Road using GPX file
+				ImportRoadToDB importer = new ImportRoadToDB(new ImportRoadFromGPX(path));
+				Road roadToImport = importer.getRoad();
+			}
+			break;
+		}
+
+		super.onActivityResult(requestCode, resultCode, data);
+	}
+	
+	
 }
