@@ -1,7 +1,8 @@
 package com.sayler.inz.history;
 
 import java.sql.SQLException;
-import java.util.List;
+import java.util.ArrayList;
+import java.util.Date;
 
 import android.annotation.SuppressLint;
 import android.app.Activity;
@@ -23,9 +24,11 @@ import com.actionbarsherlock.view.MenuInflater;
 import com.actionbarsherlock.view.MenuItem;
 import com.sayler.inz.R;
 import com.sayler.inz.data.RoadDataProvider;
+import com.sayler.inz.data.TrackDataProvider;
 import com.sayler.inz.database.DBSqliteOpenHelper;
 import com.sayler.inz.database.DaoHelper;
 import com.sayler.inz.database.model.Road;
+import com.sayler.inz.database.model.Track;
 
 @SuppressLint("ShowToast")
 public class HistoryFragment extends SherlockFragment implements
@@ -60,13 +63,11 @@ public class HistoryFragment extends SherlockFragment implements
 				RoadDataProvider roadData = new RoadDataProvider();
 
 				try {
-					List<Road> roads = roadData.getAll();
 					HistoryArrayAdapter arrayAdapter = new HistoryArrayAdapter(
 							getActivity().getApplicationContext(),
 							R.layout.history_row, roadData.getAll());
 					listView.setAdapter(arrayAdapter);
 				} catch (SQLException e) {
-					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}
 			}
@@ -96,7 +97,6 @@ public class HistoryFragment extends SherlockFragment implements
 
 	@Override
 	public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
-		Log.d(TAG, "menu?");
 		inflater.inflate(R.menu.history_menu, menu);
 		super.onCreateOptionsMenu(menu, inflater);
 	}
@@ -106,6 +106,7 @@ public class HistoryFragment extends SherlockFragment implements
 
 		switch (item.getItemId()) {
 		case R.id.import_gpx:
+			// pick file to import
 			Intent intent = new Intent(Intent.ACTION_GET_CONTENT);
 			intent.setType("file/*");
 			startActivityForResult(intent, PICK_FILE_REQUEST);
@@ -118,21 +119,37 @@ public class HistoryFragment extends SherlockFragment implements
 	public void onActivityResult(int requestCode, int resultCode, Intent data) {
 
 		switch (requestCode) {
+		// on result of picking file to import
 		case PICK_FILE_REQUEST:
-			if (resultCode == Activity.RESULT_OK){
-				
-				String path =  data.getData().getPath();
+			if (resultCode == Activity.RESULT_OK) {
+
+				String path = data.getData().getPath();
 				Log.d(TAG, "selected file: " + path);
-				
-				//Import Road using GPX file
-				ImportRoadToDB importer = new ImportRoadToDB(new ImportRoadFromGPX(path));
-				Road roadToImport = importer.getRoad();
+
+				// Import Road using GPX file
+				ImportRoadToDB importer = new ImportRoadToDB(
+						new ImportRoadFromGPX(path));
+				ArrayList<Track> tracks = (ArrayList<Track>) importer
+						.getTracks();
+
+				// save road
+				RoadDataProvider roadData = new RoadDataProvider();
+				Road roadToImport = new Road();
+				roadToImport.setCreatedAt(new Date());
+				roadData.save(roadToImport);
+
+				// save tracks
+				TrackDataProvider trackData = new TrackDataProvider();
+				for (Track track : tracks) {
+					track.setRoad(roadToImport);
+					trackData.save(track);
+				}
+
 			}
 			break;
 		}
 
 		super.onActivityResult(requestCode, resultCode, data);
 	}
-	
-	
+
 }

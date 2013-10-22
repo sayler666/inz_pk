@@ -84,4 +84,11 @@ public class Track extends AbstractObject {
 		this.time = time;
 	}
 
+	public Road getRoad() {
+		return road;
+	}
+
+	public void setRoad(Road road) {
+		this.road = road;
+	}
 }

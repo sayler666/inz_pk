@@ -2,8 +2,6 @@ package com.sayler.inz.database.model;
 
 import java.util.Date;
 
-import android.util.Log;
-
 import com.j256.ormlite.field.DatabaseField;
 
 

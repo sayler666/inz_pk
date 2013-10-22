@@ -49,7 +49,7 @@ public class WorkoutService extends Service implements LocationListener {
 	// -- miscellaneous
 
 	// if accuracy above do not save track
-	private final int minimumAccuracy = 20;
+	//private final int minimumAccuracy = 20;
 
 	/**
 	 * if recording track
@@ -179,7 +179,7 @@ public class WorkoutService extends Service implements LocationListener {
 		}
 
 		// ORM
-		Track trackOrm = new Track(lat, lng, alt, speed, time, this.currentRoad);
+		Track trackOrm = new Track(lat, lng, alt, speed, time, currentRoad);
 		trackOrm.setCreatedAt(new Date());
 		TrackDataProvider trackData = new TrackDataProvider();
 		trackData.save(trackOrm);

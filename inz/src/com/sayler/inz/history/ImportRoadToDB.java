@@ -1,10 +1,12 @@
 package com.sayler.inz.history;
 
-import com.sayler.inz.database.model.Road;
+import java.util.List;
+
+import com.sayler.inz.database.model.Track;
 
 public class ImportRoadToDB {
 	private I_ImportRoadToDB _importStrategy;
-	private Road _road;
+	private List<Track> _road;
 	
 	public ImportRoadToDB(I_ImportRoadToDB _importStrategy) {
 		
@@ -15,10 +17,10 @@ public class ImportRoadToDB {
 		this._importStrategy.setURL(url);
 	}
 	
-	public Road getRoad(){
+	public List<Track> getTracks(){
 		
 		this._importStrategy.read();
-		_road = this._importStrategy.getRoad();
+		_road = this._importStrategy.getTracks();
 		
 		return _road;
 	}

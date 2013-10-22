@@ -25,7 +25,6 @@ public class Launch extends SherlockFragmentActivity implements
 	private ActionBarDrawerToggle mDrawerToggle;
 	private DrawerLayout mDrawerLayout;
 	private FragmentManager fm;
-	private Fragment activeFragment = null;
 	private Class<?> fragmentClass = null;
 	private ListFragment menu;
 	private WelcomeFragment welcomeF = new WelcomeFragment();
@@ -65,8 +64,6 @@ public class Launch extends SherlockFragmentActivity implements
 		fm = getSupportFragmentManager();
 
 		setContentView(R.layout.activity_launch);
-		activeFragment = null;
-
 		// menu fragment
 		menu = new com.sayler.inz.Menu();
 		fm.beginTransaction().replace(R.id.left_drawer, menu).commit();
@@ -138,12 +135,8 @@ public class Launch extends SherlockFragmentActivity implements
 		Log.d(TAG, "switch fragment");
 
 		this.fragmentClass = fragmentClass;
-		this.activeFragment = f;
-
 		// replace fragments
 		fm.beginTransaction().replace(R.id.content_frame, f).commit();
-		activeFragment = f;
-
 		// set title
 		getSupportActionBar().setTitle(title);
 		mDrawerLayout.closeDrawer(Gravity.START);
