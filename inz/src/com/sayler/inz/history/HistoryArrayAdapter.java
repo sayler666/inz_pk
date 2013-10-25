@@ -1,12 +1,9 @@
 package com.sayler.inz.history;
 
-import java.text.SimpleDateFormat;
-import java.util.Date;
 import java.util.List;
 
 import android.content.Context;
 import android.text.format.DateUtils;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -43,7 +40,11 @@ public class HistoryArrayAdapter extends ArrayAdapter<Road> {
     
     		TextView textViewSubtitle = (TextView) view
     				.findViewById(R.id.subtitle);
-    		textViewSubtitle.setText(String.valueOf(item.getDistance()));
+    		textViewSubtitle.setText(context.getResources().getText(R.string.distance)+String.format(" %.2f m", item.getDistance()));
+    		
+    		TextView textViewCalories = (TextView) view
+    				.findViewById(R.id.calories);
+    		textViewCalories.setText(context.getResources().getText(R.string.calories)+String.format(" %d kcal", item.getCalories()));
     		
     		TextView textViewRoadId = (TextView) view
     				.findViewById(R.id.road_id);

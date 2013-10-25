@@ -1,5 +1,7 @@
 package com.sayler.inz.history;
 
+import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Date;
@@ -10,11 +12,16 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.util.Log;
+import android.view.ContextMenu;
+import android.view.ContextMenu.ContextMenuInfo;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
+import android.widget.AdapterView.AdapterContextMenuInfo;
 import android.widget.AdapterView.OnItemClickListener;
+import android.widget.AdapterView.OnItemLongClickListener;
+import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
 
@@ -32,10 +39,10 @@ import com.sayler.inz.database.model.Track;
 
 @SuppressLint("ShowToast")
 public class HistoryFragment extends SherlockFragment implements
-		OnItemClickListener {
+		OnItemClickListener, OnItemLongClickListener {
 
 	private ListView listView;
-
+	private RoadDataProvider roadDataProvider;
 	static final int PICK_FILE_REQUEST = 1;
 
 	private static String TAG = "HistoryFragment";
@@ -49,9 +56,25 @@ public class HistoryFragment extends SherlockFragment implements
 
 		setHasOptionsMenu(true);
 
+		//road provider
+		roadDataProvider = new RoadDataProvider();
+		
 		// listView
 		listView = (ListView) view.findViewById(R.id.listView);
 
+		// load cursor on separate thread
+		loadCursor();
+
+		// set listener on list items
+		listView.setOnItemClickListener(this);
+
+		// set long click on list items
+		registerForContextMenu(listView);
+
+		return view;
+	}
+
+	private void loadCursor() {
 		// load cursor on separate thread
 		new Handler().post(new Runnable() {
 			@Override
@@ -72,11 +95,6 @@ public class HistoryFragment extends SherlockFragment implements
 				}
 			}
 		});
-
-		// set listener on list items
-		listView.setOnItemClickListener(this);
-
-		return view;
 	}
 
 	@Override
@@ -116,6 +134,41 @@ public class HistoryFragment extends SherlockFragment implements
 	}
 
 	@Override
+	public void onCreateContextMenu(ContextMenu menu, View v,
+			ContextMenuInfo menuInfo) {
+
+		super.onCreateContextMenu(menu, v, menuInfo);
+		
+		//menu to export/delete road
+		android.view.MenuInflater inflater = getActivity().getMenuInflater();
+		inflater.inflate(R.menu.history_floating_context_menu, menu);
+
+	}
+
+	@Override
+	public boolean onContextItemSelected(android.view.MenuItem item) {
+
+		AdapterContextMenuInfo info = (AdapterContextMenuInfo) item
+				.getMenuInfo();
+		Long roadId = Long.valueOf(((TextView) ((LinearLayout) info.targetView)
+				.findViewById(R.id.road_id)).getText().toString());
+
+		switch (item.getItemId()) {
+
+		case R.id.delete:
+			// delete road
+			roadDataProvider.delete(roadId);
+			// refresh list
+			loadCursor();
+
+			return true;
+		default:
+			return super.onContextItemSelected(item);
+		}
+
+	}
+
+	@Override
 	public void onActivityResult(int requestCode, int resultCode, Intent data) {
 
 		switch (requestCode) {
@@ -129,27 +182,54 @@ public class HistoryFragment extends SherlockFragment implements
 				// Import Road using GPX file
 				ImportRoadToDB importer = new ImportRoadToDB(
 						new ImportRoadFromGPX(path));
-				ArrayList<Track> tracks = (ArrayList<Track>) importer
-						.getTracks();
 
-				// save road
-				RoadDataProvider roadData = new RoadDataProvider();
-				Road roadToImport = new Road();
-				roadToImport.setCreatedAt(new Date());
-				roadData.save(roadToImport);
+				try {
+					// read file
+					importer.read();
+					// get tracks
+					ArrayList<Track> roadTracks = (ArrayList<Track>) importer
+							.getTracks();
+					// get date
+					Date roadData = importer.getDate();
+					
+					// save road
+					Road roadToImport = new Road();
+					roadToImport.setCreatedAt(roadData);
+					roadDataProvider.save(roadToImport);
 
-				// save tracks
-				TrackDataProvider trackData = new TrackDataProvider();
-				for (Track track : tracks) {
-					track.setRoad(roadToImport);
-					trackData.save(track);
+					// save tracks
+					TrackDataProvider trackDataProvider = new TrackDataProvider();
+					for (Track track : roadTracks) {
+						track.setRoad(roadToImport);
+						trackDataProvider.save(track);
+					}
+
+					// refresh cursor
+					loadCursor();
+
+				} catch (FileNotFoundException e) {
+					e.printStackTrace();
+				} catch (IOException e) {
+					e.printStackTrace();
 				}
+
+				// // dialog
+				// TurnOnGpsDialog gpsTurnOnDialog = new TurnOnGpsDialog();
+				// gpsTurnOnDialog.setTargetFragment(this, 0);
+				// gpsTurnOnDialog.show(fm, "turn_on_gps");
 
 			}
 			break;
 		}
 
 		super.onActivityResult(requestCode, resultCode, data);
+	}
+
+	@Override
+	public boolean onItemLongClick(AdapterView<?> arg0, View arg1, int arg2,
+			long arg3) {
+		// TODO Auto-generated method stub
+		return false;
 	}
 
 }

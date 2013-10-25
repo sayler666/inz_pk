@@ -1144,29 +1144,32 @@ containing a value of this type.
         public static final int abs__textButton=0x7f0a0017;
         public static final int abs__title=0x7f0a001f;
         public static final int abs__up=0x7f0a000f;
-        public static final int action_settings=0x7f0a0051;
+        public static final int action_settings=0x7f0a0054;
         public static final int back_button=0x7f0a004c;
         public static final int button_bar=0x7f0a004b;
+        public static final int calories=0x7f0a0048;
         public static final int caloriesTextView=0x7f0a0041;
         public static final int content_frame=0x7f0a0037;
         public static final int controlsLayout=0x7f0a0039;
+        public static final int delete=0x7f0a0052;
         public static final int disableHome=0x7f0a000d;
         public static final int distanceTextView=0x7f0a003f;
         public static final int drawer_layout=0x7f0a0036;
         public static final int edit_query=0x7f0a002a;
         public static final int endButton=0x7f0a003b;
+        public static final int export_gpx=0x7f0a0051;
         public static final int gpsStatusText=0x7f0a0043;
         public static final int homeAsUp=0x7f0a000a;
         public static final int hybrid=0x7f0a0004;
         public static final int icon=0x7f0a004a;
-        public static final int import_gpx=0x7f0a0050;
+        public static final int import_gpx=0x7f0a0053;
         public static final int left_drawer=0x7f0a0038;
         public static final int linearLayout1=0x7f0a003c;
         public static final int linearLayout2=0x7f0a003e;
         public static final int linearLayout3=0x7f0a0040;
         public static final int linearLayoutMap=0x7f0a0042;
         public static final int listMode=0x7f0a0006;
-        public static final int listView=0x7f0a0046;
+        public static final int listView=0x7f0a0045;
         public static final int map=0x7f0a004f;
         public static final int next_button=0x7f0a004e;
         public static final int none=0x7f0a0000;
@@ -1179,12 +1182,12 @@ containing a value of this type.
         public static final int skip_button=0x7f0a004d;
         public static final int sportChosen=0x7f0a0044;
         public static final int startButton=0x7f0a003a;
-        public static final int subtitle=0x7f0a0048;
+        public static final int subtitle=0x7f0a0047;
         public static final int tabMode=0x7f0a0007;
         public static final int terrain=0x7f0a0003;
-        public static final int textView1=0x7f0a0045;
+        public static final int textView1=0x7f0a0050;
         public static final int timerView1=0x7f0a003d;
-        public static final int title=0x7f0a0047;
+        public static final int title=0x7f0a0046;
         public static final int useLogo=0x7f0a0008;
         public static final int wrap_content=0x7f0a0005;
     }
@@ -1228,8 +1231,9 @@ containing a value of this type.
         public static final int welcome_fragment=0x7f030020;
     }
     public static final class menu {
-        public static final int history_menu=0x7f0e0000;
-        public static final int launch=0x7f0e0001;
+        public static final int history_floating_context_menu=0x7f0e0000;
+        public static final int history_menu=0x7f0e0001;
+        public static final int launch=0x7f0e0002;
     }
     public static final class string {
         /**  Content description for the action bar "home" affordance. [CHAR LIMIT=NONE] 
@@ -1358,11 +1362,13 @@ containing a value of this type.
          */
         public static final int common_signin_button_text_long=0x7f080011;
         public static final int default_sport_title=0x7f08003e;
+        public static final int delete=0x7f080041;
         public static final int distance=0x7f080036;
         public static final int drawer_close=0x7f080029;
         public static final int drawer_open=0x7f080028;
         public static final int end_button=0x7f08002f;
         public static final int end_recording_dialog_message=0x7f080034;
+        public static final int export_gpx=0x7f080040;
         public static final int gps_fixed=0x7f080030;
         public static final int gps_not_fixed=0x7f080032;
         public static final int gps_not_fixed_dialog_message=0x7f080033;
