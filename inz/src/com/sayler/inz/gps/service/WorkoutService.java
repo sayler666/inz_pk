@@ -2,6 +2,9 @@ package com.sayler.inz.gps.service;
 
 import java.util.Date;
 
+import android.app.Notification;
+import android.app.NotificationManager;
+import android.app.PendingIntent;
 import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
@@ -14,6 +17,8 @@ import android.os.IBinder;
 import android.os.SystemClock;
 import android.util.Log;
 
+import com.sayler.inz.Launch;
+import com.sayler.inz.R;
 import com.sayler.inz.data.TrackDataProvider;
 import com.sayler.inz.database.DBSqliteOpenHelper;
 import com.sayler.inz.database.DaoHelper;
@@ -49,7 +54,7 @@ public class WorkoutService extends Service implements LocationListener {
 	// -- miscellaneous
 
 	// if accuracy above do not save track
-	//private final int minimumAccuracy = 20;
+	// private final int minimumAccuracy = 20;
 
 	/**
 	 * if recording track
@@ -68,6 +73,7 @@ public class WorkoutService extends Service implements LocationListener {
 	@Override
 	public int onStartCommand(Intent intent, int flags, int startId) {
 
+		// running
 		isRunning = true;
 
 		// Get the location manager
@@ -99,6 +105,22 @@ public class WorkoutService extends Service implements LocationListener {
 	 */
 	public void onEvent(StartRecordingEvent e) {
 
+		// notification
+		Intent intentToReturn = new Intent(getApplicationContext(),
+				Launch.class);
+		PendingIntent pIntent = PendingIntent.getActivity(
+				getApplicationContext(), 0, intentToReturn, 0);
+
+		Notification n = new Notification.Builder(getApplicationContext())
+				.setContentTitle("com.sayler.inz")
+				.setContentText("service is running")
+				.setSmallIcon(R.drawable.ic_drawer).setContentIntent(pIntent)
+				.setAutoCancel(false)
+				.addAction(R.drawable.ic_drawer, "And more", pIntent).build();
+
+		// service will be in foreground - harder to kill
+		startForeground(1, n);
+
 		// current road instance
 		this.currentRoad = e.currentRoad;
 
@@ -118,7 +140,10 @@ public class WorkoutService extends Service implements LocationListener {
 	 *            empty
 	 */
 	public void onEvent(StopRecordingEvent e) {
-
+		
+		// remove notification
+		stopForeground(true);
+		
 		// stop recording
 		isRecording = false;
 		// last UI update
