@@ -15,10 +15,11 @@ import android.view.Gravity;
 import com.actionbarsherlock.app.SherlockFragmentActivity;
 import com.actionbarsherlock.view.MenuItem;
 import com.sayler.inz.Menu.FragmentSwitchable;
+import com.sayler.inz.gps.service.WorkoutService;
 import com.sayler.inz.welcome.WelcomeFragment;
 
 public class Launch extends SherlockFragmentActivity implements
-		FragmentSwitchable {
+		FragmentSwitchable, IlastIntent {
 
 	static String TAG = "Launch";
 
@@ -29,6 +30,7 @@ public class Launch extends SherlockFragmentActivity implements
 	private ListFragment menu;
 	private WelcomeFragment welcomeF = new WelcomeFragment();
 
+	private Bundle lastIntentExtras = null;
 
 	@Override
 	protected void onSaveInstanceState(Bundle outState) {
@@ -64,15 +66,43 @@ public class Launch extends SherlockFragmentActivity implements
 		fm = getSupportFragmentManager();
 
 		setContentView(R.layout.activity_launch);
-		// menu fragment
-		menu = new com.sayler.inz.Menu();
-		fm.beginTransaction().replace(R.id.left_drawer, menu).commit();
 
+		// restore state
+		if (savedInstanceState == null) {
+
+			// welcome fragment
+			fm.beginTransaction().replace(R.id.content_frame, welcomeF)
+					.commit();
+
+			// menu fragment
+			menu = new com.sayler.inz.Menu();
+			fm.beginTransaction().replace(R.id.left_drawer, menu).commit();
+
+		} else {
+			Log.d(TAG,
+					"w bundle " + savedInstanceState.getString("fragmentClass"));
+			try {
+				fragmentClass = Class.forName(savedInstanceState
+						.getString("fragmentClass"));
+			} catch (ClassNotFoundException e1) {
+
+				e1.printStackTrace();
+			}
+
+			// get menu fragment
+			menu = (com.sayler.inz.Menu) fm.findFragmentById(R.id.left_drawer);
+
+			// restore fragment if need
+			RestorableFragment restorableF = (RestorableFragment) menu;
+			restorableF.restoreFragment(fragmentClass);
+
+		}
+
+		// drawer layout
 		mDrawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
 		mDrawerLayout.setScrimColor(0x88cccccc);
 		mDrawerLayout.setDrawerShadow(R.drawable.drawer_shadow,
 				GravityCompat.START);
-
 		mDrawerToggle = new ActionBarDrawerToggle(this, mDrawerLayout,
 				R.drawable.ic_drawer, R.string.drawer_open,
 				R.string.drawer_close);
@@ -83,19 +113,29 @@ public class Launch extends SherlockFragmentActivity implements
 		getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 		getSupportActionBar().setHomeButtonEnabled(true);
 
-		// restore state
-		if (savedInstanceState == null) {
+	}
 
-			// welcome fragment
-			fm.beginTransaction().replace(R.id.content_frame, welcomeF)
-					.commit();
-		} else {
-			Log.d(TAG,
-					"w bundle " + savedInstanceState.getString("fragmentClass"));
+	@Override
+	protected void onNewIntent(Intent intent) {
+		super.onNewIntent(intent);
+		// get intent
+		if (intent != null) {
+			lastIntentExtras = intent.getExtras();
+
+			if (intent.hasExtra(WorkoutService.STOP_RECORDING_INTENT)) {
+				Log.d(TAG, "STOP KURWA");
+			} else {
+				Log.d(TAG, "empty");
+			}
 		}
 
 	}
-
+	
+	//fragments can grab last intent
+	public Bundle getLastIntentExtras(){
+		return lastIntentExtras;
+	}
+	
 	@Override
 	protected void onPostCreate(Bundle savedInstanceState) {
 		super.onPostCreate(savedInstanceState);
@@ -115,7 +155,7 @@ public class Launch extends SherlockFragmentActivity implements
 		switch (item.getItemId()) {
 
 		// HOME button
-		// navidraver hide/show
+		// navigation drawer hide/show
 		case android.R.id.home:
 
 			if (mDrawerLayout.isDrawerOpen(Gravity.START)) {
@@ -142,12 +182,11 @@ public class Launch extends SherlockFragmentActivity implements
 		mDrawerLayout.closeDrawer(Gravity.START);
 
 	}
-	
+
 	@Override
 	protected void onActivityResult(int arg0, int arg1, Intent arg2) {
 		// TODO Auto-generated method stub
 		super.onActivityResult(arg0, arg1, arg2);
 	}
 
-	
 }

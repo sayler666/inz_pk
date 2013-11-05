@@ -23,9 +23,6 @@ public class Menu extends ListFragment implements RestorableFragment {
 
 	private MenuListAdapter mListAdapter;
 	private String[] menu_sections, menu_icons, menu_fragments;
-	private ArrayList<Fragment> initializedFragments;
-
-	
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
@@ -33,9 +30,7 @@ public class Menu extends ListFragment implements RestorableFragment {
 		menu_fragments = getResources().getStringArray(R.array.menu_fragments);
 		menu_icons = getResources().getStringArray(R.array.menu_icons);
 
-		Log.d(TAG, menu_fragments[0]);
 		super.onCreate(savedInstanceState);
-		Log.v(TAG, "In frag's on create");
 		this.setRetainInstance(true);
 	}
 
@@ -45,10 +40,9 @@ public class Menu extends ListFragment implements RestorableFragment {
 		mListAdapter = new MenuListAdapter(getActivity(), menu_sections,
 				menu_sections, menu_icons);
 
+		// set list adapter
 		setListAdapter(mListAdapter);
-
-		initializedFragments = new ArrayList<Fragment>();
-
+		
 		return inflater.inflate(R.layout.menu_layout, null);
 	}
 
@@ -67,14 +61,9 @@ public class Menu extends ListFragment implements RestorableFragment {
 		try {
 			// class name of chosen fragment
 			fragmentClass = Class.forName(menu_fragments[position]);
-
-			// if fragment instance not exists - creating new instance
-			if (!exists) {
-				newFragment = (Fragment) fragmentClass.newInstance();
-				initializedFragments.add(newFragment);
-				Log.d(TAG, menu_fragments[position] + " - new instantion");
-			}
-
+			// create new fragment
+			newFragment = (Fragment) fragmentClass.newInstance();
+			
 			// replace old fragment with new
 			if (getActivity() instanceof FragmentSwitchable) {
 				FragmentSwitchable fragmentSwitcher = (FragmentSwitchable) getActivity();
@@ -98,8 +87,17 @@ public class Menu extends ListFragment implements RestorableFragment {
 
 	@Override
 	public void restoreFragment(Class<?> fragmentClass) {
+		// restore fragment
 		try {
-			Log.d(TAG, fragmentClass.toString() + " " + menu_sections[0]);
+
+			for (int i = 0; i < menu_fragments.length; i++) {
+				if (menu_fragments[i].equals(fragmentClass.getCanonicalName()) == true) {
+					// set action bar title
+					getActivity().getActionBar().setTitle(menu_sections[i]);
+					break;
+				}
+			}
+
 		} catch (java.lang.NullPointerException e) {
 			e.printStackTrace();
 		}
@@ -122,7 +120,6 @@ public class Menu extends ListFragment implements RestorableFragment {
 	}
 
 	// MENU LIST ADPATER
-
 	private class MenuListAdapter extends BaseAdapter {
 		final static String TAG = "MenuListAdapter";
 		// Declare Variables
@@ -139,7 +136,6 @@ public class Menu extends ListFragment implements RestorableFragment {
 			this.mSubTitle = subtitle;
 			this.mIcon = icon;
 
-			Log.d(TAG, String.valueOf(this.mIcon.length));
 		}
 
 		@Override
@@ -177,8 +173,6 @@ public class Menu extends ListFragment implements RestorableFragment {
 			// Set the results into TextViews
 			txtTitle.setText(mTitle[position]);
 			txtSubTitle.setText(mSubTitle[position]);
-
-			Log.d(TAG, mIcon[position]);
 
 			// Set the results into ImageView
 			int iconDraw = this.context.getResources().getIdentifier(

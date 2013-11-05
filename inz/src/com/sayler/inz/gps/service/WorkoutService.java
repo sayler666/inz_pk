@@ -31,7 +31,9 @@ import de.greenrobot.event.EventBus;
 
 public class WorkoutService extends Service implements LocationListener {
 	final static String TAG = "WorkoutService";
-
+	
+	public final static String STOP_RECORDING_INTENT = "stopRecording";
+	
 	private LocationManager locationManager;
 
 	private Location mLastLocation = null;
@@ -106,17 +108,30 @@ public class WorkoutService extends Service implements LocationListener {
 	public void onEvent(StartRecordingEvent e) {
 
 		// notification
+		
+		//return to app intent
 		Intent intentToReturn = new Intent(getApplicationContext(),
 				Launch.class);
-		PendingIntent pIntent = PendingIntent.getActivity(
-				getApplicationContext(), 0, intentToReturn, 0);
-
+		intentToReturn.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
+		PendingIntent pIntentToReturn = PendingIntent.getActivity(
+				getApplicationContext(), 0, intentToReturn, PendingIntent.FLAG_UPDATE_CURRENT);
+		
+		//stop recording intent
+		Intent intentToStop = new Intent(getApplicationContext(),
+				Launch.class);
+		intentToStop.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
+		intentToStop.putExtra(STOP_RECORDING_INTENT, "1");
+		
+		PendingIntent pIntentToStop = PendingIntent.getActivity(
+				getApplicationContext(), 1, intentToStop, PendingIntent.FLAG_UPDATE_CURRENT);
+		
 		Notification n = new Notification.Builder(getApplicationContext())
 				.setContentTitle("com.sayler.inz")
-				.setContentText("service is running")
-				.setSmallIcon(R.drawable.ic_drawer).setContentIntent(pIntent)
+				.setContentText("Running...")
+				.setSmallIcon(R.drawable.ic_drawer)
+				.setContentIntent(pIntentToReturn)
 				.setAutoCancel(false)
-				.addAction(R.drawable.ic_drawer, "And more", pIntent).build();
+				.addAction(R.drawable.ic_drawer, getResources().getText(R.string.end_button), pIntentToStop).build();
 
 		// service will be in foreground - harder to kill
 		startForeground(1, n);

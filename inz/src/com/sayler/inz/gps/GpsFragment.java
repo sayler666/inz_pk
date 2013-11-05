@@ -4,9 +4,6 @@ import java.sql.SQLException;
 import java.util.Date;
 import java.util.List;
 
-import android.app.Notification;
-import android.app.NotificationManager;
-import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -40,7 +37,7 @@ import com.google.android.gms.maps.model.Circle;
 import com.google.android.gms.maps.model.CircleOptions;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.PolylineOptions;
-import com.sayler.inz.Launch;
+import com.sayler.inz.IlastIntent;
 import com.sayler.inz.R;
 import com.sayler.inz.data.RoadDataProvider;
 import com.sayler.inz.database.DBSqliteOpenHelper;
@@ -219,14 +216,18 @@ public class GpsFragment extends SherlockFragment implements OnClickListener,
 
 		case R.id.endButton: // end recording
 
-			// dialog if user is sure
-			EndRecordingDialog gpsDialog = new EndRecordingDialog();
-			gpsDialog.setTargetFragment(this, 0);
-			gpsDialog.show(fm, "end_recording");
+			this.showEndRecordingDialog();
 
 			break;
 		}
 
+	}
+
+	public void showEndRecordingDialog() {
+		// dialog if user is sure
+		EndRecordingDialog gpsDialog = new EndRecordingDialog();
+		gpsDialog.setTargetFragment(this, 0);
+		gpsDialog.show(fm, "end_recording");
 	}
 
 	// UpdateUI event
@@ -487,7 +488,6 @@ public class GpsFragment extends SherlockFragment implements OnClickListener,
 
 	@Override
 	public void onDestroy() {
-		Log.d(TAG, "stop timer");
 		// stop timer
 		timerView.end();
 
@@ -499,6 +499,21 @@ public class GpsFragment extends SherlockFragment implements OnClickListener,
 	public boolean onNavigationItemSelected(int itemPosition, long itemId) {
 		// TODO Auto-generated method stub
 		return false;
+	}
+
+	@Override
+	public void onResume() {
+
+		// get last intent that started Activity
+		Bundle lastIntent = ((IlastIntent) getActivity()).getLastIntentExtras();
+		if (lastIntent != null) {
+			// check if STOP_RECORDING_INTENT was send
+			if (lastIntent.containsKey(WorkoutService.STOP_RECORDING_INTENT)) {
+				this.showEndRecordingDialog();
+			}
+		}
+
+		super.onResume();
 	}
 
 }
