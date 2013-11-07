@@ -139,7 +139,7 @@ public class GpsFragment extends SherlockFragment implements OnClickListener,
 
 		caloriesCalculator = new Calories();
 		// load preferences
-		this.loadPrefs();
+		loadPrefs();
 
 		// Get the location manager
 		locationManager = (LocationManager) getActivity().getSystemService(
@@ -157,7 +157,7 @@ public class GpsFragment extends SherlockFragment implements OnClickListener,
 		}
 
 		// ORM
-		DaoHelper.setOpenHelper(this.getActivity().getApplicationContext(),
+		DaoHelper.setOpenHelper(getActivity().getApplicationContext(),
 				DBSqliteOpenHelper.class);
 		roadData = new RoadDataProvider();
 
@@ -205,18 +205,18 @@ public class GpsFragment extends SherlockFragment implements OnClickListener,
 
 			// if GPS not fix - dialog
 			if (isGpsFix == false) {
-
 				GpsNotFixedDialog gpsDialog = new GpsNotFixedDialog();
 				gpsDialog.setTargetFragment(this, 0);
 				gpsDialog.show(fm, "gps_dialog");
 			} else
-				this.startRecording();
+				startRecording();
 
 			break;
 
-		case R.id.endButton: // end recording
-
-			this.showEndRecordingDialog();
+		case R.id.endButton: 
+			
+			// end recording
+			showEndRecordingDialog();
 
 			break;
 		}
@@ -235,17 +235,17 @@ public class GpsFragment extends SherlockFragment implements OnClickListener,
 	public void onEventMainThread(final UpdateUiEvent e) {
 		Log.d(TAG, " updateUI gps fixed? " + e.isGpsFixed);
 
-		this.gpsFix(e.isGpsFixed);
-		this.recording(e.isRecording);
+		gpsFix(e.isGpsFixed);
+		recording(e.isRecording);
 
 		if (e.isRecording) {
 			// setting UI controls to match data collected by recording service
 
 			// ORM
-			this.currentRoad = e.currentRoad;
+			currentRoad = e.currentRoad;
 
 			// set timer view
-			this.timerView.start(e.time);
+			timerView.start(e.time);
 
 			// update distance view
 			distanceTextView.setText(String.format("%.0f m", e.distance));
@@ -316,7 +316,7 @@ public class GpsFragment extends SherlockFragment implements OnClickListener,
 	}
 
 	private void gpsFix(boolean b) {
-		this.isGpsFix = b;
+		isGpsFix = b;
 
 		if (b)
 			gpsStatusView.setText(R.string.gps_fixed);
@@ -325,7 +325,7 @@ public class GpsFragment extends SherlockFragment implements OnClickListener,
 	}
 
 	private void recording(boolean b) {
-		this.isRecording = b;
+		isRecording = b;
 
 		if (b) {
 			// show necessary buttons
@@ -342,9 +342,9 @@ public class GpsFragment extends SherlockFragment implements OnClickListener,
 	public void startRecording() {
 
 		// ORM
-		this.currentRoad = new Road();
-		this.currentRoad.setCreatedAt(new Date());
-		roadData.save(this.currentRoad);
+		currentRoad = new Road();
+		currentRoad.setCreatedAt(new Date());
+		roadData.save(currentRoad);
 
 		// start timer
 		timerView.start();
@@ -352,7 +352,7 @@ public class GpsFragment extends SherlockFragment implements OnClickListener,
 		// start recording in service
 		EventBus.getDefault().post(new StartRecordingEvent(currentRoad));
 
-		this.recording(true);
+		recording(true);
 	}
 
 	// if user end recording manually
@@ -377,17 +377,17 @@ public class GpsFragment extends SherlockFragment implements OnClickListener,
 		double avg_speed = (distance / 1000.0) / (time / 3600.0);
 
 		// ORM
-		this.currentRoad.setAvg_speed(avg_speed);
-		this.currentRoad.setCalories((int) calories);
-		this.currentRoad.setDistance(distance);
-		this.currentRoad.setDuration(time);
+		currentRoad.setAvg_speed(avg_speed);
+		currentRoad.setCalories((int) calories);
+		currentRoad.setDistance(distance);
+		currentRoad.setDuration(time);
 
-		roadData.save(this.currentRoad);
+		roadData.save(currentRoad);
 
 		// start Road activity - show the road
 		Intent roadActivityIntent = new Intent(getActivity(),
 				RoadActivity.class);
-		roadActivityIntent.putExtra("roadId", this.currentRoad.getId());
+		roadActivityIntent.putExtra("roadId", currentRoad.getId());
 		startActivity(roadActivityIntent);
 		getActivity().overridePendingTransition(R.animator.left_to_right_show,
 				R.animator.left_to_right_hide);
@@ -435,7 +435,7 @@ public class GpsFragment extends SherlockFragment implements OnClickListener,
 		// if sport chosen
 		if (item.getItemId() >= 0 && item.getItemId() < sportsClasses.length) {
 			// change sport
-			this.changeSport(sportsClasses[item.getItemId()]);
+			changeSport(sportsClasses[item.getItemId()]);
 		}
 		return super.onOptionsItemSelected(item);
 	}
@@ -453,7 +453,7 @@ public class GpsFragment extends SherlockFragment implements OnClickListener,
 				i++;
 			}
 			sportName = sportsList[i];
-			this.sport = sportClass.newInstance();
+			sport = sportClass.newInstance();
 
 		} catch (ClassNotFoundException e) {
 			e.printStackTrace();
@@ -463,8 +463,8 @@ public class GpsFragment extends SherlockFragment implements OnClickListener,
 			e.printStackTrace();
 		}
 
-		this.caloriesCalculator.setCaloriesCalculateStrategy(this.sport);
-		this.sportChosenTextView.setText(sportName);
+		caloriesCalculator.setCaloriesCalculateStrategy(sport);
+		sportChosenTextView.setText(sportName);
 
 		// edit shared preference with sport
 		Editor editor = sharedPref.edit();
@@ -477,7 +477,7 @@ public class GpsFragment extends SherlockFragment implements OnClickListener,
 		String sportClassName = sharedPref.getString("chosen_sport",
 				"com.sayler.inz.gps.sports.Running");
 		// change sport
-		this.changeSport(sportClassName);
+		changeSport(sportClassName);
 	}
 
 	@Override
@@ -509,7 +509,7 @@ public class GpsFragment extends SherlockFragment implements OnClickListener,
 		if (lastIntent != null) {
 			// check if STOP_RECORDING_INTENT was send
 			if (lastIntent.containsKey(WorkoutService.STOP_RECORDING_INTENT)) {
-				this.showEndRecordingDialog();
+				showEndRecordingDialog();
 			}
 		}
 

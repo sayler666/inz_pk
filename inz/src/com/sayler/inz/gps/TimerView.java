@@ -32,8 +32,6 @@ public class TimerView extends TextView {
 		@Override
 		public boolean handleMessage(Message msg) {
 			elapsedTime = (int) ((System.currentTimeMillis() - startTime) / 1000);
-
-			long milis = System.currentTimeMillis() - startTime;
 			setTime(elapsedTime);
 			return false;
 		}
@@ -81,9 +79,7 @@ public class TimerView extends TextView {
 		int hours = (int) (seconds / 3600);
 		seconds = seconds % 60;
 		minutes = minutes % 60;
-//		Log.d(TAG," "+seconds);
-//		Log.d(TAG,String.format("%02d:%02d:%02d", hours,
-//				minutes, seconds) );
+
 		TimerView.this.setText(String.format("%02d:%02d:%02d", hours,
 				minutes, seconds));
 		

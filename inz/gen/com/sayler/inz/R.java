@@ -1311,6 +1311,7 @@ containing a value of this type.
         public static final int bike_weight_title=0x7f080041;
         public static final int calories=0x7f08003b;
         public static final int cancel=0x7f08002e;
+        public static final int click_again_to_close=0x7f080046;
         /**  Button in confirmation dialog to enable Google Play services.  Clicking it
         will direct user to application settings of Google Play services where they
         can enable it [CHAR LIMIT=40] 

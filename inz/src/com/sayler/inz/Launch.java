@@ -3,6 +3,7 @@ package com.sayler.inz;
 import android.content.Intent;
 import android.content.res.Configuration;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.v4.app.ActionBarDrawerToggle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
@@ -11,6 +12,7 @@ import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.util.Log;
 import android.view.Gravity;
+import android.widget.Toast;
 
 import com.actionbarsherlock.app.SherlockFragmentActivity;
 import com.actionbarsherlock.view.MenuItem;
@@ -29,7 +31,9 @@ public class Launch extends SherlockFragmentActivity implements
 	private Class<?> fragmentClass = null;
 	private ListFragment menu;
 	private WelcomeFragment welcomeF = new WelcomeFragment();
-
+	// seconds
+	private final int doubleBackClickTime = 3;
+	private int backClickTimeLeft = 0;
 	private Bundle lastIntentExtras = null;
 
 	@Override
@@ -118,24 +122,17 @@ public class Launch extends SherlockFragmentActivity implements
 	@Override
 	protected void onNewIntent(Intent intent) {
 		super.onNewIntent(intent);
-		// get intent
+		// get intent and store it's data
 		if (intent != null) {
 			lastIntentExtras = intent.getExtras();
-
-			if (intent.hasExtra(WorkoutService.STOP_RECORDING_INTENT)) {
-				Log.d(TAG, "STOP KURWA");
-			} else {
-				Log.d(TAG, "empty");
-			}
 		}
-
 	}
-	
-	//fragments can grab last intent
-	public Bundle getLastIntentExtras(){
+
+	// fragments can grab last intent
+	public Bundle getLastIntentExtras() {
 		return lastIntentExtras;
 	}
-	
+
 	@Override
 	protected void onPostCreate(Bundle savedInstanceState) {
 		super.onPostCreate(savedInstanceState);
@@ -185,8 +182,34 @@ public class Launch extends SherlockFragmentActivity implements
 
 	@Override
 	protected void onActivityResult(int arg0, int arg1, Intent arg2) {
-		// TODO Auto-generated method stub
 		super.onActivityResult(arg0, arg1, arg2);
+	}
+
+	@Override
+	public void onBackPressed() {
+		//back click twice to close app
+		if (backClickTimeLeft > 0) {
+			super.onBackPressed();
+		} else {
+			Toast.makeText(this, R.string.click_again_to_close, Toast.LENGTH_LONG).show();
+			Thread count = new Thread(new BackTimeCounter());
+			count.start();
+		}
+	}
+
+	class BackTimeCounter implements Runnable {
+		@Override
+		public void run() {
+			backClickTimeLeft = doubleBackClickTime;
+			while (backClickTimeLeft > 0) {
+				try {
+					backClickTimeLeft--;
+					Thread.sleep(1000);
+				} catch (InterruptedException e) {
+					e.printStackTrace();
+				}
+			}
+		}
 	}
 
 }

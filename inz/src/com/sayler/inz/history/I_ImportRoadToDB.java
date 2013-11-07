@@ -17,4 +17,5 @@ public interface I_ImportRoadToDB {
 	void read() throws FileNotFoundException, IOException;
 	List<Track> getTracks();
 	Date getDate();
+	Double getDistance();
 }

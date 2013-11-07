@@ -29,7 +29,7 @@ import com.sayler.inz.gps.TimerView;
 public class RoadActivity extends SherlockFragmentActivity {
 	private GoogleMap map;
 
-	private static String TAG = "RoadActivity";
+	private static final String TAG = "RoadActivity";
 	private long roadId;
 
 	private TextView distanceTextView;

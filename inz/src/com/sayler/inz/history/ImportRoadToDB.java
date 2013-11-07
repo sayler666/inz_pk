@@ -11,7 +11,7 @@ public class ImportRoadToDB {
 	private I_ImportRoadToDB _importStrategy;
 	private List<Track> _road;
 	private Date _date;
-
+	private Double _distance;
 	public ImportRoadToDB(I_ImportRoadToDB _importStrategy) {
 		this._importStrategy = _importStrategy;
 	}
@@ -24,6 +24,8 @@ public class ImportRoadToDB {
 		this._importStrategy.read();
 	}
 
+	
+	
 	public List<Track> getTracks() {
 
 		_road = this._importStrategy.getTracks();
@@ -37,5 +39,11 @@ public class ImportRoadToDB {
 
 		return _date;
 	}
+	
+	public Double getDistance(){
 
+		_distance = this._importStrategy.getDistance();
+
+		return _distance;
+	}
 }

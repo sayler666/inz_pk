@@ -4,7 +4,6 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.sql.SQLException;
 import java.util.ArrayList;
-import java.util.Date;
 
 import android.annotation.SuppressLint;
 import android.app.Activity;
@@ -43,7 +42,7 @@ public class HistoryFragment extends SherlockFragment implements
 
 	private ListView listView;
 	private RoadDataProvider roadDataProvider;
-	static final int PICK_FILE_REQUEST = 1;
+	static final int PICK_FILE_REQUEST = 101;
 
 	private static String TAG = "HistoryFragment";
 
@@ -55,10 +54,14 @@ public class HistoryFragment extends SherlockFragment implements
 				false);
 
 		setHasOptionsMenu(true);
-
-		//road provider
-		roadDataProvider = new RoadDataProvider();
 		
+		// ORM
+		DaoHelper.setOpenHelper(getActivity().getApplicationContext(),
+				DBSqliteOpenHelper.class);
+		
+		// road provider
+		roadDataProvider = new RoadDataProvider();
+
 		// listView
 		listView = (ListView) view.findViewById(R.id.listView);
 
@@ -99,7 +102,7 @@ public class HistoryFragment extends SherlockFragment implements
 
 	@Override
 	public void onItemClick(AdapterView<?> arg0, View arg1, int arg2, long arg3) {
-		// extract RoadId from invisible textview
+		// extract RoadId from invisible TextView
 		long roadId = Long.valueOf(((TextView) arg1.findViewById(R.id.road_id))
 				.getText().toString());
 
@@ -138,8 +141,8 @@ public class HistoryFragment extends SherlockFragment implements
 			ContextMenuInfo menuInfo) {
 
 		super.onCreateContextMenu(menu, v, menuInfo);
-		
-		//menu to export/delete road
+
+		// menu to export/delete road
 		android.view.MenuInflater inflater = getActivity().getMenuInflater();
 		inflater.inflate(R.menu.history_floating_context_menu, menu);
 
@@ -170,7 +173,8 @@ public class HistoryFragment extends SherlockFragment implements
 
 	@Override
 	public void onActivityResult(int requestCode, int resultCode, Intent data) {
-
+		Log.d(TAG, "onActivityResult, rc: " + resultCode + ", request: "
+				+ requestCode);
 		switch (requestCode) {
 		// on result of picking file to import
 		case PICK_FILE_REQUEST:
@@ -189,12 +193,14 @@ public class HistoryFragment extends SherlockFragment implements
 					// get tracks
 					ArrayList<Track> roadTracks = (ArrayList<Track>) importer
 							.getTracks();
-					// get date
-					Date roadData = importer.getDate();
-					
-					// save road
+
+					// set road data
 					Road roadToImport = new Road();
-					roadToImport.setCreatedAt(roadData);
+					roadToImport.setCreatedAt(importer.getDate());
+					roadToImport.setDistance(importer.getDistance());
+					Log.d(TAG, importer.getDistance().toString());
+
+					// save road to DB
 					roadDataProvider.save(roadToImport);
 
 					// save tracks

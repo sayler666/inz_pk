@@ -14,7 +14,9 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import android.annotation.SuppressLint;
+import android.location.Location;
 
+import com.google.android.gms.maps.model.LatLng;
 import com.sayler.inz.database.model.Track;
 
 /**
@@ -25,12 +27,13 @@ import com.sayler.inz.database.model.Track;
  */
 public class ImportRoadFromGPX implements I_ImportRoadToDB {
 
-	private final String TAG = "ImportRoadFromGPX";
+	private static final String TAG = "ImportRoadFromGPX";
 	private String _url;
 	private StringBuilder _totalLine;
 
 	private List<Track> _tracks;
-
+	private Double _distance=0.0;
+	
 	public ImportRoadFromGPX() {
 		super();
 	}
@@ -145,6 +148,38 @@ public class ImportRoadFromGPX implements I_ImportRoadToDB {
 		}
 
 		return date;
+	}
+
+	@Override
+	public Double getDistance() {
+
+		// pattern for WTPs
+		Pattern patternWpt = Pattern
+				.compile("<wpt lat=\"(.*?)\" lon=\"(.*?)\">(.*?)</wpt>");
+		// matcher for WTPs
+		Matcher matcherWpt = patternWpt.matcher(_totalLine);
+		// remember last location
+		LatLng mLastLocation = null;
+		// find all occurrence
+		while (matcherWpt.find()) {
+			//current location
+			LatLng location =  new LatLng(Double.valueOf(matcherWpt.group(1)),
+					Double.valueOf(matcherWpt.group(2)));
+			
+			// calculate distance
+			if (mLastLocation != null) {
+				float[] results = new float[5];
+				Location.distanceBetween(mLastLocation.latitude,
+						mLastLocation.longitude, location.latitude,
+						location.longitude, results);
+				_distance += results[0];
+			}
+			
+			mLastLocation =new LatLng(Double.valueOf(matcherWpt.group(1)),
+					Double.valueOf(matcherWpt.group(2)));
+		}
+
+		return _distance;
 	}
 
 }

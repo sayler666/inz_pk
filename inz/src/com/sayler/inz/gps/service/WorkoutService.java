@@ -90,7 +90,7 @@ public class WorkoutService extends Service implements LocationListener {
 		locationManager.addGpsStatusListener(mGPSListener);
 
 		// ORM
-		DaoHelper.setOpenHelper(this.getApplicationContext(),
+		DaoHelper.setOpenHelper(getApplicationContext(),
 				DBSqliteOpenHelper.class);
 
 		// register event bus
@@ -137,7 +137,7 @@ public class WorkoutService extends Service implements LocationListener {
 		startForeground(1, n);
 
 		// current road instance
-		this.currentRoad = e.currentRoad;
+		currentRoad = e.currentRoad;
 
 		// reset variable
 		time = (long) System.currentTimeMillis();
@@ -162,7 +162,7 @@ public class WorkoutService extends Service implements LocationListener {
 		// stop recording
 		isRecording = false;
 		// last UI update
-		this.updateUI();
+		updateUI();
 
 	}
 
@@ -177,7 +177,7 @@ public class WorkoutService extends Service implements LocationListener {
 		Log.d(TAG, "onEventRequestUpdateUI ");
 
 		// UI update
-		this.updateUI();
+		updateUI();
 
 	}
 
@@ -193,7 +193,7 @@ public class WorkoutService extends Service implements LocationListener {
 		// if not recording - do not bother about rest calculations, but update
 		// UI (maybe gps've been fixed)
 		if (isRecording == false) {
-			this.updateUI();
+			updateUI();
 			return;
 
 		}
@@ -228,7 +228,7 @@ public class WorkoutService extends Service implements LocationListener {
 		mLastLocation = location;
 
 		// Update UI
-		this.updateUI();
+		updateUI();
 	}
 
 	public void updateUI() {
@@ -241,7 +241,7 @@ public class WorkoutService extends Service implements LocationListener {
 
 	@Override
 	public void onProviderDisabled(String provider) {
-		Log.d(this.getClass().toString(), provider + "  enabled ");
+		Log.d(getClass().toString(), provider + "  enabled ");
 	}
 
 	@Override
@@ -252,12 +252,12 @@ public class WorkoutService extends Service implements LocationListener {
 
 	@Override
 	public void onProviderEnabled(String provider) {
-		Log.d(this.getClass().toString(), provider + "  disable ");
+		Log.d(getClass().toString(), provider + "  disable ");
 	}
 
 	@Override
 	public void onStatusChanged(String provider, int status, Bundle extras) {
-		Log.d(this.getClass().toString(), " status changed: ");
+		Log.d(getClass().toString(), " status changed: ");
 	}
 
 	// GPS status
