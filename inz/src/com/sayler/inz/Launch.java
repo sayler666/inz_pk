@@ -187,6 +187,7 @@ public class Launch extends SherlockFragmentActivity implements
 
 	@Override
 	public void onBackPressed() {
+		
 		//back click twice to close app
 		if (backClickTimeLeft > 0) {
 			super.onBackPressed();
@@ -203,7 +204,7 @@ public class Launch extends SherlockFragmentActivity implements
 			backClickTimeLeft = doubleBackClickTime;
 			while (backClickTimeLeft > 0) {
 				try {
-					backClickTimeLeft--;
+					--backClickTimeLeft;
 					Thread.sleep(1000);
 				} catch (InterruptedException e) {
 					e.printStackTrace();
