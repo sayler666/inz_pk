@@ -42,7 +42,7 @@ public class Menu extends ListFragment implements RestorableFragment {
 
 		// set list adapter
 		setListAdapter(mListAdapter);
-		
+
 		return inflater.inflate(R.layout.menu_layout, null);
 	}
 
@@ -63,7 +63,7 @@ public class Menu extends ListFragment implements RestorableFragment {
 			fragmentClass = Class.forName(menu_fragments[position]);
 			// create new fragment
 			newFragment = (Fragment) fragmentClass.newInstance();
-			
+
 			// replace old fragment with new
 			if (getActivity() instanceof FragmentSwitchable) {
 				FragmentSwitchable fragmentSwitcher = (FragmentSwitchable) getActivity();
@@ -81,6 +81,23 @@ public class Menu extends ListFragment implements RestorableFragment {
 			e.printStackTrace();
 		} catch (IllegalAccessException e) {
 
+			e.printStackTrace();
+		}
+	}
+
+	public void setFragmentByClassName(Class<?> fragmentClass) {
+		// restore fragment
+		try {
+
+			for (int i = 0; i < menu_fragments.length; i++) {
+				if (menu_fragments[i].equals(fragmentClass.getCanonicalName()) == true) {
+					
+					setActiveMenuItem(i);
+					break;
+				}
+			}
+
+		} catch (java.lang.NullPointerException e) {
 			e.printStackTrace();
 		}
 	}

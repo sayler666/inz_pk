@@ -3,7 +3,6 @@ package com.sayler.inz;
 import android.content.Intent;
 import android.content.res.Configuration;
 import android.os.Bundle;
-import android.os.Handler;
 import android.support.v4.app.ActionBarDrawerToggle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
@@ -17,13 +16,14 @@ import android.widget.Toast;
 import com.actionbarsherlock.app.SherlockFragmentActivity;
 import com.actionbarsherlock.view.MenuItem;
 import com.sayler.inz.Menu.FragmentSwitchable;
-import com.sayler.inz.gps.service.WorkoutService;
 import com.sayler.inz.welcome.WelcomeFragment;
 
 public class Launch extends SherlockFragmentActivity implements
 		FragmentSwitchable, IlastIntent {
 
 	static String TAG = "Launch";
+
+	public static final String SWITCH_FRAGMENT_INTENT = "SWITCH_FRAGMENT_INTENT";
 
 	private ActionBarDrawerToggle mDrawerToggle;
 	private DrawerLayout mDrawerLayout;
@@ -125,12 +125,28 @@ public class Launch extends SherlockFragmentActivity implements
 		// get intent and store it's data
 		if (intent != null) {
 			lastIntentExtras = intent.getExtras();
+
+			//switch fragment
+			if (intent.hasExtra(SWITCH_FRAGMENT_INTENT)) {
+				try {
+					((com.sayler.inz.Menu) menu).setFragmentByClassName(Class
+							.forName(lastIntentExtras
+									.getString(SWITCH_FRAGMENT_INTENT)));
+				} catch (ClassNotFoundException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+			}
 		}
 	}
 
 	// fragments can grab last intent
-	public Bundle getLastIntentExtras() {
-		return lastIntentExtras;
+	public Bundle popLastIntentExtras() {
+		try {
+			return lastIntentExtras;
+		} finally {
+			lastIntentExtras=null;
+		}
 	}
 
 	@Override
@@ -187,17 +203,21 @@ public class Launch extends SherlockFragmentActivity implements
 
 	@Override
 	public void onBackPressed() {
-		
-		//back click twice to close app
+
+		// back click twice to close app
 		if (backClickTimeLeft > 0) {
 			super.onBackPressed();
 		} else {
-			Toast.makeText(this, R.string.click_again_to_close, Toast.LENGTH_LONG).show();
+			Toast.makeText(this, R.string.click_again_to_close,
+					Toast.LENGTH_LONG).show();
 			Thread count = new Thread(new BackTimeCounter());
 			count.start();
 		}
 	}
 
+	/*
+	 * counting down time to second click back
+	 */
 	class BackTimeCounter implements Runnable {
 		@Override
 		public void run() {

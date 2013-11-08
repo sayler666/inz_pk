@@ -505,7 +505,7 @@ public class GpsFragment extends SherlockFragment implements OnClickListener,
 	public void onResume() {
 
 		// get last intent that started Activity
-		Bundle lastIntent = ((IlastIntent) getActivity()).getLastIntentExtras();
+		Bundle lastIntent = ((IlastIntent) getActivity()).popLastIntentExtras();
 		if (lastIntent != null) {
 			// check if STOP_RECORDING_INTENT was send
 			if (lastIntent.containsKey(WorkoutService.STOP_RECORDING_INTENT)) {

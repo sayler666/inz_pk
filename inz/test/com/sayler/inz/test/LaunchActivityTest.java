@@ -41,13 +41,7 @@ public class LaunchActivityTest {
 
 	}
 
-	@Test
-	@Config(reportSdk = 10)
-	public void testButtonVisibility() throws Exception {
-		Button b = (Button) activity.findViewById(R.id.testButton);
-		assertThat(b.getVisibility(), equalTo(View.VISIBLE));
 
-	}
 	
 	@Test
 	@Config(reportSdk = 10)

@@ -54,11 +54,11 @@ public class HistoryFragment extends SherlockFragment implements
 				false);
 
 		setHasOptionsMenu(true);
-		
+
 		// ORM
 		DaoHelper.setOpenHelper(getActivity().getApplicationContext(),
 				DBSqliteOpenHelper.class);
-		
+
 		// road provider
 		roadDataProvider = new RoadDataProvider();
 
@@ -78,26 +78,19 @@ public class HistoryFragment extends SherlockFragment implements
 	}
 
 	private void loadCursor() {
-		// load cursor on separate thread
-		new Handler().post(new Runnable() {
-			@Override
-			public void run() {
+		
+		//TODO: separete thread 
+		
 
-				// ORM
-				DaoHelper.setOpenHelper(getActivity().getApplicationContext(),
-						DBSqliteOpenHelper.class);
-				RoadDataProvider roadData = new RoadDataProvider();
+		try {
+			HistoryArrayAdapter arrayAdapter = new HistoryArrayAdapter(
+					getActivity().getApplicationContext(),
+					R.layout.history_row, roadDataProvider.getAll());
+			listView.setAdapter(arrayAdapter);
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
 
-				try {
-					HistoryArrayAdapter arrayAdapter = new HistoryArrayAdapter(
-							getActivity().getApplicationContext(),
-							R.layout.history_row, roadData.getAll());
-					listView.setAdapter(arrayAdapter);
-				} catch (SQLException e) {
-					e.printStackTrace();
-				}
-			}
-		});
 	}
 
 	@Override

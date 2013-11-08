@@ -3,12 +3,7 @@
     android:id="@+id/drawer_layout"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
-      <Button
-            android:id="@+id/testButton"
-            style="?android:attr/buttonStyleSmall"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/start_button" />
+   
     <!-- The main content view -->
     <FrameLayout
         android:id="@+id/content_frame"

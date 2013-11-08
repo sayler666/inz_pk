@@ -120,7 +120,12 @@ public class WorkoutService extends Service implements LocationListener {
 		Intent intentToStop = new Intent(getApplicationContext(),
 				Launch.class);
 		intentToStop.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
+		
+		//stop recording
 		intentToStop.putExtra(STOP_RECORDING_INTENT, "1");
+		
+		//switch fragment
+		intentToStop.putExtra(Launch.SWITCH_FRAGMENT_INTENT, "com.sayler.inz.gps.GpsFragment");
 		
 		PendingIntent pIntentToStop = PendingIntent.getActivity(
 				getApplicationContext(), 1, intentToStop, PendingIntent.FLAG_UPDATE_CURRENT);
