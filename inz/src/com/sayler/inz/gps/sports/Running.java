@@ -10,7 +10,7 @@ public class Running implements ISport {
 
 		int weight = Integer.parseInt(sharedPref.getString("weight", "70"));
 
-		float mph = (float) (distance / 1609.344) / (((float) time) / 3600);
+		//float mph = (float) (distance / 1609.344) / (((float) time) / 3600);
 
 		float lbs = (float) ((float) weight * 2.20462262);
 

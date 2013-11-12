@@ -18,4 +18,5 @@ public interface I_ImportRoadToDB {
 	List<Track> getTracks();
 	Date getDate();
 	Double getDistance();
+	Double getDuration();
 }

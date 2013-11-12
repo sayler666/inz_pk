@@ -11,7 +11,8 @@ public class ImportRoadToDB {
 	private I_ImportRoadToDB _importStrategy;
 	private List<Track> _road;
 	private Date _date;
-	private Double _distance;
+	private Double _distance, _duration;
+
 	public ImportRoadToDB(I_ImportRoadToDB _importStrategy) {
 		this._importStrategy = _importStrategy;
 	}
@@ -24,8 +25,6 @@ public class ImportRoadToDB {
 		this._importStrategy.read();
 	}
 
-	
-	
 	public List<Track> getTracks() {
 
 		_road = this._importStrategy.getTracks();
@@ -33,17 +32,24 @@ public class ImportRoadToDB {
 		return _road;
 	}
 
-	public Date getDate() throws FileNotFoundException, IOException {
+	public Date getDate() {
 
 		_date = this._importStrategy.getDate();
 
 		return _date;
 	}
-	
-	public Double getDistance(){
+
+	public Double getDistance() {
 
 		_distance = this._importStrategy.getDistance();
 
 		return _distance;
+	}
+
+	public Double getDuration(){
+
+		_duration = this._importStrategy.getDuration();
+
+		return _duration;
 	}
 }
