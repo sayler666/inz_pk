@@ -1,10 +1,14 @@
 package com.sayler.inz.gps.sports;
 
+import com.sayler.inz.database.model.SportTypes;
+
 import android.content.SharedPreferences;
 import android.util.Log;
 
 public class Bicycling implements ISport {
-
+	
+	final SportTypes SPORT_TYPE = SportTypes.BICYCLING;
+	
 	@Override
 	public float calculateCalories(float distance, int time, SharedPreferences sharedPref) {
 
@@ -19,6 +23,11 @@ public class Bicycling implements ISport {
 				.pow(mph, 3))) * (((float) time) / 3600);
 
 		return calories;
+	}
+	@Override
+	public SportTypes getSportType() {
+		
+		return SPORT_TYPE;
 	}
 
 }

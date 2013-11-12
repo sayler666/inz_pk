@@ -36,6 +36,7 @@ import com.sayler.inz.data.TrackDataProvider;
 import com.sayler.inz.database.DBSqliteOpenHelper;
 import com.sayler.inz.database.DaoHelper;
 import com.sayler.inz.database.model.Road;
+import com.sayler.inz.database.model.SportTypes;
 import com.sayler.inz.database.model.Track;
 import com.sayler.inz.gps.sports.Calories;
 import com.sayler.inz.gps.sports.ISport;
@@ -86,7 +87,6 @@ public class HistoryFragment extends SherlockFragment implements
 	private void loadCursor() {
 
 		// TODO: separete thread
-
 		try {
 			HistoryArrayAdapter arrayAdapter = new HistoryArrayAdapter(
 					getActivity().getApplicationContext(),
@@ -125,7 +125,7 @@ public class HistoryFragment extends SherlockFragment implements
 
 		switch (item.getItemId()) {
 		case R.id.import_gpx:
-
+			
 			importGpx();
 
 			break;
@@ -135,7 +135,7 @@ public class HistoryFragment extends SherlockFragment implements
 
 	private void importGpx() {
 
-		// // dialog
+		// dialog to choose sport
 		ChooseSportDialog gpsTurnOnDialog = new ChooseSportDialog();
 		gpsTurnOnDialog.setTargetFragment(this, 0);
 		gpsTurnOnDialog.show(getFragmentManager(), "turn_on_gps");
@@ -169,7 +169,6 @@ public class HistoryFragment extends SherlockFragment implements
 			roadDataProvider.delete(roadId);
 			// refresh list
 			loadCursor();
-
 			return true;
 		default:
 			return super.onContextItemSelected(item);
@@ -179,15 +178,15 @@ public class HistoryFragment extends SherlockFragment implements
 
 	@Override
 	public void onActivityResult(int requestCode, int resultCode, Intent data) {
-		Log.d(TAG, "onActivityResult, rc: " + resultCode + ", request: "
-				+ requestCode);
+		// Log.d(TAG, "onActivityResult, rc: " + resultCode + ", request: "
+		// + requestCode);
 		switch (requestCode) {
 		// on result of picking file to import
 		case PICK_FILE_REQUEST:
 			if (resultCode == Activity.RESULT_OK) {
 
+				// long time task
 				new ImportRoadTask().execute(data);
-
 			}
 			break;
 		}
@@ -195,9 +194,6 @@ public class HistoryFragment extends SherlockFragment implements
 		super.onActivityResult(requestCode, resultCode, data);
 	}
 
-	
-	
-	
 	@Override
 	public boolean onItemLongClick(AdapterView<?> arg0, View arg1, int arg2,
 			long arg3) {
@@ -215,23 +211,28 @@ public class HistoryFragment extends SherlockFragment implements
 		startActivityForResult(intent, PICK_FILE_REQUEST);
 	}
 
-	private class ImportRoadTask extends AsyncTask<Intent, Integer, Long>{
-		LoadingDialog loadingDialog;
+	/*
+	 * AsyncTask to import file
+	 */
+	private class ImportRoadTask extends AsyncTask<Intent, Integer, Long> {
+		private LoadingDialog loadingDialog;
+
 		protected void onPreExecute() {
+			// show dialog
 			loadingDialog = new LoadingDialog();
 			loadingDialog.setCancelable(false);
 			loadingDialog.show(getFragmentManager(), "loading_dialog");
 		}
-		
+
 		@Override
 		protected Long doInBackground(Intent... data) {
-			
+
 			String path = data[0].getData().getPath();
 			Log.d(TAG, "selected file: " + path);
 
 			// Import Road using GPX file
-			ImportRoadToDB importer = new ImportRoadToDB(
-					new ImportRoadFromGPX(path));
+			ImportRoadToDB importer = new ImportRoadToDB(new ImportRoadFromGPX(
+					path));
 
 			try {
 				// read file
@@ -246,18 +247,19 @@ public class HistoryFragment extends SherlockFragment implements
 				roadToImport.setDistance(importer.getDistance());
 
 				double duration = importer.getDuration();
-				
-				//calculate calories
+
+				// calculate calories
 				SharedPreferences sharedPref = PreferenceManager
 						.getDefaultSharedPreferences(getActivity());
-				
-				float calories = caloriesCalculation.calculate((float)roadToImport.getDistance(),
-						(int)duration, sharedPref);
-				
-				
+
+				float calories = caloriesCalculation.calculate(
+						(float) roadToImport.getDistance(), (int) duration,
+						sharedPref);
+				SportTypes sportType = ((ISport) caloriesCalculation.getCaloriesCalculateStrategy()).getSportType();
+				roadToImport.setSport_type(sportType);
 				roadToImport.setDuration(duration);
-				roadToImport.setCalories((int)calories);
-				
+				roadToImport.setCalories((int) calories);
+
 				// save road to DB
 				roadDataProvider.save(roadToImport);
 
@@ -268,25 +270,22 @@ public class HistoryFragment extends SherlockFragment implements
 					trackDataProvider.save(track);
 				}
 
-				
-
 			} catch (FileNotFoundException e) {
 				e.printStackTrace();
 			} catch (IOException e) {
 				e.printStackTrace();
 			}
-			
+
 			return null;
 		}
-		
+
 		protected void onPostExecute(Long result) {
+			// hide dialog
 			loadingDialog.dismiss();
 			// refresh cursor
 			loadCursor();
 		}
-		
+
 	}
-	
+
 }
-
-

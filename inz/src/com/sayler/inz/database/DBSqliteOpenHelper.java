@@ -17,7 +17,7 @@ public class DBSqliteOpenHelper extends OrmLiteSqliteOpenHelper {
 	private final String TAG = "DBSqliteOpenHelper";
 	
 	private static final String DATABASE_NAME = "gps_ormed.db";
-	private static final int DATABASE_VERSION = 4;
+	private static final int DATABASE_VERSION = 7;
 	
 	public DBSqliteOpenHelper(Context context) {
 		super(context, DATABASE_NAME, null, DATABASE_VERSION);

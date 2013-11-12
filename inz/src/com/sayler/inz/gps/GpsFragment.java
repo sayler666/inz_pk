@@ -381,7 +381,8 @@ public class GpsFragment extends SherlockFragment implements OnClickListener,
 		currentRoad.setCalories((int) calories);
 		currentRoad.setDistance(distance);
 		currentRoad.setDuration(time);
-
+		currentRoad.setSport_type(sport.getSportType());
+		
 		roadData.save(currentRoad);
 
 		// start Road activity - show the road
