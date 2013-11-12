@@ -20,9 +20,10 @@ public class Road extends AbstractObject {
 	private double avg_speed;
 	@DatabaseField()
 	private int calories;
+	@DatabaseField()
+	private SportTypes sport_type;
 	@ForeignCollectionField
 	private ForeignCollection<Track> tracks;
-	
 	
 
 	public Road() {
@@ -94,5 +95,12 @@ public class Road extends AbstractObject {
 		this.tracks = tracks;
 	}
 	
+	public SportTypes getSport_type() {
+		return sport_type;
+	}
+
+	public void setSport_type(SportTypes sport_type) {
+		this.sport_type = sport_type;
+	}
 
 }
