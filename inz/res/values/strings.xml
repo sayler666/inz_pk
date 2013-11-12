@@ -10,6 +10,7 @@
     <string name="cancel">Cancel</string>
     <string name="ignore">Ignore</string>
     <string name="yes">Yes</string>
+     <string name="ok">OK</string>
 
     <!-- MENU -->
     <string-array name="menu_sections">
@@ -48,11 +49,13 @@
     <!-- controls buttons -->
     <string name="start_button">Start</string>
     <string name="end_button">End</string>
+   
     <string name="gps_fixed">Gps fixed!</string>
     <string name="gps_searching">Gps searching!</string>
     <string name="gps_not_fixed">Gps not fixed!</string>
     <string name="gps_not_fixed_dialog_message">Gps signal is not fixed.</string>
     <string name="end_recording_dialog_message">Are you sure to end recording?</string>
+    <string name="choose_sport_dialog_message">Choose sport:</string>
     <string name="time_elapsed">Time: </string>
     <string name="distance">Distance: </string>
     <string name="calories">Calories: </string>

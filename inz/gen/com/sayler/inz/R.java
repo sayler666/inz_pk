@@ -1148,51 +1148,53 @@ containing a value of this type.
         public static final int abs__textButton=0x7f070017;
         public static final int abs__title=0x7f07001f;
         public static final int abs__up=0x7f07000f;
-        public static final int action_settings=0x7f070055;
-        public static final int back_button=0x7f07004c;
-        public static final int button_bar=0x7f07004b;
-        public static final int calories=0x7f070048;
-        public static final int caloriesTextView=0x7f070041;
+        public static final int action_settings=0x7f070057;
+        public static final int back_button=0x7f07004e;
+        public static final int button_bar=0x7f07004d;
+        public static final int calories=0x7f070049;
+        public static final int caloriesTextView=0x7f070042;
         public static final int content_frame=0x7f070037;
-        public static final int controlsLayout=0x7f070039;
-        public static final int delete=0x7f070053;
+        public static final int controlsLayout=0x7f07003a;
+        public static final int delete=0x7f070055;
         public static final int disableHome=0x7f07000d;
-        public static final int distanceTextView=0x7f07003f;
+        public static final int distanceTextView=0x7f070040;
         public static final int drawer_layout=0x7f070036;
         public static final int edit_query=0x7f07002a;
-        public static final int endButton=0x7f07003b;
-        public static final int export_gpx=0x7f070052;
-        public static final int gpsStatusText=0x7f070043;
+        public static final int endButton=0x7f07003c;
+        public static final int export_gpx=0x7f070054;
+        public static final int gpsStatusText=0x7f070044;
         public static final int homeAsUp=0x7f07000a;
         public static final int hybrid=0x7f070004;
-        public static final int icon=0x7f07004a;
-        public static final int import_gpx=0x7f070054;
+        public static final int icon=0x7f07004c;
+        public static final int import_gpx=0x7f070056;
         public static final int left_drawer=0x7f070038;
-        public static final int linearLayout1=0x7f07003c;
-        public static final int linearLayout2=0x7f07003e;
-        public static final int linearLayout3=0x7f070040;
-        public static final int linearLayoutMap=0x7f070042;
+        public static final int linearLayout1=0x7f07003d;
+        public static final int linearLayout2=0x7f07003f;
+        public static final int linearLayout3=0x7f070041;
+        public static final int linearLayoutMap=0x7f070043;
         public static final int listMode=0x7f070006;
-        public static final int listView=0x7f070045;
-        public static final int map=0x7f07004f;
-        public static final int next_button=0x7f07004e;
+        public static final int listView=0x7f070046;
+        public static final int map=0x7f070051;
+        public static final int next_button=0x7f070050;
         public static final int none=0x7f070000;
         public static final int normal=0x7f070001;
-        public static final int road_id=0x7f070049;
+        public static final int progressBar1=0x7f07004b;
+        public static final int road_id=0x7f07004a;
         public static final int satellite=0x7f070002;
         public static final int showCustom=0x7f07000c;
         public static final int showHome=0x7f070009;
         public static final int showTitle=0x7f07000b;
-        public static final int skip_button=0x7f07004d;
-        public static final int sportChosen=0x7f070044;
-        public static final int startButton=0x7f07003a;
-        public static final int subtitle=0x7f070047;
+        public static final int skip_button=0x7f07004f;
+        public static final int spinner=0x7f070039;
+        public static final int sportChosen=0x7f070045;
+        public static final int startButton=0x7f07003b;
+        public static final int subtitle=0x7f070048;
         public static final int tabMode=0x7f070007;
         public static final int terrain=0x7f070003;
-        public static final int test_button=0x7f070051;
-        public static final int textView1=0x7f070050;
-        public static final int timerView1=0x7f07003d;
-        public static final int title=0x7f070046;
+        public static final int test_button=0x7f070053;
+        public static final int textView1=0x7f070052;
+        public static final int timerView1=0x7f07003e;
+        public static final int title=0x7f070047;
         public static final int useLogo=0x7f070008;
         public static final int wrap_content=0x7f070005;
     }
@@ -1223,17 +1225,19 @@ containing a value of this type.
         public static final int abs__search_view=0x7f030013;
         public static final int abs__simple_dropdown_hint=0x7f030014;
         public static final int activity_launch=0x7f030015;
-        public static final int gps_fragment=0x7f030016;
-        public static final int history_fragment=0x7f030017;
-        public static final int history_row=0x7f030018;
-        public static final int menu_layout=0x7f030019;
-        public static final int menu_row=0x7f03001a;
-        public static final int preference_list_fragment=0x7f03001b;
-        public static final int road_activity=0x7f03001c;
-        public static final int settings_fragment=0x7f03001d;
-        public static final int sherlock_spinner_dropdown_item=0x7f03001e;
-        public static final int sherlock_spinner_item=0x7f03001f;
-        public static final int welcome_fragment=0x7f030020;
+        public static final int choose_sport_dialog=0x7f030016;
+        public static final int gps_fragment=0x7f030017;
+        public static final int history_fragment=0x7f030018;
+        public static final int history_row=0x7f030019;
+        public static final int loading_dialog=0x7f03001a;
+        public static final int menu_layout=0x7f03001b;
+        public static final int menu_row=0x7f03001c;
+        public static final int preference_list_fragment=0x7f03001d;
+        public static final int road_activity=0x7f03001e;
+        public static final int settings_fragment=0x7f03001f;
+        public static final int sherlock_spinner_dropdown_item=0x7f030020;
+        public static final int sherlock_spinner_item=0x7f030021;
+        public static final int welcome_fragment=0x7f030022;
     }
     public static final class menu {
         public static final int history_floating_context_menu=0x7f0e0000;
@@ -1308,10 +1312,11 @@ containing a value of this type.
         /**   Strings for possible PreferenceActivity Back/Next buttons 
          */
         public static final int back_button_label=0x7f080019;
-        public static final int bike_weight_title=0x7f080041;
-        public static final int calories=0x7f08003b;
+        public static final int bike_weight_title=0x7f080043;
+        public static final int calories=0x7f08003d;
         public static final int cancel=0x7f08002e;
-        public static final int click_again_to_close=0x7f080046;
+        public static final int choose_sport_dialog_message=0x7f08003a;
+        public static final int click_again_to_close=0x7f080048;
         /**  Button in confirmation dialog to enable Google Play services.  Clicking it
         will direct user to application settings of Google Play services where they
         can enable it [CHAR LIMIT=40] 
@@ -1379,36 +1384,37 @@ containing a value of this type.
         /**  Long form sign-in button text [CHAR LIMIT=30] 
          */
         public static final int common_signin_button_text_long=0x7f080012;
-        public static final int default_sport_title=0x7f080042;
-        public static final int delete=0x7f080045;
-        public static final int distance=0x7f08003a;
+        public static final int default_sport_title=0x7f080044;
+        public static final int delete=0x7f080047;
+        public static final int distance=0x7f08003c;
         public static final int drawer_close=0x7f08002d;
         public static final int drawer_open=0x7f08002c;
-        public static final int end_button=0x7f080033;
-        public static final int end_recording_dialog_message=0x7f080038;
-        public static final int export_gpx=0x7f080044;
-        public static final int gps_fixed=0x7f080034;
-        public static final int gps_not_fixed=0x7f080036;
-        public static final int gps_not_fixed_dialog_message=0x7f080037;
-        public static final int gps_searching=0x7f080035;
+        public static final int end_button=0x7f080034;
+        public static final int end_recording_dialog_message=0x7f080039;
+        public static final int export_gpx=0x7f080046;
+        public static final int gps_fixed=0x7f080035;
+        public static final int gps_not_fixed=0x7f080037;
+        public static final int gps_not_fixed_dialog_message=0x7f080038;
+        public static final int gps_searching=0x7f080036;
         public static final int ignore=0x7f08002f;
-        public static final int import_gpx=0x7f080043;
-        public static final int main_setitings_category_title=0x7f08003f;
+        public static final int import_gpx=0x7f080045;
+        public static final int main_setitings_category_title=0x7f080041;
         public static final int next_button_label=0x7f08001a;
+        public static final int ok=0x7f080031;
         public static final int road_activity=0x7f08002a;
-        public static final int settings_text=0x7f08003e;
+        public static final int settings_text=0x7f080040;
         /**  Optional button to Skip a PreferenceActivity [CHAR LIMIT=20] 
          */
         public static final int skip_button_label=0x7f08001b;
-        public static final int sports_title=0x7f080031;
+        public static final int sports_title=0x7f080032;
         /**  GPS 
  controls buttons 
          */
-        public static final int start_button=0x7f080032;
-        public static final int time_elapsed=0x7f080039;
-        public static final int turn_on_gps_dialog_message=0x7f08003d;
-        public static final int weight_title=0x7f080040;
-        public static final int welcome_text=0x7f08003c;
+        public static final int start_button=0x7f080033;
+        public static final int time_elapsed=0x7f08003b;
+        public static final int turn_on_gps_dialog_message=0x7f08003f;
+        public static final int weight_title=0x7f080042;
+        public static final int welcome_text=0x7f08003e;
         public static final int yes=0x7f080030;
     }
     public static final class style {

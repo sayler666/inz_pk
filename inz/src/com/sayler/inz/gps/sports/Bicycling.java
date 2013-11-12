@@ -8,7 +8,7 @@ public class Bicycling implements ISport {
 	@Override
 	public float calculateCalories(float distance, int time, SharedPreferences sharedPref) {
 
-		int bikeWeight = Integer.parseInt(sharedPref.getString("bike_weight", "70"));
+		int bikeWeight = Integer.parseInt(sharedPref.getString("bike_weight", "10"));
 		int weight = Integer.parseInt(sharedPref.getString("weight", "70"));
 
 		float mph = (float) (distance / 1609.344) / (((float) time) / 3600);

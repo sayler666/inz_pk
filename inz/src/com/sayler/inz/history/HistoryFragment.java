@@ -8,8 +8,10 @@ import java.util.ArrayList;
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Intent;
+import android.content.SharedPreferences;
+import android.os.AsyncTask;
 import android.os.Bundle;
-import android.os.Handler;
+import android.preference.PreferenceManager;
 import android.util.Log;
 import android.view.ContextMenu;
 import android.view.ContextMenu.ContextMenuInfo;
@@ -35,15 +37,19 @@ import com.sayler.inz.database.DBSqliteOpenHelper;
 import com.sayler.inz.database.DaoHelper;
 import com.sayler.inz.database.model.Road;
 import com.sayler.inz.database.model.Track;
+import com.sayler.inz.gps.sports.Calories;
+import com.sayler.inz.gps.sports.ISport;
+import com.sayler.inz.history.ChooseSportDialog.ChooseSportDialogListener;
 
 @SuppressLint("ShowToast")
 public class HistoryFragment extends SherlockFragment implements
-		OnItemClickListener, OnItemLongClickListener {
+		OnItemClickListener, OnItemLongClickListener, ChooseSportDialogListener {
 
 	private ListView listView;
 	private RoadDataProvider roadDataProvider;
 	static final int PICK_FILE_REQUEST = 101;
 
+	private Calories caloriesCalculation = new Calories();
 	private static String TAG = "HistoryFragment";
 
 	@Override
@@ -78,9 +84,8 @@ public class HistoryFragment extends SherlockFragment implements
 	}
 
 	private void loadCursor() {
-		
-		//TODO: separete thread 
-		
+
+		// TODO: separete thread
 
 		try {
 			HistoryArrayAdapter arrayAdapter = new HistoryArrayAdapter(
@@ -120,13 +125,21 @@ public class HistoryFragment extends SherlockFragment implements
 
 		switch (item.getItemId()) {
 		case R.id.import_gpx:
-			// pick file to import
-			Intent intent = new Intent(Intent.ACTION_GET_CONTENT);
-			intent.setType("file/*");
-			startActivityForResult(intent, PICK_FILE_REQUEST);
+
+			importGpx();
+
 			break;
 		}
 		return super.onOptionsItemSelected(item);
+	}
+
+	private void importGpx() {
+
+		// // dialog
+		ChooseSportDialog gpsTurnOnDialog = new ChooseSportDialog();
+		gpsTurnOnDialog.setTargetFragment(this, 0);
+		gpsTurnOnDialog.show(getFragmentManager(), "turn_on_gps");
+
 	}
 
 	@Override
@@ -173,49 +186,7 @@ public class HistoryFragment extends SherlockFragment implements
 		case PICK_FILE_REQUEST:
 			if (resultCode == Activity.RESULT_OK) {
 
-				String path = data.getData().getPath();
-				Log.d(TAG, "selected file: " + path);
-
-				// Import Road using GPX file
-				ImportRoadToDB importer = new ImportRoadToDB(
-						new ImportRoadFromGPX(path));
-
-				try {
-					// read file
-					importer.read();
-					// get tracks
-					ArrayList<Track> roadTracks = (ArrayList<Track>) importer
-							.getTracks();
-
-					// set road data
-					Road roadToImport = new Road();
-					roadToImport.setCreatedAt(importer.getDate());
-					roadToImport.setDistance(importer.getDistance());
-					Log.d(TAG, importer.getDistance().toString());
-
-					// save road to DB
-					roadDataProvider.save(roadToImport);
-
-					// save tracks
-					TrackDataProvider trackDataProvider = new TrackDataProvider();
-					for (Track track : roadTracks) {
-						track.setRoad(roadToImport);
-						trackDataProvider.save(track);
-					}
-
-					// refresh cursor
-					loadCursor();
-
-				} catch (FileNotFoundException e) {
-					e.printStackTrace();
-				} catch (IOException e) {
-					e.printStackTrace();
-				}
-
-				// // dialog
-				// TurnOnGpsDialog gpsTurnOnDialog = new TurnOnGpsDialog();
-				// gpsTurnOnDialog.setTargetFragment(this, 0);
-				// gpsTurnOnDialog.show(fm, "turn_on_gps");
+				new ImportRoadTask().execute(data);
 
 			}
 			break;
@@ -224,6 +195,9 @@ public class HistoryFragment extends SherlockFragment implements
 		super.onActivityResult(requestCode, resultCode, data);
 	}
 
+	
+	
+	
 	@Override
 	public boolean onItemLongClick(AdapterView<?> arg0, View arg1, int arg2,
 			long arg3) {
@@ -231,4 +205,88 @@ public class HistoryFragment extends SherlockFragment implements
 		return false;
 	}
 
+	@Override
+	public void onChooseSportDialogPositiveClick(ISport sport) {
+		caloriesCalculation.setCaloriesCalculateStrategy(sport);
+
+		// pick file to import
+		Intent intent = new Intent(Intent.ACTION_GET_CONTENT);
+		intent.setType("file/*");
+		startActivityForResult(intent, PICK_FILE_REQUEST);
+	}
+
+	private class ImportRoadTask extends AsyncTask<Intent, Integer, Long>{
+		LoadingDialog loadingDialog;
+		protected void onPreExecute() {
+			loadingDialog = new LoadingDialog();
+			loadingDialog.setCancelable(false);
+			loadingDialog.show(getFragmentManager(), "loading_dialog");
+		}
+		
+		@Override
+		protected Long doInBackground(Intent... data) {
+			
+			String path = data[0].getData().getPath();
+			Log.d(TAG, "selected file: " + path);
+
+			// Import Road using GPX file
+			ImportRoadToDB importer = new ImportRoadToDB(
+					new ImportRoadFromGPX(path));
+
+			try {
+				// read file
+				importer.read();
+				// get tracks
+				ArrayList<Track> roadTracks = (ArrayList<Track>) importer
+						.getTracks();
+
+				// set road data
+				Road roadToImport = new Road();
+				roadToImport.setCreatedAt(importer.getDate());
+				roadToImport.setDistance(importer.getDistance());
+
+				double duration = importer.getDuration();
+				
+				//calculate calories
+				SharedPreferences sharedPref = PreferenceManager
+						.getDefaultSharedPreferences(getActivity());
+				
+				float calories = caloriesCalculation.calculate((float)roadToImport.getDistance(),
+						(int)duration, sharedPref);
+				
+				
+				roadToImport.setDuration(duration);
+				roadToImport.setCalories((int)calories);
+				
+				// save road to DB
+				roadDataProvider.save(roadToImport);
+
+				// save tracks
+				TrackDataProvider trackDataProvider = new TrackDataProvider();
+				for (Track track : roadTracks) {
+					track.setRoad(roadToImport);
+					trackDataProvider.save(track);
+				}
+
+				
+
+			} catch (FileNotFoundException e) {
+				e.printStackTrace();
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+			
+			return null;
+		}
+		
+		protected void onPostExecute(Long result) {
+			loadingDialog.dismiss();
+			// refresh cursor
+			loadCursor();
+		}
+		
+	}
+	
 }
+
+
