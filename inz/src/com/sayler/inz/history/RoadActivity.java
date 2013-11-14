@@ -29,7 +29,6 @@ import com.sayler.inz.database.model.Road;
 import com.sayler.inz.database.model.Track;
 import com.sayler.inz.gps.TimerView;
 
-
 //TODO: add export/delete button in action bar 
 
 public class RoadActivity extends SherlockFragmentActivity {
@@ -69,7 +68,7 @@ public class RoadActivity extends SherlockFragmentActivity {
 		try {
 			final Road road = roadData.get(roadId);
 			ArrayList<Track> tracks = (ArrayList<Track>) road.getTracks();
-			
+
 			for (Track t : tracks) {
 				LatLng ll = new LatLng(t.getLat(), t.getLng());
 				roadLine.add(ll);
@@ -83,12 +82,13 @@ public class RoadActivity extends SherlockFragmentActivity {
 			// start circle
 
 			// finish marker
-			Track lastTrack = tracks.get(tracks.size()-1);
-			map.addMarker(new MarkerOptions().position(
-					new LatLng(lastTrack.getLat(), lastTrack.getLng())).icon(
-					BitmapDescriptorFactory
-							.fromResource(R.drawable.marker_finish)));
-
+			if (tracks.size() > 0) {
+				Track lastTrack = tracks.get(tracks.size() - 1);
+				map.addMarker(new MarkerOptions().position(
+						new LatLng(lastTrack.getLat(), lastTrack.getLng()))
+						.icon(BitmapDescriptorFactory
+								.fromResource(R.drawable.marker_finish)));
+			}
 			map.setOnCameraChangeListener(new OnCameraChangeListener() {
 
 				@Override
@@ -98,11 +98,9 @@ public class RoadActivity extends SherlockFragmentActivity {
 						map.moveCamera(CameraUpdateFactory.newLatLngBounds(
 								bc.build(), 50));
 						// Remove listener to prevent position reset on camera
-						// move.
+						// move
 						map.setOnCameraChangeListener(null);
-
 					}
-
 				}
 			});
 
@@ -111,7 +109,6 @@ public class RoadActivity extends SherlockFragmentActivity {
 			ab.setDisplayHomeAsUpEnabled(true);
 
 			// road info
-
 			distanceTextView = (TextView) findViewById(R.id.distanceTextView);
 			caloriesTextView = (TextView) findViewById(R.id.caloriesTextView);
 			timerView = (TimerView) findViewById(R.id.timerView1);
@@ -131,7 +128,6 @@ public class RoadActivity extends SherlockFragmentActivity {
 		switch (item.getItemId()) {
 		case android.R.id.home:
 			this.onBackPressed();
-
 			return true;
 		}
 		return super.onOptionsItemSelected(item);
@@ -139,7 +135,6 @@ public class RoadActivity extends SherlockFragmentActivity {
 
 	@Override
 	public void onBackPressed() {
-
 		super.onBackPressed();
 		overridePendingTransition(R.animator.right_to_left_show,
 				R.animator.right_to_left_hide);
