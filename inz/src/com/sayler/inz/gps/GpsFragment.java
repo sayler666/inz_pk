@@ -498,7 +498,6 @@ public class GpsFragment extends SherlockFragment implements OnClickListener,
 
 	@Override
 	public boolean onNavigationItemSelected(int itemPosition, long itemId) {
-		// TODO Auto-generated method stub
 		return false;
 	}
 

@@ -29,6 +29,9 @@ import com.sayler.inz.database.model.Road;
 import com.sayler.inz.database.model.Track;
 import com.sayler.inz.gps.TimerView;
 
+
+//TODO: add export/delete button in action bar 
+
 public class RoadActivity extends SherlockFragmentActivity {
 	private GoogleMap map;
 
@@ -80,7 +83,7 @@ public class RoadActivity extends SherlockFragmentActivity {
 			// start circle
 
 			// finish marker
-			Track lastTrack = tracks.get(tracks.size());
+			Track lastTrack = tracks.get(tracks.size()-1);
 			map.addMarker(new MarkerOptions().position(
 					new LatLng(lastTrack.getLat(), lastTrack.getLng())).icon(
 					BitmapDescriptorFactory

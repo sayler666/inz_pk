@@ -97,7 +97,6 @@ public class ExportRoadToGPX {
 			transformer.setOutputProperty(OutputKeys.METHOD, "xml");
 			transformer.setOutputProperty(OutputKeys.INDENT, "yes");
 			transformer.setOutputProperty(OutputKeys.ENCODING, "UTF-8");
-
 			transformer.transform(new DOMSource(doc), new StreamResult(sw));
 
 			// Log.d(TAG, sw.toString());

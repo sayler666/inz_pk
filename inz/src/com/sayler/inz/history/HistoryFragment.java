@@ -50,6 +50,9 @@ import com.sayler.inz.history.gpx.ImportRoadToDB;
 import com.sayler.inz.history.gpx.LoadingDialog;
 import com.sayler.inz.history.gpx.ChooseSportDialog.ChooseSportDialogListener;
 
+
+//FIXME: sometime some bug appear and need to clean apk data
+
 @SuppressLint("ShowToast")
 public class HistoryFragment extends SherlockFragment implements
 		OnItemClickListener, OnItemLongClickListener, ChooseSportDialogListener {
@@ -94,7 +97,7 @@ public class HistoryFragment extends SherlockFragment implements
 
 	private void loadCursor() {
 
-		// TODO: separete thread
+		// TODO: separate thread
 		try {
 			HistoryArrayAdapter arrayAdapter = new HistoryArrayAdapter(
 					getActivity().getApplicationContext(),
@@ -242,7 +245,6 @@ public class HistoryFragment extends SherlockFragment implements
 	@Override
 	public boolean onItemLongClick(AdapterView<?> arg0, View arg1, int arg2,
 			long arg3) {
-		// TODO Auto-generated method stub
 		return false;
 	}
 

@@ -133,7 +133,6 @@ public class Launch extends SherlockFragmentActivity implements
 							.forName(lastIntentExtras
 									.getString(SWITCH_FRAGMENT_INTENT)));
 				} catch (ClassNotFoundException e) {
-					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}
 			}
