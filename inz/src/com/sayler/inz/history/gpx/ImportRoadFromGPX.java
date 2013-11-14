@@ -1,4 +1,4 @@
-package com.sayler.inz.history;
+package com.sayler.inz.history.gpx;
 
 import java.io.BufferedReader;
 import java.io.FileInputStream;
@@ -119,7 +119,7 @@ public class ImportRoadFromGPX implements I_ImportRoadToDB {
 			}
 
 			Track track = new Track(Double.valueOf(matcherWpt.group(1)),
-					Double.valueOf(matcherWpt.group(2)), alt, 0, 0);
+					Double.valueOf(matcherWpt.group(2)), alt, 0, ((date != null) ? date.getTime() : 0));
 			track.setCreatedAt(date);
 
 			// add track to list

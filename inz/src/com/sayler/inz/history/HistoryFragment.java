@@ -5,6 +5,8 @@ import java.io.IOException;
 import java.sql.SQLException;
 import java.util.ArrayList;
 
+import javax.xml.parsers.ParserConfigurationException;
+
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Intent;
@@ -25,6 +27,7 @@ import android.widget.AdapterView.OnItemLongClickListener;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.actionbarsherlock.app.SherlockFragment;
 import com.actionbarsherlock.view.Menu;
@@ -40,7 +43,12 @@ import com.sayler.inz.database.model.SportTypes;
 import com.sayler.inz.database.model.Track;
 import com.sayler.inz.gps.sports.Calories;
 import com.sayler.inz.gps.sports.ISport;
-import com.sayler.inz.history.ChooseSportDialog.ChooseSportDialogListener;
+import com.sayler.inz.history.gpx.ChooseSportDialog;
+import com.sayler.inz.history.gpx.ExportRoadToGPX;
+import com.sayler.inz.history.gpx.ImportRoadFromGPX;
+import com.sayler.inz.history.gpx.ImportRoadToDB;
+import com.sayler.inz.history.gpx.LoadingDialog;
+import com.sayler.inz.history.gpx.ChooseSportDialog.ChooseSportDialogListener;
 
 @SuppressLint("ShowToast")
 public class HistoryFragment extends SherlockFragment implements
@@ -133,14 +141,7 @@ public class HistoryFragment extends SherlockFragment implements
 		return super.onOptionsItemSelected(item);
 	}
 
-	private void importGpx() {
-
-		// dialog to choose sport
-		ChooseSportDialog gpsTurnOnDialog = new ChooseSportDialog();
-		gpsTurnOnDialog.setTargetFragment(this, 0);
-		gpsTurnOnDialog.show(getFragmentManager(), "turn_on_gps");
-
-	}
+	
 
 	@Override
 	public void onCreateContextMenu(ContextMenu menu, View v,
@@ -170,12 +171,56 @@ public class HistoryFragment extends SherlockFragment implements
 			// refresh list
 			loadCursor();
 			return true;
+		case R.id.export_gpx:
+			
+			exportGpx(roadId);
+			
+			return true;
 		default:
 			return super.onContextItemSelected(item);
 		}
 
 	}
 
+	private void exportGpx(Long roadId){
+		
+		try {
+			//get road object
+			Road roadToExport = roadDataProvider.get(roadId);
+			
+			//export to GPX file
+			String filePath = ExportRoadToGPX.export(roadToExport);
+			
+			Toast.makeText(getActivity(),
+					"File saved to: "+filePath, Toast.LENGTH_SHORT)
+					.show();
+		} catch (SQLException e) {
+			Toast.makeText(getActivity(),
+					"Error reading road data!"+roadId, Toast.LENGTH_SHORT)
+					.show();
+			e.printStackTrace();
+		} catch (ParserConfigurationException es){
+			Toast.makeText(getActivity(),
+					"Error reading road data!"+roadId, Toast.LENGTH_SHORT)
+					.show();
+		} catch (IOException e) {
+			Toast.makeText(getActivity(),
+					"Error writing to sdcard!"+roadId, Toast.LENGTH_SHORT)
+					.show();
+			e.printStackTrace();
+		}
+		
+	}
+	
+	private void importGpx() {
+
+		// dialog to choose sport
+		ChooseSportDialog gpsTurnOnDialog = new ChooseSportDialog();
+		gpsTurnOnDialog.setTargetFragment(this, 0);
+		gpsTurnOnDialog.show(getFragmentManager(), "turn_on_gps");
+
+	}
+	
 	@Override
 	public void onActivityResult(int requestCode, int resultCode, Intent data) {
 		// Log.d(TAG, "onActivityResult, rc: " + resultCode + ", request: "

@@ -63,10 +63,10 @@ public class HistoryArrayAdapter extends ArrayAdapter<Road> {
 			textViewRoadId.setText(String.valueOf(item.getId()));
 
 			// icon
-			// TODO: choose specific img type for each sport
 			ImageView sportImage = (ImageView) view
 					.findViewById(R.id.sport_type_img);
 			Bitmap bmp = null;
+			// depends on sport type
 			switch (item.getSport_type()) {
 			case BICYCLING:
 				bmp = BitmapFactory.decodeResource(context.getResources(),
@@ -81,7 +81,7 @@ public class HistoryArrayAdapter extends ArrayAdapter<Road> {
 						R.drawable.sport_type_running);
 
 			}
-
+			// oval avatar
 			RoundedAvatarDrawable avatar = new RoundedAvatarDrawable(bmp);
 
 			sportImage.setImageDrawable(avatar);

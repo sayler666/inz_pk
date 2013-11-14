@@ -1,4 +1,4 @@
-package com.sayler.inz.history;
+package com.sayler.inz.history.gpx;
 
 import android.app.AlertDialog;
 import android.app.Dialog;

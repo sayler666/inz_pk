@@ -1,4 +1,4 @@
-package com.sayler.inz.history;
+package com.sayler.inz.history.gpx;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -82,9 +82,6 @@ public class ChooseSportDialog extends DialogFragment implements
 									mListener
 											.onChooseSportDialogPositiveClick(sport);
 
-									Toast.makeText(getActivity(),
-											selectedSport, Toast.LENGTH_SHORT)
-											.show();
 
 								} catch (java.lang.InstantiationException e) {
 									e.printStackTrace();

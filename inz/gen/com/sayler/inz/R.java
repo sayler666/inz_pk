@@ -1095,20 +1095,22 @@ containing a value of this type.
         public static final int common_signin_btn_text_pressed_light=0x7f020089;
         public static final int drawer_shadow=0x7f02008a;
         public static final int history_divider=0x7f02008b;
-        public static final int ic_drawer=0x7f02008c;
-        public static final int ic_launcher=0x7f02008d;
-        public static final int ic_plusone_medium_off_client=0x7f02008e;
-        public static final int ic_plusone_small_off_client=0x7f02008f;
-        public static final int ic_plusone_standard_off_client=0x7f020090;
-        public static final int ic_plusone_tall_off_client=0x7f020091;
-        public static final int import_gpx=0x7f020092;
-        public static final int menu_gradient=0x7f020093;
-        public static final int menu_row_active_gradient=0x7f020094;
-        public static final int menu_row_hover_gradient=0x7f020095;
-        public static final int menu_selector=0x7f020096;
-        public static final int sport_type_bicycling=0x7f020097;
-        public static final int sport_type_running=0x7f020098;
-        public static final int trening=0x7f020099;
+        public static final int history_row_hover_gradient=0x7f02008c;
+        public static final int history_row_selector=0x7f02008d;
+        public static final int ic_drawer=0x7f02008e;
+        public static final int ic_launcher=0x7f02008f;
+        public static final int ic_plusone_medium_off_client=0x7f020090;
+        public static final int ic_plusone_small_off_client=0x7f020091;
+        public static final int ic_plusone_standard_off_client=0x7f020092;
+        public static final int ic_plusone_tall_off_client=0x7f020093;
+        public static final int import_gpx=0x7f020094;
+        public static final int menu_gradient=0x7f020095;
+        public static final int menu_row_active_gradient=0x7f020096;
+        public static final int menu_row_hover_gradient=0x7f020097;
+        public static final int menu_selector=0x7f020098;
+        public static final int sport_type_bicycling=0x7f020099;
+        public static final int sport_type_running=0x7f02009a;
+        public static final int trening=0x7f02009b;
     }
     public static final class id {
         public static final int abs__action_bar=0x7f070024;
