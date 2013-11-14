@@ -1,6 +1,7 @@
 package com.sayler.inz.history;
 
 import java.sql.SQLException;
+import java.util.ArrayList;
 
 import android.content.Intent;
 import android.graphics.Color;
@@ -14,9 +15,11 @@ import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.GoogleMap.OnCameraChangeListener;
 import com.google.android.gms.maps.SupportMapFragment;
+import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.LatLngBounds;
+import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.maps.model.PolylineOptions;
 import com.sayler.inz.R;
 import com.sayler.inz.data.RoadDataProvider;
@@ -62,8 +65,9 @@ public class RoadActivity extends SherlockFragmentActivity {
 
 		try {
 			final Road road = roadData.get(roadId);
-
-			for (Track t : road.getTracks()) {
+			ArrayList<Track> tracks = (ArrayList<Track>) road.getTracks();
+			
+			for (Track t : tracks) {
 				LatLng ll = new LatLng(t.getLat(), t.getLng());
 				roadLine.add(ll);
 				bc.include(ll);
@@ -73,6 +77,15 @@ public class RoadActivity extends SherlockFragmentActivity {
 			map = ((SupportMapFragment) getSupportFragmentManager()
 					.findFragmentById(R.id.map)).getMap();
 			map.addPolyline(roadLine);
+			// start circle
+
+			// finish marker
+			Track lastTrack = tracks.get(tracks.size());
+			map.addMarker(new MarkerOptions().position(
+					new LatLng(lastTrack.getLat(), lastTrack.getLng())).icon(
+					BitmapDescriptorFactory
+							.fromResource(R.drawable.marker_finish)));
+
 			map.setOnCameraChangeListener(new OnCameraChangeListener() {
 
 				@Override
@@ -84,6 +97,7 @@ public class RoadActivity extends SherlockFragmentActivity {
 						// Remove listener to prevent position reset on camera
 						// move.
 						map.setOnCameraChangeListener(null);
+
 					}
 
 				}

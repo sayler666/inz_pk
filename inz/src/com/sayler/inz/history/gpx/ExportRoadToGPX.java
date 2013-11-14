@@ -22,7 +22,6 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
 import android.os.Environment;
-import android.util.Log;
 
 import com.sayler.inz.database.model.Road;
 import com.sayler.inz.database.model.Track;
@@ -73,16 +72,15 @@ public class ExportRoadToGPX {
 			Element time = doc.createElement("time");
 			String timeString = "0";
 			if (wpt.getCreatedAt() != null) {
-				Log.d(TAG, String.valueOf(dateFormatLocal.format(wpt
-						.getCreatedAt())));
 				timeString = String.valueOf(dateFormatLocal.format(wpt
 						.getCreatedAt()));
 			}
 			time.appendChild(doc.createTextNode(timeString));
 			wptNode.appendChild(time);
+			
 			// append wpt node
 			gpx.appendChild(wptNode);
-			// break;
+
 		}
 
 		// string writer
