@@ -1,15 +1,20 @@
 package com.sayler.inz.history;
 
+import java.io.IOException;
 import java.sql.SQLException;
 import java.util.ArrayList;
+
+import javax.xml.parsers.ParserConfigurationException;
 
 import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.actionbarsherlock.app.ActionBar;
 import com.actionbarsherlock.app.SherlockFragmentActivity;
+import com.actionbarsherlock.view.Menu;
 import com.actionbarsherlock.view.MenuItem;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
@@ -28,8 +33,9 @@ import com.sayler.inz.database.DaoHelper;
 import com.sayler.inz.database.model.Road;
 import com.sayler.inz.database.model.Track;
 import com.sayler.inz.gps.TimerView;
+import com.sayler.inz.history.gpx.ExportRoadToGPX;
 
-//TODO: add export/delete button in action bar 
+
 
 public class RoadActivity extends SherlockFragmentActivity {
 	private GoogleMap map;
@@ -40,7 +46,8 @@ public class RoadActivity extends SherlockFragmentActivity {
 	private TextView distanceTextView;
 	private TextView caloriesTextView;
 	private TimerView timerView;
-
+	private RoadDataProvider roadDataProvider;
+	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 
@@ -63,10 +70,10 @@ public class RoadActivity extends SherlockFragmentActivity {
 		// ORM
 		DaoHelper.setOpenHelper(getApplicationContext(),
 				DBSqliteOpenHelper.class);
-		RoadDataProvider roadData = new RoadDataProvider();
+		roadDataProvider = new RoadDataProvider();
 
 		try {
-			final Road road = roadData.get(roadId);
+			final Road road = roadDataProvider.get(roadId);
 			ArrayList<Track> tracks = (ArrayList<Track>) road.getTracks();
 
 			for (Track t : tracks) {
@@ -79,7 +86,6 @@ public class RoadActivity extends SherlockFragmentActivity {
 			map = ((SupportMapFragment) getSupportFragmentManager()
 					.findFragmentById(R.id.map)).getMap();
 			map.addPolyline(roadLine);
-			// start circle
 
 			// finish marker
 			if (tracks.size() > 0) {
@@ -89,8 +95,8 @@ public class RoadActivity extends SherlockFragmentActivity {
 						.icon(BitmapDescriptorFactory
 								.fromResource(R.drawable.marker_finish)));
 			}
-			map.setOnCameraChangeListener(new OnCameraChangeListener() {
 
+			map.setOnCameraChangeListener(new OnCameraChangeListener() {
 				@Override
 				public void onCameraChange(CameraPosition position) {
 					if (road.getTracks().size() > 0) {
@@ -124,13 +130,49 @@ public class RoadActivity extends SherlockFragmentActivity {
 	}
 
 	@Override
+	public boolean onCreateOptionsMenu(Menu menu) {
+		com.actionbarsherlock.view.MenuInflater inflater = getSupportMenuInflater();
+		inflater.inflate(R.menu.road_menu, menu);
+		return super.onCreateOptionsMenu(menu);
+	}
+
+	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
 		switch (item.getItemId()) {
 		case android.R.id.home:
 			this.onBackPressed();
 			return true;
+		case R.id.export_gpx:
+			exportGpx(roadId);
+			return true;
 		}
 		return super.onOptionsItemSelected(item);
+	}
+
+	private void exportGpx(Long roadId) {
+
+		try {
+			// get road object
+			Road roadToExport = roadDataProvider.get(roadId);
+
+			// export to GPX file
+			String filePath = ExportRoadToGPX.export(roadToExport);
+
+			Toast.makeText(this, "File saved to: " + filePath,
+					Toast.LENGTH_SHORT).show();
+		} catch (SQLException e) {
+			Toast.makeText(this, "Error reading road data!" + roadId,
+					Toast.LENGTH_SHORT).show();
+			e.printStackTrace();
+		} catch (ParserConfigurationException es) {
+			Toast.makeText(this, "Error reading road data!" + roadId,
+					Toast.LENGTH_SHORT).show();
+		} catch (IOException e) {
+			Toast.makeText(this, "Error writing to sdcard!" + roadId,
+					Toast.LENGTH_SHORT).show();
+			e.printStackTrace();
+		}
+
 	}
 
 	@Override

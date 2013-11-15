@@ -44,11 +44,11 @@ import com.sayler.inz.database.model.Track;
 import com.sayler.inz.gps.sports.Calories;
 import com.sayler.inz.gps.sports.ISport;
 import com.sayler.inz.history.gpx.ChooseSportDialog;
+import com.sayler.inz.history.gpx.ChooseSportDialog.ChooseSportDialogListener;
 import com.sayler.inz.history.gpx.ExportRoadToGPX;
 import com.sayler.inz.history.gpx.ImportRoadFromGPX;
 import com.sayler.inz.history.gpx.ImportRoadToDB;
 import com.sayler.inz.history.gpx.LoadingDialog;
-import com.sayler.inz.history.gpx.ChooseSportDialog.ChooseSportDialogListener;
 
 
 //FIXME: sometime some bug appear and need to clean apk data
@@ -92,6 +92,7 @@ public class HistoryFragment extends SherlockFragment implements
 		// set long click on list items
 		registerForContextMenu(listView);
 
+		
 		return view;
 	}
 
