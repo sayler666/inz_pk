@@ -70,5 +70,8 @@
     <string name="export_gpx">Export GPX</string>
     <string name="delete">Delete</string>
 	<string name="click_again_to_close">Click back again to close</string>
+	
+	 <string name="road_tab">Road</string>
+	 <string name="stats_tab">Statistics</string>
     
 </resources>

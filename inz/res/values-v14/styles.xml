@@ -3,7 +3,7 @@
     <!--
         Base application theme for API 14+. This theme completely replaces
         AppBaseTheme from BOTH res/values/styles.xml and
-        res/values-v11/styles.xml on API 14+ devices.
+        res/values-v11/styles.xml on API 14+ devices.
     -->
     <style name="AppBaseTheme" parent="android:Theme.Holo.Light.DarkActionBar">
         <!-- API 14 theme customizations can go here. -->
@@ -12,10 +12,17 @@
     <style name="Theme.MyTheme" parent="Theme.Sherlock">
         <item name="actionBarStyle">@style/Widget.MyTheme.ActionBar</item>
         <item name="android:actionBarStyle">@style/Widget.MyTheme.ActionBar</item>
+        <item name="android:actionBarTabStyle">@style/Theme.ActionBar.Tab</item>
+        <item name="actionBarTabStyle">@style/Theme.ActionBar.Tab</item>
     </style>
 
     <style name="Widget.MyTheme.ActionBar" parent="Widget.Sherlock.ActionBar">
         <item name="android:background">#ff52ab2b</item>
+    </style>
+
+    <style name="Theme.ActionBar.Tab" parent="Widget.Sherlock.Light.ActionBar.TabBar">
+        <item name="android:background">@drawable/tab_bar_background</item>
+        <item name="android:gravity">center</item>
     </style>
 
 </resources>

@@ -823,10 +823,10 @@ containing a value of this type.
         public static final int abs__bright_foreground_disabled_holo_light=0x7f06000f;
         public static final int abs__bright_foreground_holo_dark=0x7f06000c;
         public static final int abs__bright_foreground_holo_light=0x7f06000d;
-        public static final int abs__primary_text_disable_only_holo_dark=0x7f060010;
-        public static final int abs__primary_text_disable_only_holo_light=0x7f060011;
-        public static final int abs__primary_text_holo_dark=0x7f060012;
-        public static final int abs__primary_text_holo_light=0x7f060013;
+        public static final int abs__primary_text_disable_only_holo_dark=0x7f060012;
+        public static final int abs__primary_text_disable_only_holo_light=0x7f060013;
+        public static final int abs__primary_text_holo_dark=0x7f060014;
+        public static final int abs__primary_text_holo_light=0x7f060015;
         public static final int common_action_bar_splitter=0x7f060009;
         /**  Sign-in Button Colors 
          */
@@ -839,8 +839,10 @@ containing a value of this type.
         public static final int common_signin_btn_light_text_disabled=0x7f060006;
         public static final int common_signin_btn_light_text_focused=0x7f060007;
         public static final int common_signin_btn_light_text_pressed=0x7f060005;
-        public static final int common_signin_btn_text_dark=0x7f060014;
-        public static final int common_signin_btn_text_light=0x7f060015;
+        public static final int common_signin_btn_text_dark=0x7f060016;
+        public static final int common_signin_btn_text_light=0x7f060017;
+        public static final int tab_highlight=0x7f060011;
+        public static final int transparent=0x7f060010;
     }
     public static final class dimen {
         /**  Default height of an action bar. 
@@ -1112,7 +1114,10 @@ containing a value of this type.
         public static final int menu_selector=0x7f02009a;
         public static final int sport_type_bicycling=0x7f02009b;
         public static final int sport_type_running=0x7f02009c;
-        public static final int trening=0x7f02009d;
+        public static final int tab_bar_background=0x7f02009d;
+        public static final int tab_bar_background_selected=0x7f02009e;
+        public static final int tab_bar_background_selected_pressed=0x7f02009f;
+        public static final int trening=0x7f0200a0;
     }
     public static final class id {
         public static final int abs__action_bar=0x7f070024;
@@ -1181,10 +1186,10 @@ containing a value of this type.
         public static final int linearLayoutMap=0x7f070043;
         public static final int listMode=0x7f070006;
         public static final int listView=0x7f070046;
-        public static final int map=0x7f070053;
         public static final int next_button=0x7f070052;
         public static final int none=0x7f070000;
         public static final int normal=0x7f070001;
+        public static final int pager=0x7f070053;
         public static final int progressBar1=0x7f07004d;
         public static final int road_id=0x7f07004c;
         public static final int satellite=0x7f070002;
@@ -1241,11 +1246,12 @@ containing a value of this type.
         public static final int menu_layout=0x7f03001b;
         public static final int menu_row=0x7f03001c;
         public static final int preference_list_fragment=0x7f03001d;
-        public static final int road_activity=0x7f03001e;
-        public static final int settings_fragment=0x7f03001f;
-        public static final int sherlock_spinner_dropdown_item=0x7f030020;
-        public static final int sherlock_spinner_item=0x7f030021;
-        public static final int welcome_fragment=0x7f030022;
+        public static final int road_activity_tabs=0x7f03001e;
+        public static final int road_fragment=0x7f03001f;
+        public static final int settings_fragment=0x7f030020;
+        public static final int sherlock_spinner_dropdown_item=0x7f030021;
+        public static final int sherlock_spinner_item=0x7f030022;
+        public static final int welcome_fragment=0x7f030023;
     }
     public static final class menu {
         public static final int history_floating_context_menu=0x7f0e0000;
@@ -1411,6 +1417,7 @@ containing a value of this type.
         public static final int next_button_label=0x7f08001a;
         public static final int ok=0x7f080031;
         public static final int road_activity=0x7f08002a;
+        public static final int road_tab=0x7f080049;
         public static final int settings_text=0x7f080040;
         /**  Optional button to Skip a PreferenceActivity [CHAR LIMIT=20] 
          */
@@ -1420,6 +1427,7 @@ containing a value of this type.
  controls buttons 
          */
         public static final int start_button=0x7f080033;
+        public static final int stats_tab=0x7f08004a;
         public static final int time_elapsed=0x7f08003b;
         public static final int turn_on_gps_dialog_message=0x7f08003f;
         public static final int weight_title=0x7f080042;
@@ -1430,11 +1438,13 @@ containing a value of this type.
         /** 
         Base application theme, dependent on API level. This theme is replaced
         by AppBaseTheme from res/values-vXX/styles.xml on newer devices.
+
     
 
             Theme customizations available in newer API levels can go in
             res/values-vXX/styles.xml, while customizations related to
             backward-compatibility can go here.
+
         
 
         Base application theme for API 11+. This theme completely replaces
@@ -1445,6 +1455,8 @@ containing a value of this type.
         Base application theme for API 14+. This theme completely replaces
         AppBaseTheme from BOTH res/values/styles.xml and
         res/values-v11/styles.xml on API 14+ devices.
+
+
 
     
  API 14 theme customizations can go here. 
@@ -1491,6 +1503,7 @@ containing a value of this type.
         public static final int TextAppearance_Sherlock_Widget_PopupMenu_Large=0x7f0c0040;
         public static final int TextAppearance_Sherlock_Widget_PopupMenu_Small=0x7f0c0042;
         public static final int TextAppearance_Sherlock_Widget_TextView_SpinnerItem=0x7f0c0044;
+        public static final int Theme_ActionBar_Tab=0x7f0c005d;
         public static final int Theme_MyTheme=0x7f0c005b;
         public static final int Theme_Sherlock=0x7f0c0054;
         public static final int Theme_Sherlock_Light=0x7f0c0055;
