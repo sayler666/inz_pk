@@ -6,7 +6,6 @@ import java.util.ArrayList;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.os.Handler;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -45,10 +44,10 @@ public class RoadFragment extends SherlockFragment {
 
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
 			Bundle savedInstanceState) {
-		
-		//get road id
-		roadId = ((RoadActivity) getActivity()).getRoadId();
 
+		// get road id
+		roadId = ((RoadActivity) getActivity()).getRoadId();
+		
 		View view = inflater.inflate(R.layout.road_fragment, container, false);
 
 		// draw road on map
@@ -90,9 +89,10 @@ public class RoadFragment extends SherlockFragment {
 				@Override
 				public void run() {
 					map = mapFragment.getMap();
-					
-					//check if map is created
+
+					// check if map is created
 					if (map != null) {
+						// road
 						map.addPolyline(roadLine).setVisible(true);
 
 						// finish marker
@@ -110,9 +110,6 @@ public class RoadFragment extends SherlockFragment {
 							@Override
 							public void onCameraChange(CameraPosition position) {
 								if (road.getTracks().size() > 0) {
-									// Move camera
-									map.moveCamera(CameraUpdateFactory
-											.newLatLngBounds(bc.build(), 50));
 									// Remove listener to prevent position reset
 									// on camera
 									// move
@@ -120,8 +117,8 @@ public class RoadFragment extends SherlockFragment {
 								}
 							}
 						});
-						map.moveCamera(CameraUpdateFactory
-								.newLatLngBounds(bc.build(), 50));
+						map.moveCamera(CameraUpdateFactory.newLatLngBounds(
+								bc.build(), 50));
 
 						handler.removeCallbacksAndMessages(null);
 					} else {

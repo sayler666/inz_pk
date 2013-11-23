@@ -41,7 +41,7 @@ public class ImportRoadFromGPX implements I_ImportRoadToDB {
 			.compile("<(?:wpt|trkpt) lat=\"(.*?)\" lon=\"(.*?)\">(.*?)</(?:wpt|trkpt)>");
 	// pattern for time
 	Pattern patternTime = Pattern.compile("<time>(.*?)</time>");
-	// pattern for WTP's altitude
+	// pattern for WTP's elevation
 	Pattern patternWptAltitude = Pattern.compile("<ele>(.*?)</ele>");
 
 	public ImportRoadFromGPX() {
@@ -119,7 +119,8 @@ public class ImportRoadFromGPX implements I_ImportRoadToDB {
 			}
 
 			Track track = new Track(Double.valueOf(matcherWpt.group(1)),
-					Double.valueOf(matcherWpt.group(2)), alt, 0, ((date != null) ? date.getTime() : 0));
+					Double.valueOf(matcherWpt.group(2)), ((alt != null) ? alt
+							: 0), 0, ((date != null) ? date.getTime() : 0));
 			track.setCreatedAt(date);
 
 			// add track to list
@@ -192,7 +193,8 @@ public class ImportRoadFromGPX implements I_ImportRoadToDB {
 		long diffInMillies = _tracks.get(_tracks.size() - 1).getCreatedAt()
 				.getTime()
 				- _tracks.get(0).getCreatedAt().getTime();
-		_duration = (double) TimeUnit.SECONDS.convert(diffInMillies, TimeUnit.MILLISECONDS);
+		_duration = (double) TimeUnit.SECONDS.convert(diffInMillies,
+				TimeUnit.MILLISECONDS);
 
 		return _duration;
 	}

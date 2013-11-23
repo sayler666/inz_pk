@@ -1251,7 +1251,8 @@ containing a value of this type.
         public static final int settings_fragment=0x7f030020;
         public static final int sherlock_spinner_dropdown_item=0x7f030021;
         public static final int sherlock_spinner_item=0x7f030022;
-        public static final int welcome_fragment=0x7f030023;
+        public static final int statistic_fragment=0x7f030023;
+        public static final int welcome_fragment=0x7f030024;
     }
     public static final class menu {
         public static final int history_floating_context_menu=0x7f0e0000;

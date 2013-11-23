@@ -48,7 +48,7 @@ public class RoadActivity extends SherlockFragmentActivity {
 
 	private RoadDataProvider roadDataProvider;
 	private ActionBar actionBar;
-	RoadPagerAdapter mDemoCollectionPagerAdapter;
+	RoadPagerAdapter roadCollectionPagerAdapter;
 	ViewPager mViewPager;
 
 	@Override
@@ -58,37 +58,53 @@ public class RoadActivity extends SherlockFragmentActivity {
 		// set layout
 		setContentView(R.layout.road_activity_tabs);
 
+		// intent
+		Intent intent = getIntent();
+		roadId = intent.getLongExtra("roadId", 0);
+
+		// action bar back
 		actionBar = getSupportActionBar();
+		actionBar.setDisplayHomeAsUpEnabled(true);
+
+		// tabs
+		initTabs();
+
+		// ORM
+		DaoHelper.setOpenHelper(this, DBSqliteOpenHelper.class);
+		roadDataProvider = new RoadDataProvider();
+	}
+
+	private void initTabs() {
+		// view pager
 		mViewPager = (ViewPager) findViewById(R.id.pager);
 
 		actionBar.setNavigationMode(ActionBar.NAVIGATION_MODE_TABS);
 		actionBar.setStackedBackgroundDrawable(new ColorDrawable(Color.DKGRAY));
 		ActionBar.TabListener tabListener = new ActionBar.TabListener() {
 			public void onTabSelected(ActionBar.Tab tab, FragmentTransaction ft) {
+				// when click tab choose corresponding page
 				mViewPager.setCurrentItem(tab.getPosition());
 			}
 
 			public void onTabUnselected(ActionBar.Tab tab,
 					FragmentTransaction ft) {
-				// hide the given tab
 			}
 
 			public void onTabReselected(ActionBar.Tab tab,
 					FragmentTransaction ft) {
-				// probably ignore this event
 			}
 		};
 
-		// Add 2 tabs, specifying the tab's text and TabListener
+		// add tabs to action bar
 		actionBar.addTab(actionBar.newTab().setText(R.string.road_tab)
 				.setTabListener(tabListener));
 		actionBar.addTab(actionBar.newTab().setText(R.string.stats_tab)
 				.setTabListener(tabListener));
 
-		mDemoCollectionPagerAdapter = new RoadPagerAdapter(
+		roadCollectionPagerAdapter = new RoadPagerAdapter(
 				getSupportFragmentManager());
 
-		mViewPager.setAdapter(mDemoCollectionPagerAdapter);
+		mViewPager.setAdapter(roadCollectionPagerAdapter);
 		mViewPager
 				.setOnPageChangeListener(new ViewPager.SimpleOnPageChangeListener() {
 					@Override
@@ -100,17 +116,6 @@ public class RoadActivity extends SherlockFragmentActivity {
 					}
 
 				});
-		// intent
-		Intent intent = getIntent();
-		roadId = intent.getLongExtra("roadId", 0);
-
-		// action bar back
-		ActionBar ab = getSupportActionBar();
-		ab.setDisplayHomeAsUpEnabled(true);
-
-		// ORM
-		DaoHelper.setOpenHelper(this, DBSqliteOpenHelper.class);
-		roadDataProvider = new RoadDataProvider();
 	}
 
 	public long getRoadId() {
@@ -146,6 +151,7 @@ public class RoadActivity extends SherlockFragmentActivity {
 			// export to GPX file
 			String filePath = ExportRoadToGPX.export(roadToExport);
 
+			// file saved properly
 			Toast.makeText(this, "File saved to: " + filePath,
 					Toast.LENGTH_SHORT).show();
 		} catch (SQLException e) {
@@ -170,6 +176,9 @@ public class RoadActivity extends SherlockFragmentActivity {
 				R.animator.right_to_left_hide);
 	}
 
+	/*
+	 * page adapter with road and statistic fragments
+	 */
 	public class RoadPagerAdapter extends FragmentStatePagerAdapter {
 		public RoadPagerAdapter(FragmentManager fm) {
 			super(fm);
@@ -184,15 +193,10 @@ public class RoadActivity extends SherlockFragmentActivity {
 				break;
 
 			case 1:
-				fragment = new WelcomeFragment();
+				fragment = new StatisticFragment();
 				break;
 
 			}
-
-			Bundle args = new Bundle();
-			// Our object is just an integer :-P
-			args.putInt(DemoObjectFragment.ARG_OBJECT, i + 1);
-			fragment.setArguments(args);
 			return fragment;
 		}
 
@@ -204,24 +208,6 @@ public class RoadActivity extends SherlockFragmentActivity {
 		@Override
 		public CharSequence getPageTitle(int position) {
 			return "OBJECT " + (position + 1);
-		}
-	}
-
-	// Instances of this class are fragments representing a single
-	// object in our collection.
-	public static class DemoObjectFragment extends Fragment {
-		public static final String ARG_OBJECT = "object";
-
-		@Override
-		public View onCreateView(LayoutInflater inflater, ViewGroup container,
-				Bundle savedInstanceState) {
-			// The last two arguments ensure LayoutParams are inflated
-			// properly.
-			View rootView = inflater.inflate(R.layout.loading_dialog,
-					container, false);
-			Bundle args = getArguments();
-
-			return rootView;
 		}
 	}
 

@@ -63,11 +63,12 @@ public class ExportRoadToGPX {
 			wptNode.setAttribute("lat", String.valueOf(wpt.getLat()));
 			wptNode.setAttribute("lon", String.valueOf(wpt.getLng()));
 
-			// ele
+			// elevation
 			Element elevation = doc.createElement("ele");
 			elevation.appendChild(doc.createTextNode(String.valueOf(wpt
 					.getAlt())));
 			wptNode.appendChild(elevation);
+			
 			// time
 			Element time = doc.createElement("time");
 			String timeString = "0";
@@ -80,7 +81,6 @@ public class ExportRoadToGPX {
 			
 			// append wpt node
 			gpx.appendChild(wptNode);
-
 		}
 
 		// string writer
