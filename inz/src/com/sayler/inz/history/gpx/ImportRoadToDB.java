@@ -8,12 +8,12 @@ import java.util.List;
 import com.sayler.inz.database.model.Track;
 
 public class ImportRoadToDB {
-	private I_ImportRoadToDB _importStrategy;
+	private IImportRoadToDBStrategy _importStrategy;
 	private List<Track> _road;
 	private Date _date;
 	private Double _distance, _duration;
 
-	public ImportRoadToDB(I_ImportRoadToDB _importStrategy) {
+	public ImportRoadToDB(IImportRoadToDBStrategy _importStrategy) {
 		this._importStrategy = _importStrategy;
 	}
 

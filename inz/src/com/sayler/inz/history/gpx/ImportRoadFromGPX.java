@@ -26,7 +26,7 @@ import com.sayler.inz.database.model.Track;
  * @author 2
  * 
  */
-public class ImportRoadFromGPX implements I_ImportRoadToDB {
+public class ImportRoadFromGPX implements IImportRoadToDBStrategy {
 
 	private static final String TAG = "ImportRoadFromGPX";
 	private String _url;
@@ -35,7 +35,9 @@ public class ImportRoadFromGPX implements I_ImportRoadToDB {
 	private List<Track> _tracks;
 	private Double _distance = 0.0, _duration;
 
-	// patterns
+	/*
+	 * patterns:
+	 */
 	// pattern for WTPs
 	Pattern patternWpt = Pattern
 			.compile("<(?:wpt|trkpt) lat=\"(.*?)\" lon=\"(.*?)\">(.*?)</(?:wpt|trkpt)>");
@@ -118,9 +120,12 @@ public class ImportRoadFromGPX implements I_ImportRoadToDB {
 				}
 			}
 
+			// create track instance
 			Track track = new Track(Double.valueOf(matcherWpt.group(1)),
 					Double.valueOf(matcherWpt.group(2)), ((alt != null) ? alt
 							: 0), 0, ((date != null) ? date.getTime() : 0));
+
+			// set creation time
 			track.setCreatedAt(date);
 
 			// add track to list
