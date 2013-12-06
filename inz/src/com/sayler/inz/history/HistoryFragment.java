@@ -91,7 +91,6 @@ public class HistoryFragment extends SherlockFragment implements
 
 		// set long click on list items
 		registerForContextMenu(listView);
-
 		
 		return view;
 	}

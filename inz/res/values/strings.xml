@@ -73,5 +73,10 @@
 	
 	 <string name="road_tab">Road</string>
 	 <string name="stats_tab">Statistics</string>
+	 
+	 <!-- PLOT -->
+	 <string name="plot_elevation">Elevation (m)</string>
+	 <string name="plot_time">Time</string>
+	  <string name="plot_title">Elevation changes</string>
     
 </resources>
