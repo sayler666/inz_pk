@@ -6,6 +6,7 @@ import java.util.Arrays;
 
 import android.graphics.Color;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -49,7 +50,7 @@ public class StatisticFragment extends SherlockFragment {
 		// view
 		View view = inflater.inflate(R.layout.statistic_fragment, container,
 				false);
-
+		Log.d(TAG, "statistic");
 		try {
 			Road road = roadDataProvider.get(roadId);
 

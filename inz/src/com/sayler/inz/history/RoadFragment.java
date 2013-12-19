@@ -47,7 +47,7 @@ public class RoadFragment extends SherlockFragment {
 
 		// get road id
 		roadId = ((RoadActivity) getActivity()).getRoadId();
-		
+
 		View view = inflater.inflate(R.layout.road_fragment, container, false);
 
 		// draw road on map
@@ -66,9 +66,11 @@ public class RoadFragment extends SherlockFragment {
 			final ArrayList<Track> tracks = (ArrayList<Track>) road.getTracks();
 
 			for (Track t : tracks) {
+
 				LatLng ll = new LatLng(t.getLat(), t.getLng());
 				roadLine.add(ll);
 				bc.include(ll);
+
 			}
 
 			// maps stuff
@@ -122,10 +124,10 @@ public class RoadFragment extends SherlockFragment {
 
 						handler.removeCallbacksAndMessages(null);
 					} else {
-						handler.postDelayed(this, 500);
+						handler.postDelayed(this, 10);
 					}
 				}
-			}, 500);
+			}, 10);
 
 			// road info
 			distanceTextView = (TextView) view
