@@ -81,7 +81,7 @@ public class Launch extends SherlockFragmentActivity implements
 			// menu fragment
 			menu = new com.sayler.inz.Menu();
 			fm.beginTransaction().replace(R.id.left_drawer, menu).commit();
-
+			
 		} else {
 			Log.d(TAG,
 					"w bundle " + savedInstanceState.getString("fragmentClass"));
@@ -116,6 +116,9 @@ public class Launch extends SherlockFragmentActivity implements
 
 		getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 		getSupportActionBar().setHomeButtonEnabled(true);
+		
+		//auto show navigation drawer when start
+		mDrawerLayout.openDrawer(GravityCompat.START);
 
 	}
 
