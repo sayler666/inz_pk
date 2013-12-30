@@ -96,8 +96,6 @@ public class HistoryFragment extends SherlockFragment implements
 	}
 
 	private void loadCursor() {
-
-		// TODO: separate thread
 		try {
 			HistoryArrayAdapter arrayAdapter = new HistoryArrayAdapter(
 					getActivity().getApplicationContext(),
@@ -106,7 +104,6 @@ public class HistoryFragment extends SherlockFragment implements
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
-
 	}
 
 	@Override
@@ -333,6 +330,7 @@ public class HistoryFragment extends SherlockFragment implements
 			loadCursor();
 		}
 
+		
 	}
 
 }

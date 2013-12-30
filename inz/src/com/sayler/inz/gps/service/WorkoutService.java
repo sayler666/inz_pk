@@ -237,7 +237,7 @@ public class WorkoutService extends Service implements LocationListener {
 	}
 
 	public void updateUI() {
-
+		
 		// send event to UPDATE UI
 		EventBus.getDefault().post(
 				new UpdateUiEvent(distance, time, isGpsFix, isRecording, lat,
@@ -274,8 +274,8 @@ public class WorkoutService extends Service implements LocationListener {
 				break;
 			case GpsStatus.GPS_EVENT_FIRST_FIX:
 				// TODO something wrong here on 4.2.2
-				// isGpsFix = true;
-				// Log.d(TAG, "fixed: ");
+//				 isGpsFix = true;
+//				 Log.d(TAG, "fixed: ");
 				break;
 			case GpsStatus.GPS_EVENT_STOPPED:
 

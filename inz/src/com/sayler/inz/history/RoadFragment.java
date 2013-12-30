@@ -3,9 +3,11 @@ package com.sayler.inz.history;
 import java.sql.SQLException;
 import java.util.ArrayList;
 
+import android.content.Intent;
 import android.graphics.Color;
+import android.os.AsyncTask;
 import android.os.Bundle;
-import android.os.Handler;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -29,6 +31,7 @@ import com.sayler.inz.database.DaoHelper;
 import com.sayler.inz.database.model.Road;
 import com.sayler.inz.database.model.Track;
 import com.sayler.inz.gps.TimerView;
+import com.sayler.inz.history.gpx.LoadingDialog;
 
 public class RoadFragment extends SherlockFragment {
 	private GoogleMap map;
@@ -41,93 +44,96 @@ public class RoadFragment extends SherlockFragment {
 	private TextView caloriesTextView;
 	private TimerView timerView;
 	private RoadDataProvider roadDataProvider;
+	private View view;
+
 
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
-			Bundle savedInstanceState) {
+			final Bundle savedInstanceState) {
 
 		// get road id
 		roadId = ((RoadActivity) getActivity()).getRoadId();
 
-		View view = inflater.inflate(R.layout.road_fragment, container, false);
+		view = inflater.inflate(R.layout.road_fragment, container, false);
 
-		// draw road on map
-		final PolylineOptions roadLine = new PolylineOptions().width(5).color(
-				Color.RED);
+		// map
+		// maps stuff
+		if (savedInstanceState == null) {
+			getChildFragmentManager()
+					.beginTransaction()
+					.add(R.id.linearLayoutMap, new SupportMapFragment(),
+							"MapFragment").commit();
+			getChildFragmentManager().executePendingTransactions();
 
-		// bounds - need to center map over road
-		final LatLngBounds.Builder bc = new LatLngBounds.Builder();
+		}
+		mapFragment = (SupportMapFragment) getChildFragmentManager()
+				.findFragmentById(R.id.linearLayoutMap);
 
-		// ORM
-		DaoHelper.setOpenHelper(getActivity(), DBSqliteOpenHelper.class);
-		roadDataProvider = new RoadDataProvider();
+		new CreateMap().execute();
 
-		try {
-			final Road road = roadDataProvider.get(roadId);
-			final ArrayList<Track> tracks = (ArrayList<Track>) road.getTracks();
+		return view;
+	}
 
-			for (Track t : tracks) {
+	/*
+	 * AsyncTask to generate map
+	 */
+	private class CreateMap extends AsyncTask<Intent, Integer, Long> {
+		private LoadingDialog loadingDialog;
+		private Road road;
+		private PolylineOptions roadLine;
+		private ArrayList<Track> tracks;
+		private LatLngBounds.Builder bc;
 
-				LatLng ll = new LatLng(t.getLat(), t.getLng());
-				roadLine.add(ll);
-				bc.include(ll);
+		protected void onPreExecute() {
+			// show dialog
+			loadingDialog = new LoadingDialog();
+			loadingDialog.setCancelable(false);
+			loadingDialog.show(getFragmentManager(), "loading_dialog");
+		}
 
-			}
+		@Override
+		protected Long doInBackground(Intent... data) {
 
-			// maps stuff
-			if (savedInstanceState == null) {
-				getChildFragmentManager()
-						.beginTransaction()
-						.add(R.id.linearLayoutMap, new SupportMapFragment(),
-								"MapFragment").commit();
-				getChildFragmentManager().executePendingTransactions();
+			// draw road on map
+			roadLine = new PolylineOptions().width(5).color(Color.RED);
 
-			}
-			mapFragment = (SupportMapFragment) getChildFragmentManager()
-					.findFragmentById(R.id.linearLayoutMap);
+			// bounds - need to center map over road
+			bc = new LatLngBounds.Builder();
 
-			final Handler handler = new Handler();
-			handler.postDelayed(new Runnable() {
+			// ORM
+			DaoHelper.setOpenHelper(getActivity(), DBSqliteOpenHelper.class);
+			roadDataProvider = new RoadDataProvider();
 
-				@Override
-				public void run() {
-					map = mapFragment.getMap();
+			try {
+				road = roadDataProvider.get(roadId);
+				tracks = (ArrayList<Track>) road.getTracks();
 
-					// check if map is created
-					if (map != null) {
-						// road
-						map.addPolyline(roadLine).setVisible(true);
+				for (Track t : tracks) {
 
-						// finish marker
-						if (tracks.size() > 0) {
-							Track lastTrack = tracks.get(tracks.size() - 1);
-							map.addMarker(new MarkerOptions()
-									.position(
-											new LatLng(lastTrack.getLat(),
-													lastTrack.getLng()))
-									.icon(BitmapDescriptorFactory
-											.fromResource(R.drawable.marker_finish)));
-						}
-						// center and zoom map
-						map.setOnCameraChangeListener(new OnCameraChangeListener() {
-							@Override
-							public void onCameraChange(CameraPosition position) {
-								if (road.getTracks().size() > 0) {
-									// Remove listener to prevent position reset
-									// on camera
-									// move
-									map.setOnCameraChangeListener(null);
-								}
-							}
-						});
-						map.moveCamera(CameraUpdateFactory.newLatLngBounds(
-								bc.build(), 50));
-
-						handler.removeCallbacksAndMessages(null);
-					} else {
-						handler.postDelayed(this, 10);
-					}
+					LatLng ll = new LatLng(t.getLat(), t.getLng());
+					roadLine.add(ll);
+					bc.include(ll);
 				}
-			}, 10);
+
+				map = mapFragment.getMap();
+
+				// check if map is created
+				while (map == null) {
+					Log.d(TAG, "brak mapy");
+					map = mapFragment.getMap();
+					Thread.sleep(100);
+				}
+
+			} catch (SQLException e1) {
+				e1.printStackTrace();
+			} catch (InterruptedException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+
+			return null;
+		}
+
+		protected void onPostExecute(Long result) {
 
 			// road info
 			distanceTextView = (TextView) view
@@ -140,11 +146,38 @@ public class RoadFragment extends SherlockFragment {
 			caloriesTextView.setText(road.getCalories() + " kcal");
 			distanceTextView.setText(Math.round(road.getDistance() * 100)
 					/ 100.d + " m");
-		} catch (SQLException e1) {
-			e1.printStackTrace();
+
+			// map drawing
+			// road
+			map.addPolyline(roadLine).setVisible(true);
+
+			// finish marker
+			if (tracks.size() > 0) {
+				Track lastTrack = tracks.get(tracks.size() - 1);
+				map.addMarker(new MarkerOptions().position(
+						new LatLng(lastTrack.getLat(), lastTrack.getLng()))
+						.icon(BitmapDescriptorFactory
+								.fromResource(R.drawable.marker_finish)));
+			}
+			// center and zoom map
+			map.setOnCameraChangeListener(new OnCameraChangeListener() {
+				@Override
+				public void onCameraChange(CameraPosition position) {
+					if (road.getTracks().size() > 0) {
+						// Remove listener to prevent position reset
+						// on camera
+						// move
+						map.setOnCameraChangeListener(null);
+					}
+				}
+			});
+			map.moveCamera(CameraUpdateFactory.newLatLngBounds(bc.build(), 50));
+
+			// hide dialog
+			loadingDialog.dismiss();
+
 		}
 
-		return view;
 	}
 
 }

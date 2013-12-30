@@ -16,6 +16,7 @@ import android.widget.Toast;
 import com.actionbarsherlock.app.SherlockFragmentActivity;
 import com.actionbarsherlock.view.MenuItem;
 import com.sayler.inz.Menu.FragmentSwitchable;
+import com.sayler.inz.gps.service.WorkoutService;
 import com.sayler.inz.welcome.WelcomeFragment;
 
 public class Launch extends SherlockFragmentActivity implements
@@ -208,6 +209,8 @@ public class Launch extends SherlockFragmentActivity implements
 
 		// back click twice to close app
 		if (backClickTimeLeft > 0) {
+			//Intent workoutSe = new Intent(this, WorkoutService.class);
+			//this.stopService(workoutSe);
 			super.onBackPressed();
 		} else {
 			Toast.makeText(this, R.string.click_again_to_close,
