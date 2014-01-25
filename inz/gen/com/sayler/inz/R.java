@@ -1336,11 +1336,11 @@ containing a value of this type.
         /**   Strings for possible PreferenceActivity Back/Next buttons 
          */
         public static final int back_button_label=0x7f080019;
-        public static final int bike_weight_title=0x7f080043;
-        public static final int calories=0x7f08003d;
+        public static final int bike_weight_title=0x7f080044;
+        public static final int calories=0x7f08003e;
         public static final int cancel=0x7f08002e;
-        public static final int choose_sport_dialog_message=0x7f08003a;
-        public static final int click_again_to_close=0x7f080048;
+        public static final int choose_sport_dialog_message=0x7f08003b;
+        public static final int click_again_to_close=0x7f080049;
         /**  Button in confirmation dialog to enable Google Play services.  Clicking it
         will direct user to application settings of Google Play services where they
         can enable it [CHAR LIMIT=40] 
@@ -1408,31 +1408,32 @@ containing a value of this type.
         /**  Long form sign-in button text [CHAR LIMIT=30] 
          */
         public static final int common_signin_button_text_long=0x7f080012;
-        public static final int default_sport_title=0x7f080044;
-        public static final int delete=0x7f080047;
-        public static final int distance=0x7f08003c;
+        public static final int default_sport_title=0x7f080045;
+        public static final int delete=0x7f080048;
+        public static final int distance=0x7f08003d;
         public static final int drawer_close=0x7f08002d;
         public static final int drawer_open=0x7f08002c;
         public static final int end_button=0x7f080034;
-        public static final int end_recording_dialog_message=0x7f080039;
-        public static final int export_gpx=0x7f080046;
-        public static final int gps_fixed=0x7f080035;
-        public static final int gps_not_fixed=0x7f080037;
-        public static final int gps_not_fixed_dialog_message=0x7f080038;
-        public static final int gps_searching=0x7f080036;
+        public static final int end_recording_dialog_message=0x7f08003a;
+        public static final int export_gpx=0x7f080047;
+        public static final int gps_fixed=0x7f080036;
+        public static final int gps_not_fixed=0x7f080038;
+        public static final int gps_not_fixed_dialog_message=0x7f080039;
+        public static final int gps_searching=0x7f080037;
         public static final int ignore=0x7f08002f;
-        public static final int import_gpx=0x7f080045;
-        public static final int main_setitings_category_title=0x7f080041;
+        public static final int import_gpx=0x7f080046;
+        public static final int main_setitings_category_title=0x7f080042;
         public static final int next_button_label=0x7f08001a;
         public static final int ok=0x7f080031;
         /**  PLOT 
          */
-        public static final int plot_elevation=0x7f08004b;
-        public static final int plot_time=0x7f08004c;
-        public static final int plot_title=0x7f08004d;
+        public static final int plot_elevation=0x7f08004c;
+        public static final int plot_time=0x7f08004d;
+        public static final int plot_title=0x7f08004e;
         public static final int road_activity=0x7f08002a;
-        public static final int road_tab=0x7f080049;
-        public static final int settings_text=0x7f080040;
+        public static final int road_tab=0x7f08004a;
+        public static final int running=0x7f080035;
+        public static final int settings_text=0x7f080041;
         /**  Optional button to Skip a PreferenceActivity [CHAR LIMIT=20] 
          */
         public static final int skip_button_label=0x7f08001b;
@@ -1441,11 +1442,11 @@ containing a value of this type.
  controls buttons 
          */
         public static final int start_button=0x7f080033;
-        public static final int stats_tab=0x7f08004a;
-        public static final int time_elapsed=0x7f08003b;
-        public static final int turn_on_gps_dialog_message=0x7f08003f;
-        public static final int weight_title=0x7f080042;
-        public static final int welcome_text=0x7f08003e;
+        public static final int stats_tab=0x7f08004b;
+        public static final int time_elapsed=0x7f08003c;
+        public static final int turn_on_gps_dialog_message=0x7f080040;
+        public static final int weight_title=0x7f080043;
+        public static final int welcome_text=0x7f08003f;
         public static final int yes=0x7f080030;
     }
     public static final class style {
@@ -1453,11 +1454,13 @@ containing a value of this type.
         Base application theme, dependent on API level. This theme is replaced
         by AppBaseTheme from res/values-vXX/styles.xml on newer devices.
 
+
     
 
             Theme customizations available in newer API levels can go in
             res/values-vXX/styles.xml, while customizations related to
             backward-compatibility can go here.
+
 
         
 
@@ -1517,15 +1520,15 @@ containing a value of this type.
         public static final int TextAppearance_Sherlock_Widget_PopupMenu_Large=0x7f0c0040;
         public static final int TextAppearance_Sherlock_Widget_PopupMenu_Small=0x7f0c0042;
         public static final int TextAppearance_Sherlock_Widget_TextView_SpinnerItem=0x7f0c0044;
-        public static final int Theme_ActionBar_Tab=0x7f0c005d;
-        public static final int Theme_MyTheme=0x7f0c005b;
+        public static final int Theme_ActionBar_Tab=0x7f0c005f;
+        public static final int Theme_MyTheme=0x7f0c005d;
         public static final int Theme_Sherlock=0x7f0c0054;
         public static final int Theme_Sherlock_Light=0x7f0c0055;
         public static final int Theme_Sherlock_Light_DarkActionBar=0x7f0c0056;
         public static final int Theme_Sherlock_Light_NoActionBar=0x7f0c0058;
         public static final int Theme_Sherlock_NoActionBar=0x7f0c0057;
         public static final int Widget=0x7f0c0000;
-        public static final int Widget_MyTheme_ActionBar=0x7f0c005c;
+        public static final int Widget_MyTheme_ActionBar=0x7f0c005e;
         public static final int Widget_Sherlock_ActionBar=0x7f0c0002;
         public static final int Widget_Sherlock_ActionBar_Solid=0x7f0c0003;
         public static final int Widget_Sherlock_ActionBar_TabBar=0x7f0c000a;
@@ -1572,6 +1575,8 @@ containing a value of this type.
         public static final int Widget_Sherlock_SearchAutoCompleteTextView=0x7f0c0034;
         public static final int Widget_Sherlock_Spinner_DropDown_ActionBar=0x7f0c0024;
         public static final int Widget_Sherlock_TextView_SpinnerItem=0x7f0c0032;
+        public static final int expander=0x7f0c005b;
+        public static final int row=0x7f0c005c;
     }
     public static final class xml {
         public static final int line_point_formatter_with_plf1=0x7f050000;

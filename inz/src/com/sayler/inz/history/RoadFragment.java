@@ -46,7 +46,6 @@ public class RoadFragment extends SherlockFragment {
 	private RoadDataProvider roadDataProvider;
 	private View view;
 
-
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
 			final Bundle savedInstanceState) {
 
@@ -147,32 +146,35 @@ public class RoadFragment extends SherlockFragment {
 			distanceTextView.setText(Math.round(road.getDistance() * 100)
 					/ 100.d + " m");
 
-			// map drawing
-			// road
-			map.addPolyline(roadLine).setVisible(true);
-
-			// finish marker
 			if (tracks.size() > 0) {
-				Track lastTrack = tracks.get(tracks.size() - 1);
-				map.addMarker(new MarkerOptions().position(
-						new LatLng(lastTrack.getLat(), lastTrack.getLng()))
-						.icon(BitmapDescriptorFactory
-								.fromResource(R.drawable.marker_finish)));
-			}
-			// center and zoom map
-			map.setOnCameraChangeListener(new OnCameraChangeListener() {
-				@Override
-				public void onCameraChange(CameraPosition position) {
-					if (road.getTracks().size() > 0) {
-						// Remove listener to prevent position reset
-						// on camera
-						// move
-						map.setOnCameraChangeListener(null);
-					}
-				}
-			});
-			map.moveCamera(CameraUpdateFactory.newLatLngBounds(bc.build(), 50));
 
+				// map drawing
+				// road
+				map.addPolyline(roadLine).setVisible(true);
+
+				// finish marker
+				if (tracks.size() > 0) {
+					Track lastTrack = tracks.get(tracks.size() - 1);
+					map.addMarker(new MarkerOptions().position(
+							new LatLng(lastTrack.getLat(), lastTrack.getLng()))
+							.icon(BitmapDescriptorFactory
+									.fromResource(R.drawable.marker_finish)));
+				}
+				// center and zoom map
+				map.setOnCameraChangeListener(new OnCameraChangeListener() {
+					@Override
+					public void onCameraChange(CameraPosition position) {
+						if (road.getTracks().size() > 0) {
+							// Remove listener to prevent position reset
+							// on camera
+							// move
+							map.setOnCameraChangeListener(null);
+						}
+					}
+				});
+				map.moveCamera(CameraUpdateFactory.newLatLngBounds(bc.build(),
+						50));
+			}
 			// hide dialog
 			loadingDialog.dismiss();
 

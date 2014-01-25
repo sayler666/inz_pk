@@ -2,6 +2,8 @@ package com.sayler.inz.gps.service;
 
 import java.util.Date;
 
+import android.annotation.SuppressLint;
+import android.annotation.TargetApi;
 import android.app.Notification;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
@@ -12,6 +14,7 @@ import android.location.GpsStatus;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.IBinder;
 import android.os.SystemClock;
@@ -28,6 +31,8 @@ import com.sayler.inz.database.model.Track;
 import de.greenrobot.event.EventBus;
 
 //TODO update ui even if gps is no on
+
+
 
 public class WorkoutService extends Service implements LocationListener {
 	final static String TAG = "WorkoutService";
@@ -105,6 +110,9 @@ public class WorkoutService extends Service implements LocationListener {
 	 * @param e
 	 *            contains currentRoadId
 	 */
+
+	@SuppressLint("NewApi")
+	@TargetApi(Build.VERSION_CODES.JELLY_BEAN)
 	public void onEvent(StartRecordingEvent e) {
 
 		// notification
@@ -131,8 +139,8 @@ public class WorkoutService extends Service implements LocationListener {
 				getApplicationContext(), 1, intentToStop, PendingIntent.FLAG_UPDATE_CURRENT);
 		
 		Notification n = new Notification.Builder(getApplicationContext())
-				.setContentTitle("com.sayler.inz")
-				.setContentText("Running...")
+				.setContentTitle(getResources().getText(R.string.app_name))
+				.setContentText(getResources().getText(R.string.running))
 				.setSmallIcon(R.drawable.ic_drawer)
 				.setContentIntent(pIntentToReturn)
 				.setAutoCancel(false)

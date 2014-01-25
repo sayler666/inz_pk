@@ -209,6 +209,7 @@ public class Launch extends SherlockFragmentActivity implements
 
 		// back click twice to close app
 		if (backClickTimeLeft > 0) {
+			//stop WorkoutService
 			//Intent workoutSe = new Intent(this, WorkoutService.class);
 			//this.stopService(workoutSe);
 			super.onBackPressed();
