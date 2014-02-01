@@ -161,12 +161,13 @@ public class AgendaFragment extends SherlockFragment implements
 	public void onDatePickerSet(int year, int month, int day) {
 
 		try {
+			month++;
 			Date date = new SimpleDateFormat("yyyy-MM-dd").parse(String
 					.valueOf(year + "-" + month + "-" + day));
 			Agenda newAgende = new Agenda(date);
 			agendaDataProvider.save(newAgende);
 			Long agendaId = newAgende.getId();
-			
+
 			Intent alarmIntent = new Intent(getActivity(), AlarmReceiver.class);
 			alarmIntent.putExtra(AGENDA_ID, agendaId.intValue());
 			PendingIntent pendingAlarm = PendingIntent.getBroadcast(
@@ -174,11 +175,13 @@ public class AgendaFragment extends SherlockFragment implements
 					PendingIntent.FLAG_UPDATE_CURRENT);
 
 			Calendar cal = Calendar.getInstance();
-			cal.add(Calendar.SECOND, 5); 
-			
+			cal.add(Calendar.SECOND, 10);
+			Log.d(TAG, "calendar " + cal.getTimeInMillis());
+			Log.d(TAG, "date " + date.getTime());
+
 			AlarmManager am = (AlarmManager) getActivity().getSystemService(
 					Context.ALARM_SERVICE);
-			am.set(AlarmManager.RTC_WAKEUP, cal.getTimeInMillis(), pendingAlarm);
+			am.set(AlarmManager.RTC_WAKEUP, date.getTime(), pendingAlarm);
 			Log.d(TAG, "agenda new id: " + agendaId.intValue());
 			// refresh list
 			loadCursor();
