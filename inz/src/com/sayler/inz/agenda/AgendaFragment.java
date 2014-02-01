@@ -3,8 +3,13 @@ package com.sayler.inz.agenda;
 import java.sql.SQLException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import java.util.Date;
 
+import android.app.AlarmManager;
+import android.app.PendingIntent;
+import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.DialogFragment;
 import android.util.Log;
@@ -35,6 +40,8 @@ import com.sayler.inz.database.model.Agenda;
 
 public class AgendaFragment extends SherlockFragment implements
 		OnItemClickListener, OnItemLongClickListener, OnDatePickerSetListener {
+	public static final String AGENDA_ID = "AGENDA_ID";
+
 	private static String TAG = "AgendaFragment";
 
 	private ListView listView;
@@ -135,8 +142,8 @@ public class AgendaFragment extends SherlockFragment implements
 		switch (item.getItemId()) {
 
 		case R.id.delete:
-			 agendaDataProvider.delete(agendaId);
-			 loadCursor();
+			agendaDataProvider.delete(agendaId);
+			loadCursor();
 			return true;
 		default:
 			return super.onContextItemSelected(item);
@@ -158,7 +165,21 @@ public class AgendaFragment extends SherlockFragment implements
 					.valueOf(year + "-" + month + "-" + day));
 			Agenda newAgende = new Agenda(date);
 			agendaDataProvider.save(newAgende);
+			Long agendaId = newAgende.getId();
+			
+			Intent alarmIntent = new Intent(getActivity(), AlarmReceiver.class);
+			alarmIntent.putExtra(AGENDA_ID, agendaId.intValue());
+			PendingIntent pendingAlarm = PendingIntent.getBroadcast(
+					getActivity(), agendaId.intValue(), alarmIntent,
+					PendingIntent.FLAG_UPDATE_CURRENT);
 
+			Calendar cal = Calendar.getInstance();
+			cal.add(Calendar.SECOND, 5); 
+			
+			AlarmManager am = (AlarmManager) getActivity().getSystemService(
+					Context.ALARM_SERVICE);
+			am.set(AlarmManager.RTC_WAKEUP, cal.getTimeInMillis(), pendingAlarm);
+			Log.d(TAG, "agenda new id: " + agendaId.intValue());
 			// refresh list
 			loadCursor();
 		} catch (ParseException e) {

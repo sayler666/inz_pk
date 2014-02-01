@@ -1,5 +1,7 @@
 package com.sayler.inz;
 
+import java.util.Currency;
+
 import android.content.Intent;
 import android.content.res.Configuration;
 import android.os.Bundle;
@@ -34,9 +36,9 @@ public class Launch extends SherlockFragmentActivity implements
 	private WelcomeFragment welcomeF = new WelcomeFragment();
 	// seconds
 	private final int doubleBackClickTime = 3;
-	private int backClickTimeLeft = 0;
+	Long lastBackClick=0l;
 	private Bundle lastIntentExtras = null;
-
+	
 	@Override
 	protected void onSaveInstanceState(Bundle outState) {
 
@@ -203,12 +205,12 @@ public class Launch extends SherlockFragmentActivity implements
 	protected void onActivityResult(int arg0, int arg1, Intent arg2) {
 		super.onActivityResult(arg0, arg1, arg2);
 	}
-
+	
 	@Override
 	public void onBackPressed() {
-
+		Long clickTime = System.currentTimeMillis();
 		// back click twice to close app
-		if (backClickTimeLeft > 0) {
+		if (lastBackClick + (doubleBackClickTime*1000) > clickTime) {
 			//stop WorkoutService
 			//Intent workoutSe = new Intent(this, WorkoutService.class);
 			//this.stopService(workoutSe);
@@ -216,27 +218,11 @@ public class Launch extends SherlockFragmentActivity implements
 		} else {
 			Toast.makeText(this, R.string.click_again_to_close,
 					Toast.LENGTH_LONG).show();
-			Thread count = new Thread(new BackTimeCounter());
-			count.start();
+
+			lastBackClick = clickTime;
 		}
 	}
 
-	/*
-	 * counting down time to second click back
-	 */
-	class BackTimeCounter implements Runnable {
-		@Override
-		public void run() {
-			backClickTimeLeft = doubleBackClickTime;
-			while (backClickTimeLeft > 0) {
-				try {
-					--backClickTimeLeft;
-					Thread.sleep(1000);
-				} catch (InterruptedException e) {
-					e.printStackTrace();
-				}
-			}
-		}
-	}
+
 
 }
